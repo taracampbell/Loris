@@ -552,6 +552,8 @@ class NDB_Form_statistics extends NDB_Form
             return PEAR::raiseError("Could not connect to database: ".$DB->getMessage());
         }
 
+        $config = NDB_Config::singleton();
+
         $projects[null] = 'All Projects';
         foreach(Utility::getProjectList() as $key => $value) {
             $projects[$key] = $value;
@@ -718,6 +720,8 @@ class NDB_Form_statistics extends NDB_Form
             $this->tpl_data['RecruitsTable'] = $this->render_stats_table("Breakdown of Registered Candidates", $Subcategories, $Visits, "DemographicInstrument", $instruments, '', $centers, $result, "demographics", $currentProject);
 
         }
+
+        $this->tpl_data['target'] = $config->getSetting('recruitmentTarget');
     }
 
 

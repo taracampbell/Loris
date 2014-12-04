@@ -20,6 +20,70 @@
         <div class="row">
             <div id="demographicsChart"></div>
         </div>
+        <div class="row">
+            <div class="col-md-6">
+                <H5>Registered candidates</H5>
+                <div class="progress">
+                    {foreach from=$Subprojects item=proj key=keyid}
+                    <div class="progress-bar" role="progressbar" aria-valuenow="{$registered[$keyid].total}" aria-valuemin="0" aria-valuemax="{$target}" style="width: 10%" data-toggle="tooltip" data-placement="bottom" title="{$registered[$keyid].total} {$proj}">
+                        <p>
+                        {$registered[$keyid].total}
+                        <br>
+                        {$proj}
+                        </p>
+                    </div>
+                    {/foreach}
+                    <p class="pull-right small target">Target: {$target}</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <H5>Registered candidates currently in or passed screening</H5>
+                <div class="progress">
+                    {foreach from=$Subprojects item=proj key=keyid}
+                    <div class="progress-bar" role="progressbar" aria-valuenow="{$registered[$keyid].visit}" aria-valuemin="0" aria-valuemax="{$target}" style="width: {$registered[$keyid].visit / $target}" data-toggle="tooltip" data-placement="bottom" title="{$registered[$keyid].visit} {$proj}">
+                        <p>
+                        {$registered[$keyid].visit}
+                        <br>
+                        {$proj}
+                        </p>
+                    </div>
+                    {/foreach}
+                    <p class="pull-right small target">Target: {$target}</p>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <H5>Registered candidates who have come in for a visit</H5>
+                <div class="progress">
+                    {foreach from=$Subprojects item=proj key=keyid}
+                    <div class="progress-bar" role="progressbar" aria-valuenow="{$edi[$keyid].complete}" aria-valuemin="0" aria-valuemax="{$target}" style="width: 10%" data-toggle="tooltip" data-placement="bottom" title="{$edi[$keyid].complete} {$proj}">
+                        <p>
+                        {$edi[$keyid].complete}
+                        <br>
+                        {$proj}
+                        </p>
+                    </div>
+                    {/foreach}
+                    <p class="pull-right small target">Target: {$target}</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <H5>Registered candidates with T1 acquired</H5>
+                <div class="progress">
+                    {foreach from=$Subprojects item=proj key=keyid}
+                    <div class="progress-bar" role="progressbar" aria-valuenow="{$scanned[$keyid].complete}" aria-valuemin="0" aria-valuemax="{$target}" style="width: 10%" data-toggle="tooltip" data-placement="bottom" title="{$scanned[$keyid].complete} {$proj}">
+                        <p>
+                        {$scanned[$keyid].complete}
+                        <br>
+                        {$proj}
+                        </p>
+                    </div>
+                    {/foreach}
+                    <p class="pull-right small target">Target: {$target}</p>
+                </div>
+            </div>
+        </div>
     </div>
 
 {$RecruitsTable}
@@ -37,12 +101,30 @@
 
         var processedData = new Array();
         for (var i in subprojects) {
-            var projectData = [subprojects[i], 0, registered[i].visit, edi[i].complete, scanned[i].complete];
+            var registeredTotal = registered[i].total
+            if (typeof registeredTotal === 'undefined') {
+                registeredTotal = 0;
+            }
+            var registeredVisit = registered[i].visit
+            if (typeof registeredVisit === 'undefined') {
+                registeredVisit = 0;
+            }
+            var ediComplete = edi[i].complete
+            if (typeof ediComplete === 'undefined') {
+                ediComplete = 0;
+            }
+            var scannedComplete = scanned[i].complete
+            if (typeof scannedComplete === 'undefined') {
+                scannedComplete = 0;
+            }
+            var projectData = [subprojects[i], registeredTotal, registeredVisit, ediComplete, scannedComplete];
             processedData.push(projectData);
         }
-
-        console.log(processedData);
-
+        /*var undefinedTotal = registered[null].total
+        if (typeof undefinedTotal === 'undefined') {
+            undefinedTotal = 0;
+        }
+        processedData.push(['Undefined Yet', undefinedTotal]);*/
         return processedData;
     }
 

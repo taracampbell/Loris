@@ -2,35 +2,35 @@
 <html xmlns="http://www.w3.org/1999/xhtml" style="height:100%; background:transparent">
     {if $dynamictabs neq "dynamictabs"}
     <head>
-        <link rel="stylesheet" href="{$css}" type="text/css" />
-        <link rel="shortcut icon" href="images/mni_icon.ico" type="image/ico" />
-        <script src="js/jquery/jquery-1.11.0.min.js" type="text/javascript"></script>
-        <script type="text/javascript" src="js/jquery/jquery-ui-1.10.4.custom.min.js"></script>
-        <script type="text/javascript" src="js/jquery.dynamictable.js"></script>
-        <script type="text/javascript" src="js/jquery.fileupload.js"></script>
-        <!-- Custom JavaScript for the Menu Toggle -->
-   
-        <link type="text/css" href="css/loris-jquery/jquery-ui-1.10.4.custom.min.css" rel="Stylesheet" />
 
+        <!-- css -->
+        <link rel="stylesheet" href="{$css}">
         <!-- Latest compiled and minified CSS -->
         <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
         <link rel="stylesheet" href="bootstrap/css/custom-css.css">
-        <!-- <link rel="stylesheet" href="bootstrap-3.1.1/css/magic-bootstrap.css"> -->
-
+        <link rel="stylesheet" href="css/loris-jquery/jquery-ui-1.10.4.custom.min.css">
         <!-- Module-specific CSS -->
         {if $test_name_css}
             <link rel="stylesheet" href="{$test_name_css}" type="text/css" />
         {/if}
 
+        <!-- shortcut icon -->
+        <link rel="shortcut icon" href="images/mni_icon.ico" type="image/ico">
+
+        <!-- javascript -->
+        <script src="js/jquery/jquery-1.11.0.min.js"></script>
+        <script src="js/jquery/jquery-ui-1.10.4.custom.min.js"></script>
+        <script src="js/jquery.dynamictable.js"></script>
+        <script src="js/jquery.fileupload.js"></script>
         <!-- Latest compiled and minified JavaScript -->
         <script src="bootstrap/js/bootstrap.min.js"></script>
-        <title>
-            {$study_title}
-        </title>
-
         {if $test_name_js}
             <script type="text/javascript" src="{$test_name_js}"></script>
         {/if}
+
+        <title>
+            {$study_title}
+        </title>
 
         {literal}
             <script language="javascript" type="text/javascript"> 
@@ -533,10 +533,7 @@
                          
                         
                     </div>              
-                
-                
 
-                   
                 <!-- </div> -->
             </div>
             {else}
@@ -569,7 +566,7 @@
                 <div align="center" colspan="1" style="color:#808080" >
                     Powered by LORIS &copy; {$currentyear}. All rights reserved.
                 </div>
-      		<div align="center" colspan="1" style="color:#808080">
+            <div align="center" colspan="1" style="color:#808080">
                     Created by <a href="http://mcin-cnim.ca/" style="color: #2FA4E7" target="_blank">
                          MCIN
                     </a>

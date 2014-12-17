@@ -85,8 +85,8 @@
                 {section name=piece loop=$items[item]}
                 {if $items[item][piece].name != "ID"} 
                 <td>
-            		{if $items[item][piece].name == "full_name"}
-            		<a href="main.php?test_name=certification&subtest=edit_event&identifier={$items[item][piece].ID}">{$items[item][piece].value}</a>
+                    {if $items[item][piece].name == "full_name"}
+                    <a href="main.php?test_name=certification&subtest=edit_event&identifier={$items[item][piece].ID}">{$items[item][piece].value}</a>
                     {elseif $items[item][piece].name != "date"}
                     {$items[item][piece].value}
                     {/if}

@@ -30,7 +30,9 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-4 col-xs-12">
+                        {if $multisite_permission}
                         <input type="button" name="button" value="Add Certification" class="btn btn-sm btn-primary col-xs-12" onclick="location.href='main.php?test_name=certification&subtest=edit_event'" />
+                        {/if}
                     </div>
                     <div class="visible-xs col-xs-12"> </div>
                     <div class="visible-xs col-xs-12"> </div>

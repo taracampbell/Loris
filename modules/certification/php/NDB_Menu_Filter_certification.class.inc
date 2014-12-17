@@ -64,6 +64,7 @@ class NDB_Menu_Filter_certification extends NDB_Menu_Filter
 
         // PSC
         if ($user->hasPermission('certification_multisite')) {
+            $this->tpl_data['multisite_permission'] = 1;
             // get the list of study sites - to be replaced by the Site object
             $list_of_sites = Utility::getSiteList();
             if(Utility::isErrorX($list_of_sites)) {

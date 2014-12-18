@@ -79,8 +79,8 @@ $(function () {
             url: 'AjaxHelper.php?Module=configuration&script=process.php',
             data: form,
             success: function () {
-                var html = "<label>Submitted</label>";
-                $(html).hide().appendTo('.submit-area').fadeIn(500).delay(1000).fadeOut(500)
+                var html = '<label class="submit-notification">Submitted</label>';
+                $(html).hide().appendTo('.submit-area').fadeIn(500).delay(1500).fadeOut(500)
                 $('input[type="reset"]').attr('disabled','disabled');
             },
             error: function(xhr, desc, err) {

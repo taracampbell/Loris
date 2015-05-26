@@ -5,6 +5,7 @@
     });
 </script>
 {/literal}
+<script type="text/javascript" src="{$baseurl}/js/advancedMenu.js"></script>
 
 <div class="row">
 <div class="col-sm-9">
@@ -116,10 +117,10 @@
                     </div>
                     <div class="form-group col-sm-4">
                         <label class="col-sm-12 col-md-4">
-                            {$form.Latest_Visit_Status.label}
+                            {$form.edc.label}
                         </label>
                         <div class="col-sm-12 col-md-8">
-                            {$form.Latest_Visit_Status.html}
+                            {$form.edc.html}
                         </div>
                     </div>
                 </div>
@@ -134,10 +135,10 @@
                     </div>
                     <div class="form-group col-sm-4">
                         <label class="col-sm-12 col-md-4">
-                            {$form.scan_done.label}
+                            &nbsp;
                         </label>
                         <div class="col-sm-12 col-md-8">
-                            {$form.scan_done.html}
+                            &nbsp;
                         </div>
                     </div>
                     <div class="form-group col-sm-4">
@@ -188,14 +189,14 @@
         <span class="glyphicon arrow glyphicon-chevron-up pull-right"></span>
     </div>
     <div class="panel-body" id="panel-body">
-    <form class="form-horizontal" name="accessProfileForm" method="get" action="main.php" onSubmit="return checkAccessProfileForm();">
+    <form class="form-horizontal" id="accessProfileForm" name="accessProfileForm" method="get" action="main.php">
         <input type="hidden" name="test_name" value="timepoint_list">
         <div class="form-group col-sm-12">
             <label class="col-sm-12 col-md-4">
-                {$form.DCCID.label}
+                {$form.candID.label}
             </label>
             <div class="col-sm-12 col-md-8">
-                {$form.DCCID.html}
+                {$form.candID.html}
             </div>
         </div>
         <div class="form-group col-sm-12">
@@ -253,7 +254,7 @@
                 {elseif $items[item][piece].name == "scan_Done"}
                     {if $items[item][piece].value == 'Y'}
                         {assign var="scan_done" value="Yes"}
-                        <a href="{$baseurl}/main.php?test_name=imaging_browser&pscid={$PSCID}&filter=Show%20Data">{$scan_done}</a>
+                        <a class="scanDoneLink" data-pscid="{$PSCID}" href="{$baseurl}/main.php?test_name=imaging_browser&pscid={$PSCID}&filter=Show%20Data">{$scan_done}</a>
                     {else}
                         {assign var="scan_done" value="No"}
                         {$scan_done}

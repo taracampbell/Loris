@@ -168,12 +168,12 @@ class LorisForm
      */
     public function addTextArea($elname, $label, $options=array())
     {
-        $el         =& $this->addBase($elname, $label);
+        $el         =& $this->addBase($elname, $label, $options);
         $el['type'] = 'textarea';
-        if ($options['cols']) {
+        if (isset($options['cols'])) {
             $el['cols'] = $options['cols'];
         }
-        if ($options['rows']) {
+        if (isset($options['rows'])) {
             $el['rows'] = $options['rows'];
         }
         return $el;
@@ -186,16 +186,19 @@ class LorisForm
      *
      * @param string $name    The element name.
      * @param string $label   The label to attach to this element.
-     * @param array  $options An array of other attributes that should
+     * @param array  $options An array of options that should get added,
+     *                        such as the date format, min or max date etc.
+     * @param array  $attribs An array of other attributes that should
      *                        get added. Currently only the "class"
      *                        attribute gets added.
      *
      * @return none, modifies $this->form as a side-effect.
      */
-    public function addDate($name, $label, $options)
+    public function addDate($name, $label, $options, $attribs = array())
     {
-        $el         =& $this->addBase($name, $label, $options);
-        $el['type'] = 'date';
+        $el            =& $this->addBase($name, $label, $attribs);
+        $el['type']    = 'date';
+        $el['options'] = $options;
     }
 
     /**
@@ -247,7 +250,7 @@ class LorisForm
             $el = $this->addSelect($name, $label, $options, $attribs);
             break;
         case 'date':
-            $el = $this->addDate($name, $label, $options);
+            $el = $this->addDate($name, $label, $options, $attribs);
             break;
         case 'file':
             $el = $this->addFile($name, $label, $options);
@@ -366,7 +369,11 @@ class LorisForm
         foreach ($options as $optionKey => $optionVal) {
             $selected = '';
 
-            if ($optionKey == $this->getValue($el['name'])) {
+            if (!is_null($optionKey)) {
+                $optionKey = (string) $optionKey;
+            }
+
+            if ($optionKey === $this->getValue($el['name'])) {
                 $selected = 'selected="selected"';
             }
 
@@ -406,11 +413,11 @@ class LorisForm
      */
     function staticHTML($el)
     {
+        if (empty($el['name'])) {
+            return $el['label'];
+        }
         $val = $this->getValue($el['name']);
 
-        if (!empty($el['label'])) {
-            return $el['label'] . $val;
-        }
         return $val;
     }
     /**
@@ -485,6 +492,10 @@ class LorisForm
         }
         $value = $this->getValue($el['name']);
         return "<input name=\"$el[name]\" type=\"$type\" $cls"
+            . (
+                isset($el['required']) && $el['required']
+                ? ' required' : ''
+              )
             . (
                 !empty($value)
                 ? ' value="' . $this->getValue($el['name']) . '"'

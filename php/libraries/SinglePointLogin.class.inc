@@ -85,16 +85,13 @@ class SinglePointLogin
             // If StudyLinks aren't defined, it shouldn't be fatal.
         }
 
+        $study_title = $config->getSetting('title');
         $tpl_data['study_title'] = $study_title;
         try {
-            $tpl_data['study_logo'] = $study_logo;
+            $tpl_data['study_logo'] = $config->getSetting('studylogo');
         } catch(ConfigurationException $e) {
             $tpl_data['study_logo'] = '';
         }
-
-        // If there's no study, we have a bigger problem
-        $study_title = $config->getSetting('title');
-
         //Output template using Smarty
         $smarty = new Smarty_neurodb;
         $smarty->assign($tpl_data);
@@ -316,7 +313,7 @@ class SinglePointLogin
                     return false;
                 }
 
-                if ($row['Pending_approval'] == '1') {
+                if ($row['Pending_approval'] == 'Y') {
                     $this->_lastError = "Your account has not yet been activated."
                         . " Please contact your project administrator to activate"
                         . " this account.";

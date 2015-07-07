@@ -1,6 +1,88 @@
 <link rel="stylesheet" href="css/c3.css">
 <script src="js/d3.min.js" charset="utf-8"></script>
 <script src="js/c3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js"></script>
+{literal}
+<script type="text/jsx">
+    var Notification = React.createClass({
+        render: function() {
+            return (
+                <li className="list-group-item">
+                    <p>{this.props.children}</p>
+                    <p className="text-right text-muted small"><em>{this.props.author} | {this.props.timestamp}</em></p>
+                </li>
+            );
+        }
+    });
+
+    var NotificationList = React.createClass({
+        render: function() {
+            var notificationNodes = this.props.notifications.map(function (notification) {
+                return (
+                    <Notification author={notification.Author} timestamp={notification.Timestamp}>
+                        {notification.Posting}
+                    </Notification>
+                );
+            });
+            return (
+                <ul className="list-group">
+                    {notificationNodes}
+                </ul>
+            );
+        } 
+    });
+
+    var PostNotificationButton = React.createClass({
+        handleClick: function(event) {
+            
+        },
+        render: function() {
+            <button type="button" className="btn btn-primary">Post a notification</button>
+        }
+    });
+
+    var NotificationPanel = React.createClass({
+        getInitialState: function() {
+            return {notifications: []};
+        },
+        loadNotificationsFromServer: function() {
+            $.ajax({
+                url: this.props.url,
+                dataType: 'json',
+                cache: false,
+                success: function(data) {
+                    this.setState({notifications: data});
+                }.bind(this),
+                error: function(xhr, status, err) {
+                    console.error(this.props.url, status, err.toString());
+                }.bind(this)
+            });
+        },
+        componentDidMount: function() {
+            this.loadNotificationsFromServer();
+            setInterval(this.loadNotificationsFromServer, this.props.pollInterval);
+        },
+        render: function() {
+            return (
+                <div className="panel panel-default">
+                    <div className="panel-heading">
+                        <h3 className="panel-title">Notifications</h3>
+                    </div>
+                    <div className="panel-body">
+                        <NotificationList notifications={this.state.notifications} />
+                        <PostNotificationButton />
+                    </div>
+                </div>
+            );
+        }
+    });
+    React.render(
+        <NotificationPanel url="AjaxHelper.php?Module=dashboard&script=get_notifications.php" pollInterval={100000} />,
+        document.getElementById('content')
+    );
+</script>
+{/literal}
 
 <div class="row">
     <div class="col-lg-8">
@@ -119,6 +201,8 @@
     </div>
 
     <div class="col-lg-4">
+
+        <div id="content"></div>
         <!-- My Tasks -->
         {if $new_scans neq "" or $conflicts neq "" or $incomplete_forms neq "" or $radiology_review neq "" or $violated_scans neq "" or $pending_users neq ""}
             <div class="col-lg-12 col-md-6 col-sm-6 col-xs-12">

@@ -35,10 +35,43 @@
 
     var PostNotificationButton = React.createClass({
         handleClick: function(event) {
-            
+
         },
         render: function() {
-            <button type="button" className="btn btn-primary">Post a notification</button>
+            return (
+                <button type="button" className="btn btn-primary" onClick={this.handleClick}>Post a notification</button>
+            );
+        }
+    });
+
+    var PostNotificationForm = React.createClass({
+        render: function() {
+            return (
+                <form>
+                    <textarea className="form-control" rows="5"></textarea>
+                    <button type="submit" className="btn btn-primary"></button>
+                </form>
+            );
+        }
+    });
+
+    var PostNotificationModal = React.createClass({
+        render: function() {
+            return (
+                <div className="modal fade" tabindex="-1" role="dialog">
+                    <div className="modal-dialog" role="document">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <button type="button" className="close" data-dismiss="modal">&times;</button>
+                                <h4 className="modal-title">Post a Notification</h4>
+                            </div>
+                            <div className="modal-body">
+                                <PostNotificationForm />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
         }
     });
 

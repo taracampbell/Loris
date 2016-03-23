@@ -2001,12 +2001,13 @@ CREATE TABLE `server_processes` (
 DROP TABLE IF EXISTS ExternalLinkTypes;
 CREATE TABLE ExternalLinkTypes (
     LinkTypeID int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    LinkType varchar(255)
+    LinkType varchar(255),
+    LinkLabel varchar(255)
 );  
-INSERT INTO ExternalLinkTypes (LinkType)
-    VALUES ('FooterLink'),
-           ('StudyLinks'),
-           ('dashboard');
+INSERT INTO ExternalLinkTypes (LinkType, LinkLabel)
+    VALUES ('FooterLink', 'Footer Links'),
+           ('StudyLinks', 'Study Links'),
+           ('dashboard', 'Dashboard Links');
 
 DROP TABLE IF EXISTS ExternalLinks;
 CREATE TABLE ExternalLinks (

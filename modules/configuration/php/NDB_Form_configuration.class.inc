@@ -84,6 +84,15 @@ class NDB_Form_Configuration extends NDB_Form
             $tree[$node['Parent']]['Children'][] = &$node;
         }
 
+        // get the ExternalLinks data
+        $externalLinks = $this->DB->pselect(
+            "SELECT elt.LinkType, elt.LinkLabel, el.LinkText, el.LinkURL
+             FROM ExternalLinks el
+             LEFT JOIN ExternalLinkTypes elt ON el.LinkTypeID=elt.LinkTypeID
+             ORDER BY elt.LinkTypeID",
+            array()
+        );
+
         $instruments = Utility::getAllInstruments();
         $instruments = array_merge(array('' => ''), $instruments);
         $useProjects = $config->getSetting("useProjects");
@@ -92,6 +101,7 @@ class NDB_Form_Configuration extends NDB_Form
         $this->tpl_data['parentMenuItems'] = $parentMenuItems;
         $this->tpl_data['config']          = $configs;
         $this->tpl_data['instruments']     = $instruments;
+        $this->tpl_data['externalLinks']   = $externalLinks;
         $this->tpl_data['sandbox']         = $config->getSetting("sandbox");
 
     }

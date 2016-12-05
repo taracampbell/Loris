@@ -67,15 +67,15 @@ var Permission = React.createClass({
     },
     render: function() {
         var textStyle = {};
-        if (this.props.highlight) {
-            textStyle = {
-                color: 'lightblue'
-            };
-        }
         if (this.props.disabled) {
             textStyle = {
                 color: '#ccc',
                 cursor: 'not-allowed'
+            };
+        }
+        if (this.props.highlight) {
+            textStyle = {
+                color: 'lightblue'
             };
         }
         return (
@@ -83,7 +83,6 @@ var Permission = React.createClass({
                 <input
                     name={"permID[" + this.props.id + "]"}
                     type="checkbox"
-                    value={this.props.id}
                     id={this.props.id}
                     checked={this.props.checked}
                     onChange={this.handleCheck}
@@ -231,7 +230,7 @@ var Access = React.createClass({
         var permissionsToChange = this.state.roles[index].permissions;
         var permissionsUpdate = this.state.permissions;
 
-        for (i = 0; i < permissionsToChange.length; i++) {
+        for (var i = 0; i < permissionsToChange.length; i++) {
             var permissionIndex = this.getPermissionIndex(permissionsToChange[i].permissionID);
             if (currentState) {
                 permissionsUpdate[permissionIndex].checked = false;
@@ -252,7 +251,7 @@ var Access = React.createClass({
         var permissionsToHighlight = this.state.roles[index].permissions;
         var permissionsUpdate = this.state.permissions;
 
-        for (i = 0; i < permissionsToHighlight.length; i++) {
+        for (var i = 0; i < permissionsToHighlight.length; i++) {
             var permissionIndex = this.getPermissionIndex(permissionsToHighlight[i].permissionID);
             permissionsUpdate[permissionIndex].highlight = true;
         }
@@ -264,7 +263,7 @@ var Access = React.createClass({
     handleRoleMouseOut: function() {
         var permissionsUpdate = this.state.permissions;
 
-        for (i = 0; i < permissionsUpdate.length; i++) {
+        for (var i = 0; i < permissionsUpdate.length; i++) {
             permissionsUpdate[i].highlight = false;
         }
 

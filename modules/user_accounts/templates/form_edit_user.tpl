@@ -359,6 +359,9 @@ $(document).ready(function() {
     		</div>
     	</div>
     </div>
+    <div id="access">
+        Access
+    </div>
     <div class="row form-group form-inline">
         <label class="col-sm-2">
           {$form.Supervisors_Group.label}
@@ -383,3 +386,10 @@ $(document).ready(function() {
     </div>
 <!-- </form> -->
 </form>
+
+<script>
+    var access = RAccess({
+        "dataURL": "{$baseurl}/user_accounts/ajax/getData.php"
+    });
+    React.render(access, document.getElementById("access"));
+</script>

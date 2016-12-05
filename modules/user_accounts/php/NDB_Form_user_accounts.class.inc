@@ -1131,5 +1131,23 @@ class NDB_Form_User_Accounts extends NDB_Form
         }
         return $permission;
     }
+
+    /**
+     * Get javascript dependencies
+     *
+     * @return array of javascript to be inserted
+     */
+    function getJSDependencies()
+    {
+        $factory = NDB_Factory::singleton();
+        $baseURL = $factory->settings()->getBaseURL();
+        $deps = parent::getJSDependencies();
+        return array_merge(
+            $deps,
+            array(
+                $baseURL . "/user_accounts/js/access.js"
+            )
+        );
+    }
 }
 ?>

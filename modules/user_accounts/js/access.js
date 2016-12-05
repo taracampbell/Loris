@@ -3,41 +3,40 @@
 var Role = React.createClass({
     displayName: 'Role',
 
-    getInitialState: function getInitialState() {
-        return {
-            value: false
-        };
+    handleCheck: function handleCheck() {
+        this.props.onChange(this.props.id);
     },
-    addPermissions: function addPermissions() {
-        var event = new CustomEvent('updatePermissions');
-        window.dispatchEvent(event);
+    handleMouseOver: function handleMouseOver() {
+        this.props.onMouseOver(this.props.id);
     },
-    removePermissions: function removePermissions() {
-        var event = new CustomEvent('updatePermissions');
-        window.dispatchEvent(event);
-    },
-    handleCheck: function handleCheck(event) {
-        this.setState({ value: event.target.value });
-        if (event.target.checked) {
-            this.addPermissions(event.target.id);
-        }
-        if (!event.target.checked) {
-            this.removePermissions(event.target.id);
-        }
+    handleMouseOut: function handleMouseOut() {
+        this.props.onMouseOut();
     },
     render: function render() {
+        var textStyle = {};
+        if (this.props.disabled) {
+            textStyle = {
+                color: '#ccc',
+                cursor: 'not-allowed'
+            };
+        }
         return React.createElement(
             'div',
-            { className: 'checkbox role' },
+            {
+                className: 'checkbox role',
+                onMouseOver: this.handleMouseOver,
+                onMouseOut: this.handleMouseOut },
+            React.createElement('input', {
+                type: 'checkbox',
+                value: this.props.id,
+                id: this.props.id,
+                checked: this.props.checked,
+                onChange: this.handleCheck,
+                disabled: this.props.disabled
+            }),
             React.createElement(
                 'label',
-                null,
-                React.createElement('input', {
-                    type: 'checkbox',
-                    value: this.state.value,
-                    id: this.props.id,
-                    onChange: this.handleCheck
-                }),
+                { style: textStyle },
                 this.props.name
             )
         );
@@ -49,11 +48,19 @@ var RoleList = React.createClass({
 
     render: function render() {
         var roleNodes = this.props.data.map(function (role) {
-            return React.createElement(Role, { name: role.name, id: role.id });
-        });
+            return React.createElement(Role, {
+                key: role.id,
+                name: role.name,
+                id: role.id,
+                checked: role.checked,
+                disabled: role.disabled,
+                onChange: this.props.onChange,
+                onMouseOver: this.props.onMouseOver,
+                onMouseOut: this.props.onMouseOut });
+        }, this);
         return React.createElement(
             'div',
-            { className: 'roleList col-md-3' },
+            { className: 'roleList col-md-2' },
             React.createElement(
                 'label',
                 null,
@@ -67,27 +74,37 @@ var RoleList = React.createClass({
 var Permission = React.createClass({
     displayName: 'Permission',
 
-    getInitialState: function getInitialState() {
-        return {
-            value: false
-        };
-    },
-    handleCheck: function handleCheck(event) {
-        this.setState({ value: event.target.value });
+    handleCheck: function handleCheck(e) {
+        this.props.onChange(this.props.id, this.props.key);
     },
     render: function render() {
+        var textStyle = {};
+        if (this.props.highlight) {
+            textStyle = {
+                color: 'lightblue'
+            };
+        }
+        if (this.props.disabled) {
+            textStyle = {
+                color: '#ccc',
+                cursor: 'not-allowed'
+            };
+        }
         return React.createElement(
             'div',
             { className: 'checkbox permission' },
+            React.createElement('input', {
+                name: "permID[" + this.props.id + "]",
+                type: 'checkbox',
+                value: this.props.id,
+                id: this.props.id,
+                checked: this.props.checked,
+                onChange: this.handleCheck,
+                disabled: this.props.disabled
+            }),
             React.createElement(
                 'label',
-                null,
-                React.createElement('input', {
-                    type: 'checkbox',
-                    value: this.state.value,
-                    id: this.props.id,
-                    onChange: this.handleCheck
-                }),
+                { style: textStyle },
                 this.props.name
             )
         );
@@ -97,23 +114,52 @@ var Permission = React.createClass({
 var PermissionList = React.createClass({
     displayName: 'PermissionList',
 
-    updatePermissions: function updatePermissions() {},
-    componentDidMount: function componentDidMount() {
-        window.addEventListener('updatePermissions', this.updatePermissions);
-    },
     render: function render() {
-        var permissionNodes = this.props.data.map(function (permission) {
-            return React.createElement(Permission, { name: permission.name, id: permission.id });
-        });
+        var half = Math.ceil(this.props.data.length / 2);
+        var firstHalf = this.props.data.slice(0, half);
+        var secondHalf = this.props.data.slice(half, this.props.data.length);
+        var permissionNodesCol1 = firstHalf.map(function (permission) {
+            return React.createElement(Permission, {
+                key: permission.id,
+                name: permission.name,
+                id: permission.id,
+                highlight: permission.highlight,
+                checked: permission.checked,
+                onChange: this.props.onChange,
+                disabled: permission.disabled });
+        }, this);
+        var permissionNodesCol2 = secondHalf.map(function (permission) {
+            return React.createElement(Permission, {
+                key: permission.id,
+                name: permission.name,
+                id: permission.id,
+                highlight: permission.highlight,
+                checked: permission.checked,
+                onChange: this.props.onChange,
+                disabled: permission.disabled });
+        }, this);
         return React.createElement(
             'div',
-            { className: 'permissionList col-md-7' },
+            { className: 'col-md-8' },
             React.createElement(
-                'label',
-                null,
-                'Permissions'
+                'div',
+                { className: 'row' },
+                React.createElement(
+                    'label',
+                    null,
+                    'Permissions'
+                )
             ),
-            permissionNodes
+            React.createElement(
+                'div',
+                { className: 'permissionList col-md-6' },
+                permissionNodesCol1
+            ),
+            React.createElement(
+                'div',
+                { className: 'permissionList col-md-6' },
+                permissionNodesCol2
+            )
         );
     }
 });
@@ -130,6 +176,7 @@ var Access = React.createClass({
     loadDataFromServer: function loadDataFromServer() {
         $.ajax({
             url: this.props.dataURL,
+            data: { identifier: this.props.identifier },
             dataType: 'json',
             cache: false,
             success: function (data) {
@@ -137,6 +184,7 @@ var Access = React.createClass({
                     roles: data.roles,
                     permissions: data.permissions
                 });
+                this.calculateRoles();
             }.bind(this),
             error: function (xhr, status, err) {
                 console.error(this.props.dataURL, status, err.toString());
@@ -149,6 +197,119 @@ var Access = React.createClass({
     componentWillUnmount: function componentWillUnmount() {
         this.serverRequest.abort();
     },
+    getRoleIndex: function getRoleIndex(roleID) {
+        var roles = this.state.roles;
+        var index = -1;
+        for (var i = 0; i < roles.length; i++) {
+            if (roles[i].id == roleID) {
+                index = i;
+                break;
+            }
+        }
+        return index;
+    },
+    getPermissionIndex: function getPermissionIndex(permissionID) {
+        var permissions = this.state.permissions;
+        var index = -1;
+        for (var i = 0; i < permissions.length; i++) {
+            if (permissions[i].id == permissionID) {
+                index = i;
+                break;
+            }
+        }
+        return index;
+    },
+    calculateRoles: function calculateRoles() {
+        var roles = this.state.roles;
+        var permissions = this.state.permissions;
+
+        for (var i = 0; i < roles.length; i++) {
+            var roleIndex = this.getRoleIndex(roles[i].id);
+            var checked = true;
+            for (var j = 0; j < roles[i].permissions.length; j++) {
+                var permIndex = this.getPermissionIndex(roles[i].permissions[j].permissionID);
+                if (!permissions[permIndex].checked) {
+                    checked = false;
+                    break;
+                }
+            }
+            roles[roleIndex].checked = checked;
+        }
+
+        this.setState({
+            roles: roles
+        });
+    },
+    handleRoleChange: function handleRoleChange(roleID) {
+        //update role state
+        var index = this.getRoleIndex(roleID);
+        var roleUpdate = this.state.roles;
+        var currentState = roleUpdate[index].checked;
+        roleUpdate[index].checked = !currentState;
+
+        this.setState({
+            roles: roleUpdate
+        });
+
+        //update permission state
+        var permissionsToChange = this.state.roles[index].permissions;
+        var permissionsUpdate = this.state.permissions;
+
+        for (i = 0; i < permissionsToChange.length; i++) {
+            var permissionIndex = this.getPermissionIndex(permissionsToChange[i].permissionID);
+            if (currentState) {
+                permissionsUpdate[permissionIndex].checked = false;
+            } else {
+                permissionsUpdate[permissionIndex].checked = true;
+            }
+        }
+
+        this.setState({
+            permissions: permissionsUpdate
+        });
+
+        //update role state
+        this.calculateRoles();
+    },
+    handleRoleMouseOver: function handleRoleMouseOver(roleID) {
+        var index = this.getRoleIndex(roleID);
+        var permissionsToHighlight = this.state.roles[index].permissions;
+        var permissionsUpdate = this.state.permissions;
+
+        for (i = 0; i < permissionsToHighlight.length; i++) {
+            var permissionIndex = this.getPermissionIndex(permissionsToHighlight[i].permissionID);
+            permissionsUpdate[permissionIndex].highlight = true;
+        }
+
+        this.setState({
+            permissions: permissionsUpdate
+        });
+    },
+    handleRoleMouseOut: function handleRoleMouseOut() {
+        var permissionsUpdate = this.state.permissions;
+
+        for (i = 0; i < permissionsUpdate.length; i++) {
+            permissionsUpdate[i].highlight = false;
+        }
+
+        this.setState({
+            permissions: permissionsUpdate
+        });
+    },
+    handlePermissionChange: function handlePermissionChange(permissionID) {
+        // Set permission state
+        var index = this.getPermissionIndex(permissionID);
+        var permissionsUpdate = this.state.permissions;
+        var currentState = permissionsUpdate[index].checked;
+        permissionsUpdate[index].checked = !currentState;
+
+        this.setState({
+            permissions: permissionsUpdate
+        });
+
+        // Update roles if needed
+        this.calculateRoles();
+    },
     render: function render() {
         return React.createElement(
             'div',
@@ -158,8 +319,14 @@ var Access = React.createClass({
                 { className: 'col-sm-2' },
                 'Access'
             ),
-            React.createElement(RoleList, { data: this.state.roles }),
-            React.createElement(PermissionList, { data: this.state.permissions })
+            React.createElement(RoleList, {
+                data: this.state.roles,
+                onChange: this.handleRoleChange,
+                onMouseOver: this.handleRoleMouseOver,
+                onMouseOut: this.handleRoleMouseOut }),
+            React.createElement(PermissionList, {
+                data: this.state.permissions,
+                onChange: this.handlePermissionChange })
         );
     }
 });

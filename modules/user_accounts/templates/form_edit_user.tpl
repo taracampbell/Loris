@@ -349,17 +349,7 @@ $(document).ready(function() {
     		{$form.Pending_approval.html}
     	</div>
     </div>
-    <div class="row form-group form-inline">
-    	<label class="col-sm-2">
-    		{$form.PermID_Group.label}
-    	</label>
-    	<div class="col-sm-10 col-xs-12">
-    		<div>
-    		{$form.PermID_Group.html}
-    		</div>
-    	</div>
-    </div>
-    <div id="access">
+    <div id="access" class="row form-group">
         Access
     </div>
     <div class="row form-group form-inline">
@@ -389,7 +379,8 @@ $(document).ready(function() {
 
 <script>
     var access = RAccess({
-        "dataURL": "{$baseurl}/user_accounts/ajax/getData.php"
+        "dataURL": "{$baseurl}/user_accounts/ajax/getData.php",
+        "identifier" : "{$form.UserID.html}"
     });
     React.render(access, document.getElementById("access"));
 </script>

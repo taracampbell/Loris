@@ -204,12 +204,12 @@ function VisitCell(props) {
     var visitClass = "circle " + props.visit.status;
     return (
         <td>
-            {<div data-tip='React-tooltip' className={visitClass} />
-            /*<ReactToolTip place="top" type="dark" effect="solid">
+            <div data-tip='React-tooltip' className={visitClass} />
+            <ReactTooltip place="top" type="dark" effect="solid">
                 <span>Visit Registration: <br/></span>
                 <span>Data Entry: due in x days<br/></span>
                 <span><i>x/y instruments entered</i></span>
-            </ReactToolTip>*/}
+            </ReactTooltip>
         </td>
     );
 }

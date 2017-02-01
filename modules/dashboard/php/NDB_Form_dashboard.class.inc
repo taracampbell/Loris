@@ -473,6 +473,7 @@ class NDB_Form_Dashboard extends NDB_Form
         return array_merge(
             $baseDeps,
             array(
+             $baseurl . '/dashboard/js/react-tooltip.min.js',
              $baseurl . '/dashboard/js/dashboard.js',
             )
         );

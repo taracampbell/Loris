@@ -231,12 +231,32 @@ function VisitCell(props) {
     return React.createElement(
         "td",
         null,
-        React.createElement("div", { "data-tip": "React-tooltip", className: visitClass })
-        /*<ReactToolTip place="top" type="dark" effect="solid">
-            <span>Visit Registration: <br/></span>
-            <span>Data Entry: due in x days<br/></span>
-            <span><i>x/y instruments entered</i></span>
-        </ReactToolTip>*/
+        React.createElement("div", { "data-tip": "React-tooltip", className: visitClass }),
+        React.createElement(
+            ReactTooltip,
+            { place: "top", type: "dark", effect: "solid" },
+            React.createElement(
+                "span",
+                null,
+                "Visit Registration: ",
+                React.createElement("br", null)
+            ),
+            React.createElement(
+                "span",
+                null,
+                "Data Entry: due in x days",
+                React.createElement("br", null)
+            ),
+            React.createElement(
+                "span",
+                null,
+                React.createElement(
+                    "i",
+                    null,
+                    "x/y instruments entered"
+                )
+            )
+        )
     );
 }
 

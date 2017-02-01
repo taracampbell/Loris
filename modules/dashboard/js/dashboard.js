@@ -208,7 +208,16 @@ function VisitCell(props) {
     // will need to include additional data
     // for each visit
     var visitClass = "circle " + props.visit.status;
-    return React.createElement("td", null);
+    return React.createElement(
+        "td",
+        null,
+        React.createElement("div", { "data-tip": "React-tooltip", className: visitClass })
+        /*<ReactToolTip place="top" type="dark" effect="solid">
+            <span>Visit Registration: <br/></span>
+            <span>Data Entry: due in x days<br/></span>
+            <span><i>x/y instruments entered</i></span>
+        </ReactToolTip>*/
+    );
 }
 
 var StudyTrackerHeader = function (_React$Component2) {

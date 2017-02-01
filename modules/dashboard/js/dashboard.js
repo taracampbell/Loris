@@ -255,7 +255,7 @@ var StudyTrackerHeader = function (_React$Component2) {
             var visitLabelHeaders = this.props.visitLabels.map(function (vl) {
                 return React.createElement(
                     "th",
-                    { key: vl },
+                    { key: vl, className: "VLHeader" },
                     vl
                 );
             });

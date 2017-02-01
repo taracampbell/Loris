@@ -1,6 +1,7 @@
 var dummyData = [
     {
         "pscid": "JGH0000",
+        "psc": "JGH",
         "visits": [
             {
                 "status": "deadline-past-data-entry",
@@ -30,6 +31,7 @@ var dummyData = [
     },
     {
         "pscid": "PKD0001",
+        "psc": "PKD",
         "visits": [
             {
                 "status": "cancelled-data",
@@ -59,6 +61,7 @@ var dummyData = [
     },
     {
         "pscid": "JGH0010",
+        "psc": "JGH",
         "visits": [
             {
                 "status": "no-deadline-visit",
@@ -89,6 +92,7 @@ var dummyData = [
     },
     {
         "pscid": "PKD0011",
+        "psc": "PKD",
         "visits": [
             {
                 "status": "no-deadline-visit",
@@ -124,11 +128,26 @@ var visitLabels = [
     "Neuropsych"
 ];
 
+var sites = [
+    {
+        'psc':'JGH',
+        'fullname':'Jewish General Hospital'
+    },
+    {
+        'psc':'PKD',
+        'fullname':'Parkwood Institution'
+    }
+];
+
 function SiteFilter(props) {
+    var options = props.sites.map((site) =>
+        <option key={site.psc} value={site.psc}>{site.fullname}</option>
+    );
     return (
         <td>
-            <select>
-                <option value="site">Site</option>
+            <select onChange={props.filterSites}>
+                <option value="all">Show All Sites</option>
+                {options}
             </select>
         </td>
     );
@@ -161,7 +180,7 @@ class Filters extends React.Component {
             <table className="Filters">
                 <tbody>
                     <tr>
-                        <SiteFilter />
+                        <SiteFilter sites={this.props.sites} filterSites={this.props.filterSites}/>
                         <TeamFilter />
                         <CohortFilter />
                     </tr>
@@ -232,18 +251,29 @@ class StudyTracker extends React.Component {
             // Rows should be passed to this class
             // as JSON objects
              rows: dummyData,
-             visitLabels: visitLabels
+             visitLabels: visitLabels,
+             currentSite: "all",
+             sites: sites
         };
+
+        this.filterSites = this.filterSites.bind(this);
+    }
+
+    filterSites(event) {
+        this.setState({currentSite: event.target.value});
     }
 
     render() {
-        var dataRows = this.state.rows.map((row) =>
-            <StudyTrackerRow key={row.pscid} pscid={row.pscid} visits={row.visits}/>
+        var dataRows = this.state.rows.map(function (row) {
+                if(row.psc === this.state.currentSite || this.state.currentSite === "all") {
+                    return <StudyTrackerRow key={row.pscid} pscid={row.pscid} visits={row.visits}/>
+                }
+            }.bind(this)
         );
         return (
             <div className="StudyTracker">
                 <h1>Hello, Study Tracker!</h1>
-                <Filters/>
+                <Filters sites={this.state.sites} filterSites={this.filterSites}/>
                 <table>
                     <StudyTrackerHeader visitLabels={this.state.visitLabels}/>
                     <tbody>

@@ -12,6 +12,10 @@ th, td, tr {
     padding: 15px;
 }
 
+.VLHeader {
+    color: black;
+}
+
 .StudyTrackerRow {
     border-bottom: 1px solid #ccc;
     border-top: 1px solid #ccc;
@@ -27,7 +31,6 @@ th, td, tr {
 }
 
 .Filters {
-
     margin-left: 500px;
     padding: 10px;
 }

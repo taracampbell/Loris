@@ -217,7 +217,7 @@ function VisitCell(props) {
 class StudyTrackerHeader extends React.Component {
   render() {
     var visitLabelHeaders = this.props.visitLabels.map((vl) =>
-        <th key={vl}>{vl}</th>
+        <th key={vl} className="VLHeader">{vl}</th>
     );
     return (
         <thead className="StudyTrackerHeader">

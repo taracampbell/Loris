@@ -55,6 +55,7 @@ $tpl_data['success']     = false;
 $tpl_data['study_title'] = $config->getSetting('title');
 $tpl_data['currentyear'] = date('Y');
 $tpl_data['site_list']   = $site_list;
+$tpl_data['roles']       = getRoles();
 
 try {
     $tpl_data['study_logo'] = "../".$config->getSetting('studylogo');
@@ -169,9 +170,18 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
             array('VEmail' => $from)
         );
 
+        error_log("HERE: " . $result);
+        error_log($from);
+
         if ($result == 0) {
             // insert into db only if email address if it doesnt exist
             $success = $DB->insert('users', $vals);
+
+            // add the permissions associated with the role they have selected
+            foreach ($_POST['role'] as $roleID) {
+                addPermissions($roleID, getUserID($from));
+            }
+
         }
         unset($_SESSION['tntcon']);
         //redirect to a new page
@@ -194,6 +204,126 @@ function checkLen($str, $len=2)
 {
     return isset($_REQUEST[$str])
            && mb_strlen(strip_tags($_REQUEST[$str]), "utf-8") > $len;
+}
+
+/**
+ * getRolePermissions
+ *
+ * Returns the permissions associated to a role
+ *
+ * @param string $role the role
+ *
+ * @return array
+ */
+function getRolePermissions($role)
+{
+    global $DB;
+    $permissions = $DB->pselect(
+        "SELECT p.permID
+         FROM permissions p
+         LEFT JOIN permission_category_rel pcr ON p.permID=pcr.permission_id
+         WHERE pcr.category_id=:role",
+        array("role" => $role)
+    );
+
+    return $permissions;
+}
+
+/**
+ * userHasPermission
+ *
+ * Checks if a given user has a given permission
+ *
+ * @param int    $userID     the user ID
+ * @param int    $permission the permission ID
+ *
+ * @return boolean
+ */
+function userHasPermission($userID, $permissionID)
+{
+    global $DB;
+    $permission = $DB->pselect(
+        "SELECT userID
+         FROM user_perm_rel
+         WHERE userID=:userID AND permID=:permission",
+        array('userID' => $userID, 'permission' => $permissionID)
+    );
+
+    if (empty($permission)) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+/**
+ * addPermissions
+ *
+ * Inserts the permissions for a given role
+ *
+ * @return int userID
+ */
+function addPermissions($role, $user)
+{
+    global $DB;
+    $rolePermissions = getRolePermissions($role);
+
+    foreach ($rolePermissions as $permission) {
+        if (!userHasPermission($user, $permission['permID'])) {
+            $DB->insert(
+                'user_perm_rel',
+                array(
+                    'userID' => $user,
+                    'permID' => $permission['permID']
+                )
+            );
+        }
+    }
+}
+
+/**
+ * getUserID
+ *
+ * Returns a processed array of the role names in the database
+ *
+ * @return array of the role names in the database
+ */
+function getUserID($username)
+{
+    global $DB;
+    $ID = $DB->pselectOne(
+        "SELECT ID
+         FROM users
+         WHERE UserID=:username",
+        array('username' => $username)
+    );
+
+    return $ID;
+}
+
+/**
+ * getRoles
+ *
+ * Returns a processed array of the role names in the database
+ *
+ * @return array of the role names in the database
+ */
+function getRoles()
+{
+    global $DB;
+    $roles = $DB->pselect(
+        "SELECT id, label
+         FROM permission_category",
+        array()
+    );
+
+    $processedRoles = array();
+
+    foreach ($roles as $role) {
+        $processedRoles[$role['id']] = $role['label'];
+    }
+
+    return $processedRoles;
 }
 
 

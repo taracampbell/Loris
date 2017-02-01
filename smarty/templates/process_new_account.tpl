@@ -73,6 +73,17 @@
         </select>
     </div>
 </div>
+<div class="form-group">
+    <label class="col-sm-4 control-label">Your role: </label>
+    <div class="col-sm-6">
+        <select multiple class="form-control" name="role[]" id="role" style="width:156px;">
+            <option value=""></options>
+            {foreach from=$roles item=role key=idx}
+            <option value="{$idx}">{$role}</options>
+                {/foreach}
+        </select>
+    </div>
+</div>
     <div class="form-group">
         <label class="col-sm-4 control-label">Examiner Role: </label>
         <div class="col-sm-1">

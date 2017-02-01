@@ -399,34 +399,6 @@ var StudyTracker = function (_React$Component4) {
                 )
             );
         }
-    }, {
-        key: "componentWillMount",
-        value: function componentWillMount() {}
-        // this.getRandomRowData = this.getRowData.bind(this);
-        // this.getRandomRowData();
-
-        // Random data generator
-
-    }, {
-        key: "getRandomRowData",
-        value: function getRandomRowData() {
-            var tempData = ["PSCID0000", "PSCID0001", "PSCID0010", "PSCID0011", "PSCID0100", "PSCID0101", "PSCID0110", "PSCID0111", "PSCID1000", "PSCID1001", "PSCID1010", "PSCID1011", "PSCID1100", "PSCID1101", "PSCID1110", "PSCID1111"];
-            var rows = [];
-
-            for (var i = 0; i < tempData.length; i++) {
-                var pscVisits = [];
-                var status = ["complete-data-entry", "deadline-approaching-data-entry", "deadline-past-data-entry", "complete-visit", "deadline-approaching-visit", "deadline-past-visit", "no-deadline-visit", "cancelled-visit", "cancelled-data"];
-                for (var j = 0; j < this.state.visitLabels.length; j++) {
-                    pscVisits.push(status[Math.floor(Math.random() * status.length)]);
-                }
-                var row = {
-                    pscid: tempData[i],
-                    visits: pscVisits
-                };
-                rows.push(row);
-            }
-            this.setState({ rows: rows });
-        }
     }]);
 
     return StudyTracker;

@@ -10,6 +10,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 var dummyData = [{
     "pscid": "JGH0000",
+    "psc": "JGH",
     "visits": [{
         "status": "deadline-past-data-entry",
         "dueDate": randomDate(),
@@ -34,6 +35,7 @@ var dummyData = [{
     }]
 }, {
     "pscid": "PKD0001",
+    "psc": "PKD",
     "visits": [{
         "status": "cancelled-data",
         "dueDate": randomDate(),
@@ -58,6 +60,7 @@ var dummyData = [{
     }]
 }, {
     "pscid": "JGH0010",
+    "psc": "JGH",
     "visits": [{
         "status": "no-deadline-visit",
         "dueDate": randomDate(),
@@ -83,6 +86,7 @@ var dummyData = [{
     }]
 }, {
     "pscid": "PKD0011",
+    "psc": "PKD",
     "visits": [{
         "status": "no-deadline-visit",
         "dueDate": randomDate(),
@@ -109,18 +113,34 @@ var dummyData = [{
 
 var visitLabels = ["Screening", "Clinical", "Neuropsych"];
 
+var sites = [{
+    'psc': 'JGH',
+    'fullname': 'Jewish General Hospital'
+}, {
+    'psc': 'PKD',
+    'fullname': 'Parkwood Institution'
+}];
+
 function SiteFilter(props) {
+    var options = props.sites.map(function (site) {
+        return React.createElement(
+            "option",
+            { key: site.psc, value: site.psc },
+            site.fullname
+        );
+    });
     return React.createElement(
         "td",
         null,
         React.createElement(
             "select",
-            null,
+            { onChange: props.filterSites },
             React.createElement(
                 "option",
-                { value: "site" },
-                "Site"
-            )
+                { value: "all" },
+                "Show All Sites"
+            ),
+            options
         )
     );
 }
@@ -180,7 +200,7 @@ var Filters = function (_React$Component) {
                     React.createElement(
                         "tr",
                         null,
-                        React.createElement(SiteFilter, null),
+                        React.createElement(SiteFilter, { sites: this.props.sites, filterSites: this.props.filterSites }),
                         React.createElement(TeamFilter, null),
                         React.createElement(CohortFilter, null)
                     )
@@ -294,17 +314,28 @@ var StudyTracker = function (_React$Component4) {
             // Rows should be passed to this class
             // as JSON objects
             rows: dummyData,
-            visitLabels: visitLabels
+            visitLabels: visitLabels,
+            currentSite: "all",
+            sites: sites
         };
+
+        _this4.filterSites = _this4.filterSites.bind(_this4);
         return _this4;
     }
 
     _createClass(StudyTracker, [{
+        key: "filterSites",
+        value: function filterSites(event) {
+            this.setState({ currentSite: event.target.value });
+        }
+    }, {
         key: "render",
         value: function render() {
             var dataRows = this.state.rows.map(function (row) {
-                return React.createElement(StudyTrackerRow, { key: row.pscid, pscid: row.pscid, visits: row.visits });
-            });
+                if (row.psc === this.state.currentSite || this.state.currentSite === "all") {
+                    return React.createElement(StudyTrackerRow, { key: row.pscid, pscid: row.pscid, visits: row.visits });
+                }
+            }.bind(this));
             return React.createElement(
                 "div",
                 { className: "StudyTracker" },
@@ -313,7 +344,7 @@ var StudyTracker = function (_React$Component4) {
                     null,
                     "Hello, Study Tracker!"
                 ),
-                React.createElement(Filters, null),
+                React.createElement(Filters, { sites: this.state.sites, filterSites: this.filterSites }),
                 React.createElement(
                     "table",
                     null,

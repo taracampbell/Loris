@@ -4,6 +4,7 @@ var dummyData = [
         "psc": "JGH",
         "visits": [
             {
+                "sessionID": "1",
                 "status": "deadline-past-data-entry",
                 "dueDate": randomDate(),
                 "instrumentsCompleted": 1,
@@ -12,6 +13,7 @@ var dummyData = [
                 "cohort": "MCI"
             },
             {
+                "sessionID": "2",
                 "status": "no-deadline-visit",
                 "dueDate": randomDate(),
                 "instrumentsCompleted": 2,
@@ -20,6 +22,7 @@ var dummyData = [
                 "cohort": "SCI"
             },
             {
+                "sessionID": "3",
                 "status": "complete-data-entry",
                 "dueDate": randomDate(),
                 "instrumentsCompleted": 3,
@@ -34,6 +37,7 @@ var dummyData = [
         "psc": "PKD",
         "visits": [
             {
+                "sessionID": "4",
                 "status": "cancelled-data",
                 "dueDate": randomDate(),
                 "instrumentsCompleted": 1,
@@ -42,6 +46,7 @@ var dummyData = [
                 "cohort": "MCI"
             },
             {
+                "sessionID": "5",
                 "status": "deadline-past-visit",
                 "dueDate": randomDate(),
                 "instrumentsCompleted": 2,
@@ -50,6 +55,7 @@ var dummyData = [
                 "cohort": "SCI"
             },
             {
+                "sessionID": "6",
                 "status": "deadline-past-data-entry",
                 "dueDate": randomDate(),
                 "instrumentsCompleted": 3,
@@ -64,6 +70,7 @@ var dummyData = [
         "psc": "JGH",
         "visits": [
             {
+                "sessionID": "7",
                 "status": "no-deadline-visit",
                 "dueDate": randomDate(),
                 "instrumentsCompleted": 1,
@@ -72,6 +79,7 @@ var dummyData = [
                 "cohort": "MCI"
             },
             {
+                "sessionID": "8",
                 "status": "deadline-past-visit",
                 "dueDate": randomDate(),
                 "instrumentsCompleted": 2,
@@ -81,6 +89,7 @@ var dummyData = [
 
             },
             {
+                "sessionID": "9",
                 "status": "deadline-past-visit",
                 "dueDate": randomDate(),
                 "instrumentsCompleted": 3,
@@ -95,6 +104,7 @@ var dummyData = [
         "psc": "PKD",
         "visits": [
             {
+                "sessionID": "10",
                 "status": "no-deadline-visit",
                 "dueDate": randomDate(),
                 "instrumentsCompleted": 1,
@@ -103,6 +113,7 @@ var dummyData = [
                 "cohort": "MCI"
             },
             {
+                "sessionID": "11",
                 "status": "deadline-approaching-data-entry",
                 "dueDate": randomDate(),
                 "instrumentsCompleted": 2,
@@ -111,6 +122,7 @@ var dummyData = [
                 "cohort": "SCI"
             },
             {
+                "sessionID": "12",
                 "status": "deadline-approaching-visit",
                 "dueDate": randomDate(),
                 "instrumentsCompleted": 3,
@@ -202,16 +214,36 @@ function VisitCell(props) {
     // will need to include additional data
     // for each visit
     var visitClass = "circle " + props.visit.status;
+
+    var now = new Date();
+    var dueDate = props.visit.dueDate;
+    var daysLeft = Math.floor((dueDate - now) / (1000 * 60 * 60 * 24));
     return (
         <td>
-            {<div data-tip='React-tooltip' className={visitClass} />
-            /*<ReactToolTip place="top" type="dark" effect="solid">
-                <span>Visit Registration: <br/></span>
-                <span>Data Entry: due in x days<br/></span>
-                <span><i>x/y instruments entered</i></span>
-            </ReactToolTip>*/}
+            <div data-tip data-for={props.visit.sessionID} className={visitClass} >
+                <ReactTooltip id={props.visit.sessionID} place="top" type="dark" effect="solid">
+                    <span>Visit Registration: <br/></span>
+                    <span>Data Entry: due in {daysLeft} days<br/></span>
+                    <span><i>{props.visit.instrumentsCompleted}/{props.visit.totalInstruments} instruments entered</i></span>
+                </ReactTooltip>
+            </div>
         </td>
     );
+}
+
+
+class StudyTrackerRow extends React.Component {
+    render() {
+        var visits = this.props.visits.map((v, index) =>
+            <VisitCell key={index} visit={v} />
+        );
+        return(
+            <tr className="StudyTrackerRow">
+                <PSCIDCell pscid={this.props.pscid}/>
+                {visits}
+            </tr>
+        );
+    }
 }
 
 class StudyTrackerHeader extends React.Component {
@@ -230,26 +262,11 @@ class StudyTrackerHeader extends React.Component {
   }
 }
 
-class StudyTrackerRow extends React.Component {
-    render() {
-        var visits = this.props.visits.map((v, index) =>
-            <VisitCell key={index} visit={v} />
-        );
-        return(
-            <tr className="StudyTrackerRow">
-                <PSCIDCell pscid={this.props.pscid}/>
-                {visits}
-            </tr>
-        );
-    }
-}
 
 class StudyTracker extends React.Component {
     constructor() {
         super();
         this.state = {
-            // Rows should be passed to this class
-            // as JSON objects
              rows: dummyData,
              visitLabels: visitLabels,
              currentSite: "all",
@@ -338,7 +355,8 @@ class StudyTracker extends React.Component {
 }
 
 function randomDate() {
-    return new Date();
+    var now = new Date();
+    return new Date(now.getFullYear(), now.getMonth() + Math.floor(Math.random() * 6) + 1, now.getDate(), 0,0,0,0);
 }
 
 window.onload = function() {

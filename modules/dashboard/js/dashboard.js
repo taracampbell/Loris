@@ -12,6 +12,7 @@ var dummyData = [{
     "pscid": "JGH0000",
     "psc": "JGH",
     "visits": [{
+        "sessionID": "1",
         "status": "deadline-past-data-entry",
         "dueDate": randomDate(),
         "instrumentsCompleted": 1,
@@ -19,6 +20,7 @@ var dummyData = [{
         "visitLabel": "Initial_Assessment_Screening",
         "cohort": "MCI"
     }, {
+        "sessionID": "2",
         "status": "no-deadline-visit",
         "dueDate": randomDate(),
         "instrumentsCompleted": 2,
@@ -26,6 +28,7 @@ var dummyData = [{
         "visitLabel": "Clinical_Assessment",
         "cohort": "SCI"
     }, {
+        "sessionID": "3",
         "status": "complete-data-entry",
         "dueDate": randomDate(),
         "instrumentsCompleted": 3,
@@ -37,6 +40,7 @@ var dummyData = [{
     "pscid": "PKD0001",
     "psc": "PKD",
     "visits": [{
+        "sessionID": "4",
         "status": "cancelled-data",
         "dueDate": randomDate(),
         "instrumentsCompleted": 1,
@@ -44,6 +48,7 @@ var dummyData = [{
         "visitLabel": "Initial_Assessment_Screening",
         "cohort": "MCI"
     }, {
+        "sessionID": "5",
         "status": "deadline-past-visit",
         "dueDate": randomDate(),
         "instrumentsCompleted": 2,
@@ -51,6 +56,7 @@ var dummyData = [{
         "visitLabel": "Clinical_Assessment",
         "cohort": "SCI"
     }, {
+        "sessionID": "6",
         "status": "deadline-past-data-entry",
         "dueDate": randomDate(),
         "instrumentsCompleted": 3,
@@ -62,6 +68,7 @@ var dummyData = [{
     "pscid": "JGH0010",
     "psc": "JGH",
     "visits": [{
+        "sessionID": "7",
         "status": "no-deadline-visit",
         "dueDate": randomDate(),
         "instrumentsCompleted": 1,
@@ -69,6 +76,7 @@ var dummyData = [{
         "visitLabel": "Initial_Assessment_Screening",
         "cohort": "MCI"
     }, {
+        "sessionID": "8",
         "status": "deadline-past-visit",
         "dueDate": randomDate(),
         "instrumentsCompleted": 2,
@@ -77,6 +85,7 @@ var dummyData = [{
         "cohort": "SCI"
 
     }, {
+        "sessionID": "9",
         "status": "deadline-past-visit",
         "dueDate": randomDate(),
         "instrumentsCompleted": 3,
@@ -88,6 +97,7 @@ var dummyData = [{
     "pscid": "PKD0011",
     "psc": "PKD",
     "visits": [{
+        "sessionID": "10",
         "status": "no-deadline-visit",
         "dueDate": randomDate(),
         "instrumentsCompleted": 1,
@@ -95,6 +105,7 @@ var dummyData = [{
         "visitLabel": "Initial_Assessment_Screening",
         "cohort": "MCI"
     }, {
+        "sessionID": "11",
         "status": "deadline-approaching-data-entry",
         "dueDate": randomDate(),
         "instrumentsCompleted": 2,
@@ -102,6 +113,7 @@ var dummyData = [{
         "visitLabel": "Clinical_Assessment",
         "cohort": "SCI"
     }, {
+        "sessionID": "12",
         "status": "deadline-approaching-visit",
         "dueDate": randomDate(),
         "instrumentsCompleted": 3,
@@ -228,20 +240,79 @@ function VisitCell(props) {
     // will need to include additional data
     // for each visit
     var visitClass = "circle " + props.visit.status;
+
+    var now = new Date();
+    var dueDate = props.visit.dueDate;
+    var daysLeft = Math.floor((dueDate - now) / (1000 * 60 * 60 * 24));
     return React.createElement(
         "td",
         null,
-        React.createElement("div", { "data-tip": "React-tooltip", className: visitClass })
-        /*<ReactToolTip place="top" type="dark" effect="solid">
-            <span>Visit Registration: <br/></span>
-            <span>Data Entry: due in x days<br/></span>
-            <span><i>x/y instruments entered</i></span>
-        </ReactToolTip>*/
+        React.createElement(
+            "div",
+            { "data-tip": true, "data-for": props.visit.sessionID, className: visitClass },
+            React.createElement(
+                ReactTooltip,
+                { id: props.visit.sessionID, place: "top", type: "dark", effect: "solid" },
+                React.createElement(
+                    "span",
+                    null,
+                    "Visit Registration: ",
+                    React.createElement("br", null)
+                ),
+                React.createElement(
+                    "span",
+                    null,
+                    "Data Entry: due in ",
+                    daysLeft,
+                    " days",
+                    React.createElement("br", null)
+                ),
+                React.createElement(
+                    "span",
+                    null,
+                    React.createElement(
+                        "i",
+                        null,
+                        props.visit.instrumentsCompleted,
+                        "/",
+                        props.visit.totalInstruments,
+                        " instruments entered"
+                    )
+                )
+            )
+        )
     );
 }
 
-var StudyTrackerHeader = function (_React$Component2) {
-    _inherits(StudyTrackerHeader, _React$Component2);
+var StudyTrackerRow = function (_React$Component2) {
+    _inherits(StudyTrackerRow, _React$Component2);
+
+    function StudyTrackerRow() {
+        _classCallCheck(this, StudyTrackerRow);
+
+        return _possibleConstructorReturn(this, (StudyTrackerRow.__proto__ || Object.getPrototypeOf(StudyTrackerRow)).apply(this, arguments));
+    }
+
+    _createClass(StudyTrackerRow, [{
+        key: "render",
+        value: function render() {
+            var visits = this.props.visits.map(function (v, index) {
+                return React.createElement(VisitCell, { key: index, visit: v });
+            });
+            return React.createElement(
+                "tr",
+                { className: "StudyTrackerRow" },
+                React.createElement(PSCIDCell, { pscid: this.props.pscid }),
+                visits
+            );
+        }
+    }]);
+
+    return StudyTrackerRow;
+}(React.Component);
+
+var StudyTrackerHeader = function (_React$Component3) {
+    _inherits(StudyTrackerHeader, _React$Component3);
 
     function StudyTrackerHeader() {
         _classCallCheck(this, StudyTrackerHeader);
@@ -275,33 +346,6 @@ var StudyTrackerHeader = function (_React$Component2) {
     return StudyTrackerHeader;
 }(React.Component);
 
-var StudyTrackerRow = function (_React$Component3) {
-    _inherits(StudyTrackerRow, _React$Component3);
-
-    function StudyTrackerRow() {
-        _classCallCheck(this, StudyTrackerRow);
-
-        return _possibleConstructorReturn(this, (StudyTrackerRow.__proto__ || Object.getPrototypeOf(StudyTrackerRow)).apply(this, arguments));
-    }
-
-    _createClass(StudyTrackerRow, [{
-        key: "render",
-        value: function render() {
-            var visits = this.props.visits.map(function (v, index) {
-                return React.createElement(VisitCell, { key: index, visit: v });
-            });
-            return React.createElement(
-                "tr",
-                { className: "StudyTrackerRow" },
-                React.createElement(PSCIDCell, { pscid: this.props.pscid }),
-                visits
-            );
-        }
-    }]);
-
-    return StudyTrackerRow;
-}(React.Component);
-
 var StudyTracker = function (_React$Component4) {
     _inherits(StudyTracker, _React$Component4);
 
@@ -311,8 +355,6 @@ var StudyTracker = function (_React$Component4) {
         var _this4 = _possibleConstructorReturn(this, (StudyTracker.__proto__ || Object.getPrototypeOf(StudyTracker)).call(this));
 
         _this4.state = {
-            // Rows should be passed to this class
-            // as JSON objects
             rows: dummyData,
             visitLabels: visitLabels,
             currentSite: "all",
@@ -391,7 +433,8 @@ var StudyTracker = function (_React$Component4) {
 }(React.Component);
 
 function randomDate() {
-    return new Date();
+    var now = new Date();
+    return new Date(now.getFullYear(), now.getMonth() + Math.floor(Math.random() * 6) + 1, now.getDate(), 0, 0, 0, 0);
 }
 
 window.onload = function () {

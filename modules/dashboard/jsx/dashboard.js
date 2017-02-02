@@ -19,7 +19,7 @@ var dummyData = [
                 "instrumentsCompleted": 2,
                 "totalInstruments": 22,
                 "visitLabel": "Clinical_Assessment",
-                "cohort": "SCI"
+                "cohort": "AD"
             },
             {
                 "sessionID": "3",
@@ -43,7 +43,7 @@ var dummyData = [
                 "instrumentsCompleted": 1,
                 "totalInstruments": 22,
                 "visitLabel": "Initial_Assessment_Screening",
-                "cohort": "MCI"
+                "cohort": "AD"
             },
             {
                 "sessionID": "5",
@@ -61,7 +61,7 @@ var dummyData = [
                 "instrumentsCompleted": 3,
                 "totalInstruments": 22,
                 "visitLabel": "Neuropsych_Assessment",
-                "cohort": "AD"
+                "cohort": "MCI"
             }
         ]
     },
@@ -76,7 +76,7 @@ var dummyData = [
                 "instrumentsCompleted": 1,
                 "totalInstruments": 22,
                 "visitLabel": "Initial_Assessment_Screening",
-                "cohort": "MCI"
+                "cohort": "SCI"
             },
             {
                 "sessionID": "8",
@@ -95,7 +95,7 @@ var dummyData = [
                 "instrumentsCompleted": 3,
                 "totalInstruments": 22,
                 "visitLabel": "Neuropsych_Assessment",
-                "cohort": "AD"
+                "cohort": "SCI"
             }
         ]
     },
@@ -110,7 +110,7 @@ var dummyData = [
                 "instrumentsCompleted": 1,
                 "totalInstruments": 22,
                 "visitLabel": "Initial_Assessment_Screening",
-                "cohort": "MCI"
+                "cohort": "AD"
             },
             {
                 "sessionID": "11",
@@ -119,7 +119,7 @@ var dummyData = [
                 "instrumentsCompleted": 2,
                 "totalInstruments": 22,
                 "visitLabel": "Clinical_Assessment",
-                "cohort": "SCI"
+                "cohort": "AD"
             },
             {
                 "sessionID": "12",
@@ -151,6 +151,12 @@ var sites = [
     }
 ];
 
+var cohorts = [
+    "MCI",
+    "SCI",
+    "AD"
+];
+
 function SiteFilter(props) {
     var options = props.sites.map((site) =>
         <option key={site.psc} value={site.psc}>{site.fullname}</option>
@@ -176,10 +182,14 @@ function TeamFilter(props) {
 }
 
 function CohortFilter(props) {
+    var options = props.cohorts.map((cohort) =>
+        <option key={cohort} value={cohort}>{cohort}</option>
+    );
     return (
         <td>
-            <select>
-                <option value="cohort">Cohort</option>
+            <select onChange={props.filterCohorts}>
+                <option value="all">Show All Cohorts</option>
+                {options}
             </select>
         </td>
     );
@@ -194,7 +204,7 @@ class Filters extends React.Component {
                     <tr>
                         <SiteFilter sites={this.props.sites} filterSites={this.props.filterSites}/>
                         <TeamFilter />
-                        <CohortFilter />
+                        <CohortFilter cohorts={this.props.cohorts} filterCohorts={this.props.filterCohorts}/>
                     </tr>
                 </tbody>
             </table>
@@ -213,29 +223,39 @@ function PSCIDCell(props) {
 function VisitCell(props) {
     // will need to include additional data
     // for each visit
-    var visitClass = "circle " + props.visit.status;
+    if (props.visit.cohort === props.currentCohort || props.currentCohort === "all") {
+        var visitClass = "circle " + props.visit.status;
 
-    var now = new Date();
-    var dueDate = props.visit.dueDate;
-    var daysLeft = Math.floor((dueDate - now) / (1000 * 60 * 60 * 24));
-    return (
-        <td>
-            <div data-tip data-for={props.visit.sessionID} className={visitClass} >
-                <ReactTooltip id={props.visit.sessionID} place="top" type="dark" effect="solid">
-                    <span>Visit Registration: <br/></span>
-                    <span>Data Entry: due in {daysLeft} days<br/></span>
-                    <span><i>{props.visit.instrumentsCompleted}/{props.visit.totalInstruments} instruments entered</i></span>
-                </ReactTooltip>
-            </div>
-        </td>
-    );
+        var now = new Date();
+        var dueDate = props.visit.dueDate;
+        var daysLeft = Math.floor((dueDate - now) / (1000 * 60 * 60 * 24));
+        return (
+            <td>
+                <div data-tip data-for={props.visit.sessionID} className={visitClass}>
+                    <ReactTooltip id={props.visit.sessionID} place="top" type="dark" effect="solid">
+                        <span>Visit Registration: <br/></span>
+                        <span>Data Entry: due in {daysLeft} days<br/></span>
+                        <span><i>{props.visit.instrumentsCompleted}/{props.visit.totalInstruments}
+                            instruments entered</i></span>
+                    </ReactTooltip>
+                </div>
+            </td>
+        );
+    } else {
+        return (<td></td>);
+    }
 }
 
 
 class StudyTrackerRow extends React.Component {
     render() {
-        var visits = this.props.visits.map((v, index) =>
-            <VisitCell key={index} visit={v} />
+        var visits = this.props.visits.map(function(v) {
+                return <VisitCell
+                    key={v.sessionID}
+                    visit={v}
+                    currentCohort={this.props.currentCohort}
+                />
+            }.bind(this)
         );
         return(
             <tr className="StudyTrackerRow">
@@ -270,10 +290,17 @@ class StudyTracker extends React.Component {
              rows: dummyData,
              visitLabels: visitLabels,
              currentSite: "all",
-             sites: sites
+             sites: sites,
+             currentCohort: "all",
+             cohorts: cohorts
         };
 
         this.filterSites = this.filterSites.bind(this);
+        this.filterCohorts = this.filterCohorts.bind(this);
+    }
+
+    filterCohorts(event) {
+        this.setState({currentCohort: event.target.value});
     }
 
     filterSites(event) {
@@ -281,16 +308,28 @@ class StudyTracker extends React.Component {
     }
 
     render() {
+        // Filter out the entire row for candidates at sites other than
+        // the currently selected one
         var dataRows = this.state.rows.map(function (row) {
                 if(row.psc === this.state.currentSite || this.state.currentSite === "all") {
-                    return <StudyTrackerRow key={row.pscid} pscid={row.pscid} visits={row.visits}/>
+                    return <StudyTrackerRow
+                        key={row.pscid}
+                        pscid={row.pscid}
+                        visits={row.visits}
+                        currentCohort={this.state.currentCohort}
+                    />
                 }
             }.bind(this)
         );
         return (
             <div className="StudyTracker">
                 <h1>Hello, Study Tracker!</h1>
-                <Filters sites={this.state.sites} filterSites={this.filterSites}/>
+                <Filters
+                    sites={this.state.sites}
+                    filterSites={this.filterSites}
+                    cohorts={this.state.cohorts}
+                    filterCohorts={this.filterCohorts}
+                />
                 <table>
                     <StudyTrackerHeader visitLabels={this.state.visitLabels}/>
                     <tbody>
@@ -304,7 +343,12 @@ class StudyTracker extends React.Component {
 
 function randomDate() {
     var now = new Date();
-    return new Date(now.getFullYear(), now.getMonth() + Math.floor(Math.random() * 6) + 1, now.getDate(), 0,0,0,0);
+    return new Date(
+        now.getFullYear(),
+        now.getMonth() + Math.floor(Math.random() * 6) + 1,
+        now.getDate(),
+        0,0,0,0
+    );
 }
 
 window.onload = function() {

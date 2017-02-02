@@ -26,7 +26,7 @@ var dummyData = [{
         "instrumentsCompleted": 2,
         "totalInstruments": 22,
         "visitLabel": "Clinical_Assessment",
-        "cohort": "SCI"
+        "cohort": "AD"
     }, {
         "sessionID": "3",
         "status": "complete-data-entry",
@@ -46,7 +46,7 @@ var dummyData = [{
         "instrumentsCompleted": 1,
         "totalInstruments": 22,
         "visitLabel": "Initial_Assessment_Screening",
-        "cohort": "MCI"
+        "cohort": "AD"
     }, {
         "sessionID": "5",
         "status": "deadline-past-visit",
@@ -62,7 +62,7 @@ var dummyData = [{
         "instrumentsCompleted": 3,
         "totalInstruments": 22,
         "visitLabel": "Neuropsych_Assessment",
-        "cohort": "AD"
+        "cohort": "MCI"
     }]
 }, {
     "pscid": "JGH0010",
@@ -74,7 +74,7 @@ var dummyData = [{
         "instrumentsCompleted": 1,
         "totalInstruments": 22,
         "visitLabel": "Initial_Assessment_Screening",
-        "cohort": "MCI"
+        "cohort": "SCI"
     }, {
         "sessionID": "8",
         "status": "deadline-past-visit",
@@ -91,7 +91,7 @@ var dummyData = [{
         "instrumentsCompleted": 3,
         "totalInstruments": 22,
         "visitLabel": "Neuropsych_Assessment",
-        "cohort": "AD"
+        "cohort": "SCI"
     }]
 }, {
     "pscid": "PKD0011",
@@ -103,7 +103,7 @@ var dummyData = [{
         "instrumentsCompleted": 1,
         "totalInstruments": 22,
         "visitLabel": "Initial_Assessment_Screening",
-        "cohort": "MCI"
+        "cohort": "AD"
     }, {
         "sessionID": "11",
         "status": "deadline-approaching-data-entry",
@@ -111,7 +111,7 @@ var dummyData = [{
         "instrumentsCompleted": 2,
         "totalInstruments": 22,
         "visitLabel": "Clinical_Assessment",
-        "cohort": "SCI"
+        "cohort": "AD"
     }, {
         "sessionID": "12",
         "status": "deadline-approaching-visit",
@@ -132,6 +132,8 @@ var sites = [{
     'psc': 'PKD',
     'fullname': 'Parkwood Institution'
 }];
+
+var cohorts = ["MCI", "SCI", "AD"];
 
 function SiteFilter(props) {
     var options = props.sites.map(function (site) {
@@ -174,17 +176,25 @@ function TeamFilter(props) {
 }
 
 function CohortFilter(props) {
+    var options = props.cohorts.map(function (cohort) {
+        return React.createElement(
+            "option",
+            { key: cohort, value: cohort },
+            cohort
+        );
+    });
     return React.createElement(
         "td",
         null,
         React.createElement(
             "select",
-            null,
+            { onChange: props.filterCohorts },
             React.createElement(
                 "option",
-                { value: "cohort" },
-                "Cohort"
-            )
+                { value: "all" },
+                "Show All Cohorts"
+            ),
+            options
         )
     );
 }
@@ -214,7 +224,7 @@ var Filters = function (_React$Component) {
                         null,
                         React.createElement(SiteFilter, { sites: this.props.sites, filterSites: this.props.filterSites }),
                         React.createElement(TeamFilter, null),
-                        React.createElement(CohortFilter, null)
+                        React.createElement(CohortFilter, { cohorts: this.props.cohorts, filterCohorts: this.props.filterCohorts })
                     )
                 )
             );
@@ -239,49 +249,53 @@ function PSCIDCell(props) {
 function VisitCell(props) {
     // will need to include additional data
     // for each visit
-    var visitClass = "circle " + props.visit.status;
+    if (props.visit.cohort === props.currentCohort || props.currentCohort === "all") {
+        var visitClass = "circle " + props.visit.status;
 
-    var now = new Date();
-    var dueDate = props.visit.dueDate;
-    var daysLeft = Math.floor((dueDate - now) / (1000 * 60 * 60 * 24));
-    return React.createElement(
-        "td",
-        null,
-        React.createElement(
-            "div",
-            { "data-tip": true, "data-for": props.visit.sessionID, className: visitClass },
+        var now = new Date();
+        var dueDate = props.visit.dueDate;
+        var daysLeft = Math.floor((dueDate - now) / (1000 * 60 * 60 * 24));
+        return React.createElement(
+            "td",
+            null,
             React.createElement(
-                ReactTooltip,
-                { id: props.visit.sessionID, place: "top", type: "dark", effect: "solid" },
+                "div",
+                { "data-tip": true, "data-for": props.visit.sessionID, className: visitClass },
                 React.createElement(
-                    "span",
-                    null,
-                    "Visit Registration: ",
-                    React.createElement("br", null)
-                ),
-                React.createElement(
-                    "span",
-                    null,
-                    "Data Entry: due in ",
-                    daysLeft,
-                    " days",
-                    React.createElement("br", null)
-                ),
-                React.createElement(
-                    "span",
-                    null,
+                    ReactTooltip,
+                    { id: props.visit.sessionID, place: "top", type: "dark", effect: "solid" },
                     React.createElement(
-                        "i",
+                        "span",
                         null,
-                        props.visit.instrumentsCompleted,
-                        "/",
-                        props.visit.totalInstruments,
-                        " instruments entered"
+                        "Visit Registration: ",
+                        React.createElement("br", null)
+                    ),
+                    React.createElement(
+                        "span",
+                        null,
+                        "Data Entry: due in ",
+                        daysLeft,
+                        " days",
+                        React.createElement("br", null)
+                    ),
+                    React.createElement(
+                        "span",
+                        null,
+                        React.createElement(
+                            "i",
+                            null,
+                            props.visit.instrumentsCompleted,
+                            "/",
+                            props.visit.totalInstruments,
+                            "instruments entered"
+                        )
                     )
                 )
             )
-        )
-    );
+        );
+    } else {
+        return React.createElement("td", null);
+    }
 }
 
 var StudyTrackerRow = function (_React$Component2) {
@@ -296,9 +310,13 @@ var StudyTrackerRow = function (_React$Component2) {
     _createClass(StudyTrackerRow, [{
         key: "render",
         value: function render() {
-            var visits = this.props.visits.map(function (v, index) {
-                return React.createElement(VisitCell, { key: index, visit: v });
-            });
+            var visits = this.props.visits.map(function (v) {
+                return React.createElement(VisitCell, {
+                    key: v.sessionID,
+                    visit: v,
+                    currentCohort: this.props.currentCohort
+                });
+            }.bind(this));
             return React.createElement(
                 "tr",
                 { className: "StudyTrackerRow" },
@@ -358,14 +376,22 @@ var StudyTracker = function (_React$Component4) {
             rows: dummyData,
             visitLabels: visitLabels,
             currentSite: "all",
-            sites: sites
+            sites: sites,
+            currentCohort: "all",
+            cohorts: cohorts
         };
 
         _this4.filterSites = _this4.filterSites.bind(_this4);
+        _this4.filterCohorts = _this4.filterCohorts.bind(_this4);
         return _this4;
     }
 
     _createClass(StudyTracker, [{
+        key: "filterCohorts",
+        value: function filterCohorts(event) {
+            this.setState({ currentCohort: event.target.value });
+        }
+    }, {
         key: "filterSites",
         value: function filterSites(event) {
             this.setState({ currentSite: event.target.value });
@@ -373,9 +399,16 @@ var StudyTracker = function (_React$Component4) {
     }, {
         key: "render",
         value: function render() {
+            // Filter out the entire row for candidates at sites other than
+            // the currently selected one
             var dataRows = this.state.rows.map(function (row) {
                 if (row.psc === this.state.currentSite || this.state.currentSite === "all") {
-                    return React.createElement(StudyTrackerRow, { key: row.pscid, pscid: row.pscid, visits: row.visits });
+                    return React.createElement(StudyTrackerRow, {
+                        key: row.pscid,
+                        pscid: row.pscid,
+                        visits: row.visits,
+                        currentCohort: this.state.currentCohort
+                    });
                 }
             }.bind(this));
             return React.createElement(
@@ -386,7 +419,12 @@ var StudyTracker = function (_React$Component4) {
                     null,
                     "Hello, Study Tracker!"
                 ),
-                React.createElement(Filters, { sites: this.state.sites, filterSites: this.filterSites }),
+                React.createElement(Filters, {
+                    sites: this.state.sites,
+                    filterSites: this.filterSites,
+                    cohorts: this.state.cohorts,
+                    filterCohorts: this.filterCohorts
+                }),
                 React.createElement(
                     "table",
                     null,

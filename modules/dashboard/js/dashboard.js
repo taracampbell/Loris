@@ -383,6 +383,7 @@ var StudyTracker = function (_React$Component4) {
 
         _this4.filterSites = _this4.filterSites.bind(_this4);
         _this4.filterCohorts = _this4.filterCohorts.bind(_this4);
+        _this4.rowHasCurrentCohortVisit = _this4.rowHasCurrentCohortVisit.bind(_this4);
         return _this4;
     }
 
@@ -397,12 +398,28 @@ var StudyTracker = function (_React$Component4) {
             this.setState({ currentSite: event.target.value });
         }
     }, {
+        key: "rowHasCurrentCohortVisit",
+        value: function rowHasCurrentCohortVisit(row) {
+            if (this.state.currentCohort === "all") {
+                return true;
+            }
+            var result = false;
+
+            row.visits.forEach(function (v) {
+                if (v.cohort === this.state.currentCohort) {
+                    result = true;
+                }
+            }.bind(this));
+            return result;
+        }
+    }, {
         key: "render",
         value: function render() {
             // Filter out the entire row for candidates at sites other than
-            // the currently selected one
+            // the currently selected one or if the candidate has no visits for
+            // the currently selected cohort
             var dataRows = this.state.rows.map(function (row) {
-                if (row.psc === this.state.currentSite || this.state.currentSite === "all") {
+                if (this.rowHasCurrentCohortVisit(row) && (row.psc === this.state.currentSite || this.state.currentSite === "all")) {
                     return React.createElement(StudyTrackerRow, {
                         key: row.pscid,
                         pscid: row.pscid,

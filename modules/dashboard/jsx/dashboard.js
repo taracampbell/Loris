@@ -297,6 +297,7 @@ class StudyTracker extends React.Component {
 
         this.filterSites = this.filterSites.bind(this);
         this.filterCohorts = this.filterCohorts.bind(this);
+        this.rowHasCurrentCohortVisit = this.rowHasCurrentCohortVisit.bind(this);
     }
 
     filterCohorts(event) {
@@ -307,11 +308,28 @@ class StudyTracker extends React.Component {
         this.setState({currentSite: event.target.value});
     }
 
+    rowHasCurrentCohortVisit(row) {
+        if (this.state.currentCohort === "all") {
+            return true;
+        }
+        var result = false;
+
+        row.visits.forEach( function (v) {
+                if (v.cohort === this.state.currentCohort) {
+                    result = true;
+                }
+            }.bind(this)
+        );
+        return result;
+    }
+
     render() {
         // Filter out the entire row for candidates at sites other than
-        // the currently selected one
+        // the currently selected one or if the candidate has no visits for
+        // the currently selected cohort
         var dataRows = this.state.rows.map(function (row) {
-                if(row.psc === this.state.currentSite || this.state.currentSite === "all") {
+                if(this.rowHasCurrentCohortVisit(row) &&
+                    (row.psc === this.state.currentSite || this.state.currentSite === "all")) {
                     return <StudyTrackerRow
                         key={row.pscid}
                         pscid={row.pscid}

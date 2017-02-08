@@ -9,7 +9,7 @@ var dummyData = [
                 "dueDate": randomDate(),
                 "instrumentsCompleted": 1,
                 "totalInstruments": 22,
-                "visitLabel": "Initial_Assessment_Screening",
+                "visitLabel": "Screening",
                 "cohort": "MCI"
             },
             {
@@ -18,7 +18,7 @@ var dummyData = [
                 "dueDate": randomDate(),
                 "instrumentsCompleted": 2,
                 "totalInstruments": 22,
-                "visitLabel": "Clinical_Assessment",
+                "visitLabel": "Clinical",
                 "cohort": "AD"
             },
             {
@@ -27,7 +27,7 @@ var dummyData = [
                 "dueDate": randomDate(),
                 "instrumentsCompleted": 3,
                 "totalInstruments": 22,
-                "visitLabel": "Neuropsych_Assessment",
+                "visitLabel": "Neuropsych",
                 "cohort": "AD"
             }
         ]
@@ -42,7 +42,7 @@ var dummyData = [
                 "dueDate": randomDate(),
                 "instrumentsCompleted": 1,
                 "totalInstruments": 22,
-                "visitLabel": "Initial_Assessment_Screening",
+                "visitLabel": "Screening",
                 "cohort": "AD"
             },
             {
@@ -51,7 +51,7 @@ var dummyData = [
                 "dueDate": randomDate(),
                 "instrumentsCompleted": 2,
                 "totalInstruments": 22,
-                "visitLabel": "Clinical_Assessment",
+                "visitLabel": "Clinical",
                 "cohort": "SCI"
             },
             {
@@ -60,7 +60,7 @@ var dummyData = [
                 "dueDate": randomDate(),
                 "instrumentsCompleted": 3,
                 "totalInstruments": 22,
-                "visitLabel": "Neuropsych_Assessment",
+                "visitLabel": "Neuropsych",
                 "cohort": "MCI"
             }
         ]
@@ -75,7 +75,7 @@ var dummyData = [
                 "dueDate": randomDate(),
                 "instrumentsCompleted": 1,
                 "totalInstruments": 22,
-                "visitLabel": "Initial_Assessment_Screening",
+                "visitLabel": "Screening",
                 "cohort": "SCI"
             },
             {
@@ -84,7 +84,7 @@ var dummyData = [
                 "dueDate": randomDate(),
                 "instrumentsCompleted": 2,
                 "totalInstruments": 22,
-                "visitLabel": "Clinical_Assessment",
+                "visitLabel": "Clinical",
                 "cohort": "SCI"
 
             },
@@ -94,7 +94,7 @@ var dummyData = [
                 "dueDate": randomDate(),
                 "instrumentsCompleted": 3,
                 "totalInstruments": 22,
-                "visitLabel": "Neuropsych_Assessment",
+                "visitLabel": "Neuropsych",
                 "cohort": "SCI"
             }
         ]
@@ -109,7 +109,7 @@ var dummyData = [
                 "dueDate": randomDate(),
                 "instrumentsCompleted": 1,
                 "totalInstruments": 22,
-                "visitLabel": "Initial_Assessment_Screening",
+                "visitLabel": "Screening",
                 "cohort": "AD"
             },
             {
@@ -118,7 +118,7 @@ var dummyData = [
                 "dueDate": randomDate(),
                 "instrumentsCompleted": 2,
                 "totalInstruments": 22,
-                "visitLabel": "Clinical_Assessment",
+                "visitLabel": "Clinical",
                 "cohort": "AD"
             },
             {
@@ -127,7 +127,7 @@ var dummyData = [
                 "dueDate": randomDate(),
                 "instrumentsCompleted": 3,
                 "totalInstruments": 22,
-                "visitLabel": "Neuropsych_Assessment",
+                "visitLabel": "Neuropsych",
                 "cohort": "AD"
             }
         ]
@@ -230,7 +230,7 @@ function VisitCell(props) {
         var dueDate = props.visit.dueDate;
         var daysLeft = Math.floor((dueDate - now) / (1000 * 60 * 60 * 24));
         return (
-            <td>
+            <td className={props.visit.visitLabel}>
                 <div data-tip data-for={props.visit.sessionID} className={visitClass}>
                     <ReactTooltip id={props.visit.sessionID} place="top" type="dark" effect="solid">
                         <span>Visit Registration: <br/></span>
@@ -267,9 +267,33 @@ class StudyTrackerRow extends React.Component {
 }
 
 class StudyTrackerHeader extends React.Component {
+    constructor(props) {
+        super(props);
+        this.highlightVisits = this.highlightVisits.bind(this);
+        this.unHighlightVisits = this.unHighlightVisits.bind(this);
+    }
+
+    // When mouse enters header cell, highlight all cells for that visit
+    highlightVisits(event) {
+        var visitClass = "." + $(event.target).text();
+        $(visitClass).css("background-color", "#f5f5f5");
+    }
+    unHighlightVisits(event) {
+        var visitClass = "." + $(event.target).text();
+        $(visitClass).css("background-color", "");
+    }
   render() {
-    var visitLabelHeaders = this.props.visitLabels.map((vl) =>
-        <th key={vl} className="VLHeader">{vl}</th>
+    var visitLabelHeaders = this.props.visitLabels.map(function(vl) {
+            var cssClass = "VLHeader " + vl;
+            return (
+            <th
+                onMouseEnter={this.highlightVisits}
+                onMouseLeave={this.unHighlightVisits}
+                key={vl}
+                className={cssClass}>
+                {vl}
+            </th>)
+        }.bind(this)
     );
     return (
         <thead className="StudyTrackerHeader">
@@ -300,14 +324,17 @@ class StudyTracker extends React.Component {
         this.rowHasCurrentCohortVisit = this.rowHasCurrentCohortVisit.bind(this);
     }
 
+    // Function which is called when cohort filter is changed
     filterCohorts(event) {
         this.setState({currentCohort: event.target.value});
     }
 
+    // Function which is called when site filter is changed
     filterSites(event) {
         this.setState({currentSite: event.target.value});
     }
 
+    //Checks to see if a row has a visit with the selected cohort
     rowHasCurrentCohortVisit(row) {
         if (this.state.currentCohort === "all") {
             return true;

@@ -17,7 +17,7 @@ var dummyData = [{
         "dueDate": randomDate(),
         "instrumentsCompleted": 1,
         "totalInstruments": 22,
-        "visitLabel": "Initial_Assessment_Screening",
+        "visitLabel": "Screening",
         "cohort": "MCI"
     }, {
         "sessionID": "2",
@@ -25,7 +25,7 @@ var dummyData = [{
         "dueDate": randomDate(),
         "instrumentsCompleted": 2,
         "totalInstruments": 22,
-        "visitLabel": "Clinical_Assessment",
+        "visitLabel": "Clinical",
         "cohort": "AD"
     }, {
         "sessionID": "3",
@@ -33,7 +33,7 @@ var dummyData = [{
         "dueDate": randomDate(),
         "instrumentsCompleted": 3,
         "totalInstruments": 22,
-        "visitLabel": "Neuropsych_Assessment",
+        "visitLabel": "Neuropsych",
         "cohort": "AD"
     }]
 }, {
@@ -45,7 +45,7 @@ var dummyData = [{
         "dueDate": randomDate(),
         "instrumentsCompleted": 1,
         "totalInstruments": 22,
-        "visitLabel": "Initial_Assessment_Screening",
+        "visitLabel": "Screening",
         "cohort": "AD"
     }, {
         "sessionID": "5",
@@ -53,7 +53,7 @@ var dummyData = [{
         "dueDate": randomDate(),
         "instrumentsCompleted": 2,
         "totalInstruments": 22,
-        "visitLabel": "Clinical_Assessment",
+        "visitLabel": "Clinical",
         "cohort": "SCI"
     }, {
         "sessionID": "6",
@@ -61,7 +61,7 @@ var dummyData = [{
         "dueDate": randomDate(),
         "instrumentsCompleted": 3,
         "totalInstruments": 22,
-        "visitLabel": "Neuropsych_Assessment",
+        "visitLabel": "Neuropsych",
         "cohort": "MCI"
     }]
 }, {
@@ -73,7 +73,7 @@ var dummyData = [{
         "dueDate": randomDate(),
         "instrumentsCompleted": 1,
         "totalInstruments": 22,
-        "visitLabel": "Initial_Assessment_Screening",
+        "visitLabel": "Screening",
         "cohort": "SCI"
     }, {
         "sessionID": "8",
@@ -81,7 +81,7 @@ var dummyData = [{
         "dueDate": randomDate(),
         "instrumentsCompleted": 2,
         "totalInstruments": 22,
-        "visitLabel": "Clinical_Assessment",
+        "visitLabel": "Clinical",
         "cohort": "SCI"
 
     }, {
@@ -90,7 +90,7 @@ var dummyData = [{
         "dueDate": randomDate(),
         "instrumentsCompleted": 3,
         "totalInstruments": 22,
-        "visitLabel": "Neuropsych_Assessment",
+        "visitLabel": "Neuropsych",
         "cohort": "SCI"
     }]
 }, {
@@ -102,7 +102,7 @@ var dummyData = [{
         "dueDate": randomDate(),
         "instrumentsCompleted": 1,
         "totalInstruments": 22,
-        "visitLabel": "Initial_Assessment_Screening",
+        "visitLabel": "Screening",
         "cohort": "AD"
     }, {
         "sessionID": "11",
@@ -110,7 +110,7 @@ var dummyData = [{
         "dueDate": randomDate(),
         "instrumentsCompleted": 2,
         "totalInstruments": 22,
-        "visitLabel": "Clinical_Assessment",
+        "visitLabel": "Clinical",
         "cohort": "AD"
     }, {
         "sessionID": "12",
@@ -118,7 +118,7 @@ var dummyData = [{
         "dueDate": randomDate(),
         "instrumentsCompleted": 3,
         "totalInstruments": 22,
-        "visitLabel": "Neuropsych_Assessment",
+        "visitLabel": "Neuropsych",
         "cohort": "AD"
     }]
 }];
@@ -257,7 +257,7 @@ function VisitCell(props) {
         var daysLeft = Math.floor((dueDate - now) / (1000 * 60 * 60 * 24));
         return React.createElement(
             "td",
-            null,
+            { className: props.visit.visitLabel },
             React.createElement(
                 "div",
                 { "data-tip": true, "data-for": props.visit.sessionID, className: visitClass },
@@ -332,22 +332,47 @@ var StudyTrackerRow = function (_React$Component2) {
 var StudyTrackerHeader = function (_React$Component3) {
     _inherits(StudyTrackerHeader, _React$Component3);
 
-    function StudyTrackerHeader() {
+    function StudyTrackerHeader(props) {
         _classCallCheck(this, StudyTrackerHeader);
 
-        return _possibleConstructorReturn(this, (StudyTrackerHeader.__proto__ || Object.getPrototypeOf(StudyTrackerHeader)).apply(this, arguments));
+        var _this3 = _possibleConstructorReturn(this, (StudyTrackerHeader.__proto__ || Object.getPrototypeOf(StudyTrackerHeader)).call(this, props));
+
+        _this3.highlightVisits = _this3.highlightVisits.bind(_this3);
+        _this3.unHighlightVisits = _this3.unHighlightVisits.bind(_this3);
+        return _this3;
     }
 
+    // When mouse enters header cell, highlight all cells for that visit
+
+
     _createClass(StudyTrackerHeader, [{
+        key: "highlightVisits",
+        value: function highlightVisits(event) {
+            var visitClass = "." + $(event.target).text();
+            $(visitClass).css("background-color", "#f5f5f5");
+        }
+    }, {
+        key: "unHighlightVisits",
+        value: function unHighlightVisits(event) {
+            var visitClass = "." + $(event.target).text();
+            $(visitClass).css("background-color", "");
+        }
+    }, {
         key: "render",
         value: function render() {
             var visitLabelHeaders = this.props.visitLabels.map(function (vl) {
+                var cssClass = "VLHeader " + vl;
                 return React.createElement(
                     "th",
-                    { key: vl, className: "VLHeader" },
+                    {
+                        onMouseEnter: this.highlightVisits,
+                        onMouseLeave: this.unHighlightVisits,
+                        key: vl,
+                        className: cssClass
+                    },
                     vl
                 );
-            });
+            }.bind(this));
             return React.createElement(
                 "thead",
                 { className: "StudyTrackerHeader" },
@@ -387,16 +412,25 @@ var StudyTracker = function (_React$Component4) {
         return _this4;
     }
 
+    // Function which is called when cohort filter is changed
+
+
     _createClass(StudyTracker, [{
         key: "filterCohorts",
         value: function filterCohorts(event) {
             this.setState({ currentCohort: event.target.value });
         }
+
+        // Function which is called when site filter is changed
+
     }, {
         key: "filterSites",
         value: function filterSites(event) {
             this.setState({ currentSite: event.target.value });
         }
+
+        //Checks to see if a row has a visit with the selected cohort
+
     }, {
         key: "rowHasCurrentCohortVisit",
         value: function rowHasCurrentCohortVisit(row) {

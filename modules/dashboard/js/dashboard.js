@@ -165,11 +165,11 @@ function TeamFilter(props) {
         null,
         React.createElement(
             "select",
-            null,
+            { onChange: props.filterTeams },
             React.createElement(
                 "option",
-                { value: "team" },
-                "Team"
+                { value: "COMPASS-ND" },
+                "COMPASS-ND"
             )
         )
     );
@@ -223,7 +223,7 @@ var Filters = function (_React$Component) {
                         "tr",
                         null,
                         React.createElement(SiteFilter, { sites: this.props.sites, filterSites: this.props.filterSites }),
-                        React.createElement(TeamFilter, null),
+                        React.createElement(TeamFilter, { teams: this.props.teams, filterTeams: this.props.filterTeams }),
                         React.createElement(CohortFilter, { cohorts: this.props.cohorts, filterCohorts: this.props.filterCohorts })
                     )
                 )
@@ -368,8 +368,7 @@ var StudyTrackerHeader = function (_React$Component3) {
                         onMouseEnter: this.highlightVisits,
                         onMouseLeave: this.unHighlightVisits,
                         key: vl,
-                        className: cssClass
-                    },
+                        className: cssClass },
                     vl
                 );
             }.bind(this));
@@ -402,11 +401,14 @@ var StudyTracker = function (_React$Component4) {
             visitLabels: visitLabels,
             currentSite: "all",
             sites: sites,
+            teams: [],
+            currentTeam: "COMPASS-ND",
             currentCohort: "all",
             cohorts: cohorts
         };
 
         _this4.filterSites = _this4.filterSites.bind(_this4);
+        _this4.filterTeams = _this4.filterTeams.bind(_this4);
         _this4.filterCohorts = _this4.filterCohorts.bind(_this4);
         _this4.rowHasCurrentCohortVisit = _this4.rowHasCurrentCohortVisit.bind(_this4);
         return _this4;
@@ -420,6 +422,17 @@ var StudyTracker = function (_React$Component4) {
         value: function filterCohorts(event) {
             this.setState({ currentCohort: event.target.value });
         }
+
+        // Function which will handle team filtering
+
+    }, {
+        key: "filterTeams",
+        value: function filterTeams(event) {}
+        // Here there should be an AJAX call which fetches a new
+        // data object and then updates the state like:
+        // this.setState({rows: newRows, visitLabels: newVLs});
+        // or something
+
 
         // Function which is called when site filter is changed
 
@@ -473,6 +486,8 @@ var StudyTracker = function (_React$Component4) {
                 React.createElement(Filters, {
                     sites: this.state.sites,
                     filterSites: this.filterSites,
+                    teams: this.state.teams,
+                    filterTeams: this.filterTeams,
                     cohorts: this.state.cohorts,
                     filterCohorts: this.filterCohorts
                 }),

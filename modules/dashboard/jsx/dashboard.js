@@ -174,8 +174,8 @@ function SiteFilter(props) {
 function TeamFilter(props) {
     return (
         <td>
-            <select>
-                <option value="team">Team</option>
+            <select onChange={props.filterTeams}>
+                <option value="COMPASS-ND">COMPASS-ND</option>
             </select>
         </td>
     );
@@ -203,7 +203,7 @@ class Filters extends React.Component {
                 <tbody>
                     <tr>
                         <SiteFilter sites={this.props.sites} filterSites={this.props.filterSites}/>
-                        <TeamFilter />
+                        <TeamFilter teams={this.props.teams} filterTeams={this.props.filterTeams}/>
                         <CohortFilter cohorts={this.props.cohorts} filterCohorts={this.props.filterCohorts}/>
                     </tr>
                 </tbody>
@@ -315,11 +315,14 @@ class StudyTracker extends React.Component {
              visitLabels: visitLabels,
              currentSite: "all",
              sites: sites,
+             teams: [],
+             currentTeam: "COMPASS-ND",
              currentCohort: "all",
              cohorts: cohorts
         };
 
         this.filterSites = this.filterSites.bind(this);
+        this.filterTeams = this.filterTeams.bind(this);
         this.filterCohorts = this.filterCohorts.bind(this);
         this.rowHasCurrentCohortVisit = this.rowHasCurrentCohortVisit.bind(this);
     }
@@ -327,6 +330,14 @@ class StudyTracker extends React.Component {
     // Function which is called when cohort filter is changed
     filterCohorts(event) {
         this.setState({currentCohort: event.target.value});
+    }
+
+    // Function which will handle team filtering
+    filterTeams(event) {
+        // Here there should be an AJAX call which fetches a new
+        // data object and then updates the state like:
+        // this.setState({rows: newRows, visitLabels: newVLs});
+        // or something
     }
 
     // Function which is called when site filter is changed
@@ -372,6 +383,8 @@ class StudyTracker extends React.Component {
                 <Filters
                     sites={this.state.sites}
                     filterSites={this.filterSites}
+                    teams={this.state.teams}
+                    filterTeams={this.filterTeams}
                     cohorts={this.state.cohorts}
                     filterCohorts={this.filterCohorts}
                 />

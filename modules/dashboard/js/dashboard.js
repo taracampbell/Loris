@@ -165,11 +165,11 @@ function TeamFilter(props) {
         null,
         React.createElement(
             "select",
-            null,
+            { onChange: props.filterTeams },
             React.createElement(
                 "option",
-                { value: "team" },
-                "Team"
+                { value: "COMPASS-ND" },
+                "COMPASS-ND"
             )
         )
     );
@@ -223,7 +223,7 @@ var Filters = function (_React$Component) {
                         "tr",
                         null,
                         React.createElement(SiteFilter, { sites: this.props.sites, filterSites: this.props.filterSites }),
-                        React.createElement(TeamFilter, null),
+                        React.createElement(TeamFilter, { teams: this.props.teams, filterTeams: this.props.filterTeams }),
                         React.createElement(CohortFilter, { cohorts: this.props.cohorts, filterCohorts: this.props.filterCohorts })
                     )
                 )
@@ -245,6 +245,38 @@ function PSCIDCell(props) {
         props.pscid
     );
 }
+
+var SideNav = function (_React$Component2) {
+    _inherits(SideNav, _React$Component2);
+
+    function SideNav() {
+        _classCallCheck(this, SideNav);
+
+        return _possibleConstructorReturn(this, (SideNav.__proto__ || Object.getPrototypeOf(SideNav)).apply(this, arguments));
+    }
+
+    _createClass(SideNav, [{
+        key: "render",
+        value: function render() {
+            return React.createElement(
+                "div",
+                { className: "SideNav" },
+                React.createElement(
+                    "a",
+                    { href: "#", className: "closebtn", onClick: this.props.closeSideNav },
+                    "\xD7"
+                ),
+                React.createElement(
+                    "span",
+                    null,
+                    "peekaboo ya filthy marmot"
+                )
+            );
+        }
+    }]);
+
+    return SideNav;
+}(React.Component);
 
 function VisitCell(props) {
     // will need to include additional data
@@ -298,8 +330,8 @@ function VisitCell(props) {
     }
 }
 
-var StudyTrackerRow = function (_React$Component2) {
-    _inherits(StudyTrackerRow, _React$Component2);
+var StudyTrackerRow = function (_React$Component3) {
+    _inherits(StudyTrackerRow, _React$Component3);
 
     function StudyTrackerRow() {
         _classCallCheck(this, StudyTrackerRow);
@@ -329,17 +361,17 @@ var StudyTrackerRow = function (_React$Component2) {
     return StudyTrackerRow;
 }(React.Component);
 
-var StudyTrackerHeader = function (_React$Component3) {
-    _inherits(StudyTrackerHeader, _React$Component3);
+var StudyTrackerHeader = function (_React$Component4) {
+    _inherits(StudyTrackerHeader, _React$Component4);
 
     function StudyTrackerHeader(props) {
         _classCallCheck(this, StudyTrackerHeader);
 
-        var _this3 = _possibleConstructorReturn(this, (StudyTrackerHeader.__proto__ || Object.getPrototypeOf(StudyTrackerHeader)).call(this, props));
+        var _this4 = _possibleConstructorReturn(this, (StudyTrackerHeader.__proto__ || Object.getPrototypeOf(StudyTrackerHeader)).call(this, props));
 
-        _this3.highlightVisits = _this3.highlightVisits.bind(_this3);
-        _this3.unHighlightVisits = _this3.unHighlightVisits.bind(_this3);
-        return _this3;
+        _this4.highlightVisits = _this4.highlightVisits.bind(_this4);
+        _this4.unHighlightVisits = _this4.unHighlightVisits.bind(_this4);
+        return _this4;
     }
 
     // When mouse enters header cell, highlight all cells for that visit
@@ -367,9 +399,9 @@ var StudyTrackerHeader = function (_React$Component3) {
                     {
                         onMouseEnter: this.highlightVisits,
                         onMouseLeave: this.unHighlightVisits,
+                        onClick: this.props.showSideNav,
                         key: vl,
-                        className: cssClass
-                    },
+                        className: cssClass },
                     vl
                 );
             }.bind(this));
@@ -389,37 +421,67 @@ var StudyTrackerHeader = function (_React$Component3) {
     return StudyTrackerHeader;
 }(React.Component);
 
-var StudyTracker = function (_React$Component4) {
-    _inherits(StudyTracker, _React$Component4);
+var StudyTracker = function (_React$Component5) {
+    _inherits(StudyTracker, _React$Component5);
 
     function StudyTracker() {
         _classCallCheck(this, StudyTracker);
 
-        var _this4 = _possibleConstructorReturn(this, (StudyTracker.__proto__ || Object.getPrototypeOf(StudyTracker)).call(this));
+        var _this5 = _possibleConstructorReturn(this, (StudyTracker.__proto__ || Object.getPrototypeOf(StudyTracker)).call(this));
 
-        _this4.state = {
+        _this5.state = {
             rows: dummyData,
             visitLabels: visitLabels,
             currentSite: "all",
             sites: sites,
+            teams: [],
+            currentTeam: "COMPASS-ND",
             currentCohort: "all",
-            cohorts: cohorts
+            cohorts: cohorts,
+            currentVisitFocus: null
         };
 
-        _this4.filterSites = _this4.filterSites.bind(_this4);
-        _this4.filterCohorts = _this4.filterCohorts.bind(_this4);
-        _this4.rowHasCurrentCohortVisit = _this4.rowHasCurrentCohortVisit.bind(_this4);
-        return _this4;
+        _this5.showSideNav = _this5.showSideNav.bind(_this5);
+        _this5.closeSideNav = _this5.closeSideNav.bind(_this5);
+        _this5.filterSites = _this5.filterSites.bind(_this5);
+        _this5.filterTeams = _this5.filterTeams.bind(_this5);
+        _this5.filterCohorts = _this5.filterCohorts.bind(_this5);
+        _this5.rowHasCurrentCohortVisit = _this5.rowHasCurrentCohortVisit.bind(_this5);
+        return _this5;
     }
 
-    // Function which is called when cohort filter is changed
-
-
     _createClass(StudyTracker, [{
+        key: "showSideNav",
+        value: function showSideNav(event) {
+            var visit = $(event.target).text();
+            this.setState({ currentVisitFocus: visit });
+            console.log(visit);
+            $(".SideNav").css("width", "250px");
+        }
+    }, {
+        key: "closeSideNav",
+        value: function closeSideNav(event) {
+            $(".SideNav").css("width", "0px");
+        }
+
+        // Function which is called when cohort filter is changed
+
+    }, {
         key: "filterCohorts",
         value: function filterCohorts(event) {
             this.setState({ currentCohort: event.target.value });
         }
+
+        // Function which will handle team filtering
+
+    }, {
+        key: "filterTeams",
+        value: function filterTeams(event) {}
+        // Here there should be an AJAX call which fetches a new
+        // data object and then updates the state like:
+        // this.setState({rows: newRows, visitLabels: newVLs});
+        // or something
+
 
         // Function which is called when site filter is changed
 
@@ -473,19 +535,25 @@ var StudyTracker = function (_React$Component4) {
                 React.createElement(Filters, {
                     sites: this.state.sites,
                     filterSites: this.filterSites,
+                    teams: this.state.teams,
+                    filterTeams: this.filterTeams,
                     cohorts: this.state.cohorts,
                     filterCohorts: this.filterCohorts
                 }),
                 React.createElement(
                     "table",
                     null,
-                    React.createElement(StudyTrackerHeader, { visitLabels: this.state.visitLabels }),
+                    React.createElement(StudyTrackerHeader, {
+                        visitLabels: this.state.visitLabels,
+                        showSideNav: this.showSideNav
+                    }),
                     React.createElement(
                         "tbody",
                         null,
                         dataRows
                     )
-                )
+                ),
+                React.createElement(SideNav, { closeSideNav: this.closeSideNav })
             );
         }
     }]);

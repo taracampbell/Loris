@@ -174,8 +174,8 @@ function SiteFilter(props) {
 function TeamFilter(props) {
     return (
         <td>
-            <select>
-                <option value="team">Team</option>
+            <select onChange={props.filterTeams}>
+                <option value="COMPASS-ND">COMPASS-ND</option>
             </select>
         </td>
     );
@@ -203,7 +203,7 @@ class Filters extends React.Component {
                 <tbody>
                     <tr>
                         <SiteFilter sites={this.props.sites} filterSites={this.props.filterSites}/>
-                        <TeamFilter />
+                        <TeamFilter teams={this.props.teams} filterTeams={this.props.filterTeams}/>
                         <CohortFilter cohorts={this.props.cohorts} filterCohorts={this.props.filterCohorts}/>
                     </tr>
                 </tbody>
@@ -218,6 +218,17 @@ function PSCIDCell(props) {
     return (
         <td>{props.pscid}</td>
     );
+}
+
+class SideNav extends React.Component {
+    render() {
+        return (
+            <div className="SideNav">
+                <a href="#" className="closebtn" onClick={this.props.closeSideNav}>&times;</a>
+                <span>peekaboo ya filthy marmot</span>
+            </div>
+        );
+    }
 }
 
 function VisitCell(props) {
@@ -289,6 +300,7 @@ class StudyTrackerHeader extends React.Component {
             <th
                 onMouseEnter={this.highlightVisits}
                 onMouseLeave={this.unHighlightVisits}
+                onClick={this.props.showSideNav}
                 key={vl}
                 className={cssClass}>
                 {vl}
@@ -315,18 +327,43 @@ class StudyTracker extends React.Component {
              visitLabels: visitLabels,
              currentSite: "all",
              sites: sites,
+             teams: [],
+             currentTeam: "COMPASS-ND",
              currentCohort: "all",
-             cohorts: cohorts
+             cohorts: cohorts,
+             currentVisitFocus: null
         };
 
+        this.showSideNav = this.showSideNav.bind(this);
+        this.closeSideNav = this.closeSideNav.bind(this);
         this.filterSites = this.filterSites.bind(this);
+        this.filterTeams = this.filterTeams.bind(this);
         this.filterCohorts = this.filterCohorts.bind(this);
         this.rowHasCurrentCohortVisit = this.rowHasCurrentCohortVisit.bind(this);
+    }
+
+    showSideNav(event) {
+        var visit = $(event.target).text();
+        this.setState({currentVisitFocus: visit});
+        console.log(visit);
+        $(".SideNav").css("width", "250px");
+    }
+
+    closeSideNav(event) {
+        $(".SideNav").css("width", "0px");
     }
 
     // Function which is called when cohort filter is changed
     filterCohorts(event) {
         this.setState({currentCohort: event.target.value});
+    }
+
+    // Function which will handle team filtering
+    filterTeams(event) {
+        // Here there should be an AJAX call which fetches a new
+        // data object and then updates the state like:
+        // this.setState({rows: newRows, visitLabels: newVLs});
+        // or something
     }
 
     // Function which is called when site filter is changed
@@ -357,12 +394,14 @@ class StudyTracker extends React.Component {
         var dataRows = this.state.rows.map(function (row) {
                 if(this.rowHasCurrentCohortVisit(row) &&
                     (row.psc === this.state.currentSite || this.state.currentSite === "all")) {
-                    return <StudyTrackerRow
-                        key={row.pscid}
-                        pscid={row.pscid}
-                        visits={row.visits}
-                        currentCohort={this.state.currentCohort}
-                    />
+                    return (
+                        <StudyTrackerRow
+                            key={row.pscid}
+                            pscid={row.pscid}
+                            visits={row.visits}
+                            currentCohort={this.state.currentCohort}
+                        />
+                    )
                 }
             }.bind(this)
         );
@@ -372,15 +411,21 @@ class StudyTracker extends React.Component {
                 <Filters
                     sites={this.state.sites}
                     filterSites={this.filterSites}
+                    teams={this.state.teams}
+                    filterTeams={this.filterTeams}
                     cohorts={this.state.cohorts}
                     filterCohorts={this.filterCohorts}
                 />
                 <table>
-                    <StudyTrackerHeader visitLabels={this.state.visitLabels}/>
+                    <StudyTrackerHeader
+                        visitLabels={this.state.visitLabels}
+                        showSideNav={this.showSideNav}
+                    />
                     <tbody>
                     {dataRows}
                     </tbody>
                 </table>
+                <SideNav closeSideNav={this.closeSideNav}/>
             </div>
         );
     }

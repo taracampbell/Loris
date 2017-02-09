@@ -5,7 +5,8 @@ var dummyData = [
         "visits": [
             {
                 "sessionID": "1",
-                "status": "deadline-past-data-entry",
+                "visitRegStatus": "complete-visit",
+                "dataEntryStatus": "deadline-past-data-entry",
                 "dueDate": randomDate(),
                 "instrumentsCompleted": 1,
                 "totalInstruments": 22,
@@ -14,7 +15,8 @@ var dummyData = [
             },
             {
                 "sessionID": "2",
-                "status": "no-deadline-visit",
+                "visitRegStatus": "no-deadline-visit",
+                "dataEntryStatus": "deadline-approaching-data-entry",
                 "dueDate": randomDate(),
                 "instrumentsCompleted": 2,
                 "totalInstruments": 22,
@@ -23,7 +25,8 @@ var dummyData = [
             },
             {
                 "sessionID": "3",
-                "status": "complete-data-entry",
+                "visitRegStatus": "deadline-approaching-visit",
+                "dataEntryStatus": "complete-data-entry",
                 "dueDate": randomDate(),
                 "instrumentsCompleted": 3,
                 "totalInstruments": 22,
@@ -38,7 +41,8 @@ var dummyData = [
         "visits": [
             {
                 "sessionID": "4",
-                "status": "cancelled-data",
+                "visitRegStatus": "complete-visit",
+                "dataEntryStatus": "cancelled-data",
                 "dueDate": randomDate(),
                 "instrumentsCompleted": 1,
                 "totalInstruments": 22,
@@ -47,7 +51,8 @@ var dummyData = [
             },
             {
                 "sessionID": "5",
-                "status": "deadline-past-visit",
+                "visitRegStatus": "deadline-past-visit",
+                "dataEntryStatus": "deadline-approaching-data-entry",
                 "dueDate": randomDate(),
                 "instrumentsCompleted": 2,
                 "totalInstruments": 22,
@@ -56,7 +61,8 @@ var dummyData = [
             },
             {
                 "sessionID": "6",
-                "status": "deadline-past-data-entry",
+                "visitRegStatus": "deadline-approaching-visit",
+                "dataEntryStatus": "deadline-past-data-entry",
                 "dueDate": randomDate(),
                 "instrumentsCompleted": 3,
                 "totalInstruments": 22,
@@ -71,7 +77,8 @@ var dummyData = [
         "visits": [
             {
                 "sessionID": "7",
-                "status": "no-deadline-visit",
+                "visitRegStatus": "complete-visit",
+                "dataEntryStatus": "deadline-approaching-data-entry",
                 "dueDate": randomDate(),
                 "instrumentsCompleted": 1,
                 "totalInstruments": 22,
@@ -80,7 +87,8 @@ var dummyData = [
             },
             {
                 "sessionID": "8",
-                "status": "deadline-past-visit",
+                "visitRegStatus": "deadline-past-visit",
+                "dataEntryStatus": "deadline-approaching-data-entry",
                 "dueDate": randomDate(),
                 "instrumentsCompleted": 2,
                 "totalInstruments": 22,
@@ -90,7 +98,8 @@ var dummyData = [
             },
             {
                 "sessionID": "9",
-                "status": "deadline-past-visit",
+                "visitRegStatus": "deadline-past-visit",
+                "dataEntryStatus": "deadline-approaching-data-entry",
                 "dueDate": randomDate(),
                 "instrumentsCompleted": 3,
                 "totalInstruments": 22,
@@ -105,7 +114,8 @@ var dummyData = [
         "visits": [
             {
                 "sessionID": "10",
-                "status": "no-deadline-visit",
+                "visitRegStatus": "complete-visit",
+                "dataEntryStatus": "deadline-approaching-data-entry",
                 "dueDate": randomDate(),
                 "instrumentsCompleted": 1,
                 "totalInstruments": 22,
@@ -114,7 +124,8 @@ var dummyData = [
             },
             {
                 "sessionID": "11",
-                "status": "deadline-approaching-data-entry",
+                "dataEntryStatus": "deadline-approaching-data-entry",
+                "visitRegStatus": "deadline-approaching-visit",
                 "dueDate": randomDate(),
                 "instrumentsCompleted": 2,
                 "totalInstruments": 22,
@@ -123,7 +134,8 @@ var dummyData = [
             },
             {
                 "sessionID": "12",
-                "status": "deadline-approaching-visit",
+                "visitRegStatus": "deadline-approaching-visit",
+                "dataEntryStatus": "deadline-approaching-data-entry",
                 "dueDate": randomDate(),
                 "instrumentsCompleted": 3,
                 "totalInstruments": 22,
@@ -227,7 +239,7 @@ class SideBar extends React.Component {
         return (
             <div className="SideBar">
                 <a href="#" className="closebtn" onClick={this.props.closeSideBar}>&times;</a>
-                <span>{this.props.sideBarContent}</span>
+                {this.props.sideBarContent}
             </div>
         );
     }
@@ -237,7 +249,9 @@ function VisitCell(props) {
     // will need to include additional data
     // for each visit
     if (props.visit.cohort === props.currentCohort || props.currentCohort === "all") {
-        var visitClass = "circle " + props.visit.status;
+        var visitClass = "circle "
+            + props.visit.dataEntryStatus + " "
+            + props.visit.visitRegStatus;
 
         var now = new Date();
         var dueDate = props.visit.dueDate;
@@ -246,10 +260,9 @@ function VisitCell(props) {
             <td className={props.visit.visitLabel}>
                 <div data-tip data-for={props.visit.sessionID} className={visitClass}>
                     <ReactTooltip id={props.visit.sessionID} place="top" type="dark" effect="solid">
-                        <span>Visit Registration: <br/></span>
+                        <span>Visit Registration: {props.visit.visitRegStatus}<br/></span>
                         <span>Data Entry: due in {daysLeft} days<br/></span>
-                        <span><i>{props.visit.instrumentsCompleted}/{props.visit.totalInstruments}
-                            instruments entered</i></span>
+                        <span><i>{props.visit.instrumentsCompleted}/{props.visit.totalInstruments} instruments entered</i></span>
                     </ReactTooltip>
                 </div>
             </td>
@@ -264,8 +277,7 @@ class PSCIDCell extends React.Component {
         return (
             <td
                 className='PSCIDCell'
-                onClick={this.props.showCandFocus}
-            >
+                onClick={this.props.showCandFocus}>
                 {this.props.pscid}
             </td>
         );
@@ -278,8 +290,7 @@ class StudyTrackerRow extends React.Component {
                 return <VisitCell
                     key={v.sessionID}
                     visit={v}
-                    currentCohort={this.props.currentCohort}
-                />
+                    currentCohort={this.props.currentCohort}/>
             }.bind(this)
         );
         return(
@@ -350,9 +361,7 @@ class StudyTracker extends React.Component {
              currentTeam: "COMPASS-ND",
              currentCohort: "all",
              cohorts: cohorts,
-             currentVisitFocus: null,
-             currentCandFocus: null,
-             sideBarContent: ""
+             sideBarContent: null
         };
 
         this.showCandFocus = this.showCandFocus.bind(this);
@@ -367,25 +376,44 @@ class StudyTracker extends React.Component {
 
     showCandFocus(event) {
         var pscid = $(event.target).text();
+        var content = [];
+
+        content[0] = <span>Participant {pscid}</span>;
+
+        var visits;
+
+        for(var i = 0; i < this.state.rows.length; i++) {
+            var r = this.state.rows[i];
+            if (r.pscid === pscid) {
+                visits = r.visits;
+                break;
+            }
+        }
+
+        var visitContent = visits.map( function(v) {
+               return <p>{v.visitLabel}: {v.visitRegStatus} {v.dataEntryStatus}<br/></p>
+            }.bind(this)
+        );
+
+        content = content.concat(visitContent);
+
         this.setState({
-            sideBarContent: pscid + " Info"
+            sideBarContent: content
         });
         this.showSideBar();
     }
 
     showVisitFocus(event){
         var visit = $(event.target).text();
+
+        var content = <p>{visit} Visit</p>;
         this.setState({
-            sideBarContent: visit +" Info"
+            sideBarContent: content
         });
         this.showSideBar();
     }
 
     showSideBar() {
-        /*var visit = $(event.target).text();
-        var target = $(event.target).attr("class");
-        console.log(target);*/
-        //this.setState({currentVisitFocus: visit});
         $(".SideBar").css("width", "250px");
     }
 
@@ -473,6 +501,13 @@ class StudyTracker extends React.Component {
             </div>
         );
     }
+}
+
+// Takes as input the status for visit registration and
+// data entry and returns a formatted nicer looking
+// text
+function prettyStatus(visitReg, dataEntry){
+
 }
 
 function randomDate() {

@@ -13,7 +13,8 @@ var dummyData = [{
     "psc": "JGH",
     "visits": [{
         "sessionID": "1",
-        "status": "deadline-past-data-entry",
+        "visitRegStatus": "complete-visit",
+        "dataEntryStatus": "deadline-past-data-entry",
         "dueDate": randomDate(),
         "instrumentsCompleted": 1,
         "totalInstruments": 22,
@@ -21,7 +22,8 @@ var dummyData = [{
         "cohort": "MCI"
     }, {
         "sessionID": "2",
-        "status": "no-deadline-visit",
+        "visitRegStatus": "no-deadline-visit",
+        "dataEntryStatus": "deadline-approaching-data-entry",
         "dueDate": randomDate(),
         "instrumentsCompleted": 2,
         "totalInstruments": 22,
@@ -29,7 +31,8 @@ var dummyData = [{
         "cohort": "AD"
     }, {
         "sessionID": "3",
-        "status": "complete-data-entry",
+        "visitRegStatus": "deadline-approaching-visit",
+        "dataEntryStatus": "complete-data-entry",
         "dueDate": randomDate(),
         "instrumentsCompleted": 3,
         "totalInstruments": 22,
@@ -41,7 +44,8 @@ var dummyData = [{
     "psc": "PKD",
     "visits": [{
         "sessionID": "4",
-        "status": "cancelled-data",
+        "visitRegStatus": "complete-visit",
+        "dataEntryStatus": "cancelled-data",
         "dueDate": randomDate(),
         "instrumentsCompleted": 1,
         "totalInstruments": 22,
@@ -49,7 +53,8 @@ var dummyData = [{
         "cohort": "AD"
     }, {
         "sessionID": "5",
-        "status": "deadline-past-visit",
+        "visitRegStatus": "deadline-past-visit",
+        "dataEntryStatus": "deadline-approaching-data-entry",
         "dueDate": randomDate(),
         "instrumentsCompleted": 2,
         "totalInstruments": 22,
@@ -57,7 +62,8 @@ var dummyData = [{
         "cohort": "SCI"
     }, {
         "sessionID": "6",
-        "status": "deadline-past-data-entry",
+        "visitRegStatus": "deadline-approaching-visit",
+        "dataEntryStatus": "deadline-past-data-entry",
         "dueDate": randomDate(),
         "instrumentsCompleted": 3,
         "totalInstruments": 22,
@@ -69,7 +75,8 @@ var dummyData = [{
     "psc": "JGH",
     "visits": [{
         "sessionID": "7",
-        "status": "no-deadline-visit",
+        "visitRegStatus": "complete-visit",
+        "dataEntryStatus": "deadline-approaching-data-entry",
         "dueDate": randomDate(),
         "instrumentsCompleted": 1,
         "totalInstruments": 22,
@@ -77,7 +84,8 @@ var dummyData = [{
         "cohort": "SCI"
     }, {
         "sessionID": "8",
-        "status": "deadline-past-visit",
+        "visitRegStatus": "deadline-past-visit",
+        "dataEntryStatus": "deadline-approaching-data-entry",
         "dueDate": randomDate(),
         "instrumentsCompleted": 2,
         "totalInstruments": 22,
@@ -86,7 +94,8 @@ var dummyData = [{
 
     }, {
         "sessionID": "9",
-        "status": "deadline-past-visit",
+        "visitRegStatus": "deadline-past-visit",
+        "dataEntryStatus": "deadline-approaching-data-entry",
         "dueDate": randomDate(),
         "instrumentsCompleted": 3,
         "totalInstruments": 22,
@@ -98,7 +107,8 @@ var dummyData = [{
     "psc": "PKD",
     "visits": [{
         "sessionID": "10",
-        "status": "no-deadline-visit",
+        "visitRegStatus": "complete-visit",
+        "dataEntryStatus": "deadline-approaching-data-entry",
         "dueDate": randomDate(),
         "instrumentsCompleted": 1,
         "totalInstruments": 22,
@@ -106,7 +116,8 @@ var dummyData = [{
         "cohort": "AD"
     }, {
         "sessionID": "11",
-        "status": "deadline-approaching-data-entry",
+        "dataEntryStatus": "deadline-approaching-data-entry",
+        "visitRegStatus": "deadline-approaching-visit",
         "dueDate": randomDate(),
         "instrumentsCompleted": 2,
         "totalInstruments": 22,
@@ -114,7 +125,8 @@ var dummyData = [{
         "cohort": "AD"
     }, {
         "sessionID": "12",
-        "status": "deadline-approaching-visit",
+        "visitRegStatus": "deadline-approaching-visit",
+        "dataEntryStatus": "deadline-approaching-data-entry",
         "dueDate": randomDate(),
         "instrumentsCompleted": 3,
         "totalInstruments": 22,
@@ -263,11 +275,7 @@ var SideBar = function (_React$Component2) {
                     { href: "#", className: "closebtn", onClick: this.props.closeSideBar },
                     "\xD7"
                 ),
-                React.createElement(
-                    "span",
-                    null,
-                    this.props.sideBarContent
-                )
+                this.props.sideBarContent
             );
         }
     }]);
@@ -279,7 +287,7 @@ function VisitCell(props) {
     // will need to include additional data
     // for each visit
     if (props.visit.cohort === props.currentCohort || props.currentCohort === "all") {
-        var visitClass = "circle " + props.visit.status;
+        var visitClass = "circle " + props.visit.dataEntryStatus + " " + props.visit.visitRegStatus;
 
         var now = new Date();
         var dueDate = props.visit.dueDate;
@@ -297,6 +305,7 @@ function VisitCell(props) {
                         "span",
                         null,
                         "Visit Registration: ",
+                        props.visit.visitRegStatus,
                         React.createElement("br", null)
                     ),
                     React.createElement(
@@ -316,7 +325,7 @@ function VisitCell(props) {
                             props.visit.instrumentsCompleted,
                             "/",
                             props.visit.totalInstruments,
-                            "instruments entered"
+                            " instruments entered"
                         )
                     )
                 )
@@ -343,8 +352,7 @@ var PSCIDCell = function (_React$Component3) {
                 "td",
                 {
                     className: "PSCIDCell",
-                    onClick: this.props.showCandFocus
-                },
+                    onClick: this.props.showCandFocus },
                 this.props.pscid
             );
         }
@@ -369,8 +377,7 @@ var StudyTrackerRow = function (_React$Component4) {
                 return React.createElement(VisitCell, {
                     key: v.sessionID,
                     visit: v,
-                    currentCohort: this.props.currentCohort
-                });
+                    currentCohort: this.props.currentCohort });
             }.bind(this));
             return React.createElement(
                 "tr",
@@ -466,9 +473,7 @@ var StudyTracker = function (_React$Component6) {
             currentTeam: "COMPASS-ND",
             currentCohort: "all",
             cohorts: cohorts,
-            currentVisitFocus: null,
-            currentCandFocus: null,
-            sideBarContent: ""
+            sideBarContent: null
         };
 
         _this6.showCandFocus = _this6.showCandFocus.bind(_this6);
@@ -486,8 +491,42 @@ var StudyTracker = function (_React$Component6) {
         key: "showCandFocus",
         value: function showCandFocus(event) {
             var pscid = $(event.target).text();
+            var content = [];
+
+            content[0] = React.createElement(
+                "span",
+                null,
+                "Participant ",
+                pscid
+            );
+
+            var visits;
+
+            for (var i = 0; i < this.state.rows.length; i++) {
+                var r = this.state.rows[i];
+                if (r.pscid === pscid) {
+                    visits = r.visits;
+                    break;
+                }
+            }
+
+            var visitContent = visits.map(function (v) {
+                return React.createElement(
+                    "p",
+                    null,
+                    v.visitLabel,
+                    ": ",
+                    v.visitRegStatus,
+                    " ",
+                    v.dataEntryStatus,
+                    React.createElement("br", null)
+                );
+            }.bind(this));
+
+            content = content.concat(visitContent);
+
             this.setState({
-                sideBarContent: pscid + " Info"
+                sideBarContent: content
             });
             this.showSideBar();
         }
@@ -495,18 +534,21 @@ var StudyTracker = function (_React$Component6) {
         key: "showVisitFocus",
         value: function showVisitFocus(event) {
             var visit = $(event.target).text();
+
+            var content = React.createElement(
+                "p",
+                null,
+                visit,
+                " Visit"
+            );
             this.setState({
-                sideBarContent: visit + " Info"
+                sideBarContent: content
             });
             this.showSideBar();
         }
     }, {
         key: "showSideBar",
         value: function showSideBar() {
-            /*var visit = $(event.target).text();
-            var target = $(event.target).attr("class");
-            console.log(target);*/
-            //this.setState({currentVisitFocus: visit});
             $(".SideBar").css("width", "250px");
         }
     }, {
@@ -615,6 +657,13 @@ var StudyTracker = function (_React$Component6) {
 
     return StudyTracker;
 }(React.Component);
+
+// Takes as input the status for visit registration and
+// data entry and returns a formatted nicer looking
+// text
+
+
+function prettyStatus(visitReg, dataEntry) {}
 
 function randomDate() {
     var now = new Date();

@@ -9,7 +9,7 @@ table {
 }
 
 th, td, tr {
-    padding: 15px;
+    padding: 15px 60px;
 }
 
 .SideBar {
@@ -29,10 +29,14 @@ th, td, tr {
 .SideBar span {
     padding: 8px 8px 8px 32px;
     text-decoration: none;
-    font-size: 25px;
+    font-size: 20px;
     color: #818181;
     display: block;
     transition: 0.3s
+}
+
+.SideBar p {
+
 }
 
 .SideBar .closebtn {
@@ -44,12 +48,17 @@ th, td, tr {
     transition: 0.3s
 }
 
+.Filters {
+    margin-left: 500px;
+    padding: 10px;
+}
+
 .VLHeader, .PSCIDCell {
     color: black;
     cursor: pointer;
 }
 
-.StudyTrackerRow {
+.StudyTrackerRow, .StudyTrackerHeader{
     border-bottom: 1px solid #ccc;
     border-top: 1px solid #ccc;
 }
@@ -62,12 +71,6 @@ th, td, tr {
     margin: auto;
     text-align: center;
 }
-
-.Filters {
-    margin-left: 500px;
-    padding: 10px;
-}
-
 
 .circle {
     border-radius: 50%;

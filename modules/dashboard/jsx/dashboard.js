@@ -202,9 +202,18 @@ class Filters extends React.Component {
             <table className="Filters">
                 <tbody>
                     <tr>
-                        <SiteFilter sites={this.props.sites} filterSites={this.props.filterSites}/>
-                        <TeamFilter teams={this.props.teams} filterTeams={this.props.filterTeams}/>
-                        <CohortFilter cohorts={this.props.cohorts} filterCohorts={this.props.filterCohorts}/>
+                        <SiteFilter
+                            sites={this.props.sites}
+                            filterSites={this.props.filterSites}
+                        />
+                        <TeamFilter
+                            teams={this.props.teams}
+                            filterTeams={this.props.filterTeams}
+                        />
+                        <CohortFilter
+                            cohorts={this.props.cohorts}
+                            filterCohorts={this.props.filterCohorts}
+                        />
                     </tr>
                 </tbody>
             </table>
@@ -212,20 +221,13 @@ class Filters extends React.Component {
     }
 }
 
-// Change to class if there is to be more than just
-// rendering
-function PSCIDCell(props) {
-    return (
-        <td>{props.pscid}</td>
-    );
-}
 
-class SideNav extends React.Component {
+class SideBar extends React.Component {
     render() {
         return (
-            <div className="SideNav">
-                <a href="#" className="closebtn" onClick={this.props.closeSideNav}>&times;</a>
-                <span>peekaboo ya filthy marmot</span>
+            <div className="SideBar">
+                <a href="#" className="closebtn" onClick={this.props.closeSideBar}>&times;</a>
+                <span>{this.props.sideBarContent}</span>
             </div>
         );
     }
@@ -253,10 +255,22 @@ function VisitCell(props) {
             </td>
         );
     } else {
-        return (<td></td>);
+        return (<td className={props.visit.visitLabel}></td>);
     }
 }
 
+class PSCIDCell extends React.Component {
+    render() {
+        return (
+            <td
+                className='PSCIDCell'
+                onClick={this.props.showCandFocus}
+            >
+                {this.props.pscid}
+            </td>
+        );
+    }
+}
 
 class StudyTrackerRow extends React.Component {
     render() {
@@ -270,7 +284,10 @@ class StudyTrackerRow extends React.Component {
         );
         return(
             <tr className="StudyTrackerRow">
-                <PSCIDCell pscid={this.props.pscid}/>
+                <PSCIDCell
+                    pscid={this.props.pscid}
+                    showCandFocus={this.props.showCandFocus}
+                />
                 {visits}
             </tr>
         );
@@ -285,6 +302,8 @@ class StudyTrackerHeader extends React.Component {
     }
 
     // When mouse enters header cell, highlight all cells for that visit
+    // This means that the text that shows up in the column header
+    // must be equal to the css class name which is perhaps bad design
     highlightVisits(event) {
         var visitClass = "." + $(event.target).text();
         $(visitClass).css("background-color", "#f5f5f5");
@@ -300,7 +319,7 @@ class StudyTrackerHeader extends React.Component {
             <th
                 onMouseEnter={this.highlightVisits}
                 onMouseLeave={this.unHighlightVisits}
-                onClick={this.props.showSideNav}
+                onClick={this.props.showVisitFocus}
                 key={vl}
                 className={cssClass}>
                 {vl}
@@ -331,26 +350,47 @@ class StudyTracker extends React.Component {
              currentTeam: "COMPASS-ND",
              currentCohort: "all",
              cohorts: cohorts,
-             currentVisitFocus: null
+             currentVisitFocus: null,
+             currentCandFocus: null,
+             sideBarContent: ""
         };
 
-        this.showSideNav = this.showSideNav.bind(this);
-        this.closeSideNav = this.closeSideNav.bind(this);
+        this.showCandFocus = this.showCandFocus.bind(this);
+        this.showVisitFocus = this.showVisitFocus.bind(this);
+        this.showSideBar = this.showSideBar.bind(this);
+        this.closeSideBar = this.closeSideBar.bind(this);
         this.filterSites = this.filterSites.bind(this);
         this.filterTeams = this.filterTeams.bind(this);
         this.filterCohorts = this.filterCohorts.bind(this);
         this.rowHasCurrentCohortVisit = this.rowHasCurrentCohortVisit.bind(this);
     }
 
-    showSideNav(event) {
-        var visit = $(event.target).text();
-        this.setState({currentVisitFocus: visit});
-        console.log(visit);
-        $(".SideNav").css("width", "250px");
+    showCandFocus(event) {
+        var pscid = $(event.target).text();
+        this.setState({
+            sideBarContent: pscid + " Info"
+        });
+        this.showSideBar();
     }
 
-    closeSideNav(event) {
-        $(".SideNav").css("width", "0px");
+    showVisitFocus(event){
+        var visit = $(event.target).text();
+        this.setState({
+            sideBarContent: visit +" Info"
+        });
+        this.showSideBar();
+    }
+
+    showSideBar() {
+        /*var visit = $(event.target).text();
+        var target = $(event.target).attr("class");
+        console.log(target);*/
+        //this.setState({currentVisitFocus: visit});
+        $(".SideBar").css("width", "250px");
+    }
+
+    closeSideBar() {
+        $(".SideBar").css("width", "0px");
     }
 
     // Function which is called when cohort filter is changed
@@ -400,6 +440,7 @@ class StudyTracker extends React.Component {
                             pscid={row.pscid}
                             visits={row.visits}
                             currentCohort={this.state.currentCohort}
+                            showCandFocus={this.showCandFocus}
                         />
                     )
                 }
@@ -419,13 +460,16 @@ class StudyTracker extends React.Component {
                 <table>
                     <StudyTrackerHeader
                         visitLabels={this.state.visitLabels}
-                        showSideNav={this.showSideNav}
+                        showVisitFocus={this.showVisitFocus}
                     />
                     <tbody>
                     {dataRows}
                     </tbody>
                 </table>
-                <SideNav closeSideNav={this.closeSideNav}/>
+                <SideBar
+                    closeSideBar={this.closeSideBar}
+                    sideBarContent={this.state.sideBarContent}
+                />
             </div>
         );
     }

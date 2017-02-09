@@ -222,9 +222,18 @@ var Filters = function (_React$Component) {
                     React.createElement(
                         "tr",
                         null,
-                        React.createElement(SiteFilter, { sites: this.props.sites, filterSites: this.props.filterSites }),
-                        React.createElement(TeamFilter, { teams: this.props.teams, filterTeams: this.props.filterTeams }),
-                        React.createElement(CohortFilter, { cohorts: this.props.cohorts, filterCohorts: this.props.filterCohorts })
+                        React.createElement(SiteFilter, {
+                            sites: this.props.sites,
+                            filterSites: this.props.filterSites
+                        }),
+                        React.createElement(TeamFilter, {
+                            teams: this.props.teams,
+                            filterTeams: this.props.filterTeams
+                        }),
+                        React.createElement(CohortFilter, {
+                            cohorts: this.props.cohorts,
+                            filterCohorts: this.props.filterCohorts
+                        })
                     )
                 )
             );
@@ -234,48 +243,36 @@ var Filters = function (_React$Component) {
     return Filters;
 }(React.Component);
 
-// Change to class if there is to be more than just
-// rendering
+var SideBar = function (_React$Component2) {
+    _inherits(SideBar, _React$Component2);
 
+    function SideBar() {
+        _classCallCheck(this, SideBar);
 
-function PSCIDCell(props) {
-    return React.createElement(
-        "td",
-        null,
-        props.pscid
-    );
-}
-
-var SideNav = function (_React$Component2) {
-    _inherits(SideNav, _React$Component2);
-
-    function SideNav() {
-        _classCallCheck(this, SideNav);
-
-        return _possibleConstructorReturn(this, (SideNav.__proto__ || Object.getPrototypeOf(SideNav)).apply(this, arguments));
+        return _possibleConstructorReturn(this, (SideBar.__proto__ || Object.getPrototypeOf(SideBar)).apply(this, arguments));
     }
 
-    _createClass(SideNav, [{
+    _createClass(SideBar, [{
         key: "render",
         value: function render() {
             return React.createElement(
                 "div",
-                { className: "SideNav" },
+                { className: "SideBar" },
                 React.createElement(
                     "a",
-                    { href: "#", className: "closebtn", onClick: this.props.closeSideNav },
+                    { href: "#", className: "closebtn", onClick: this.props.closeSideBar },
                     "\xD7"
                 ),
                 React.createElement(
                     "span",
                     null,
-                    "peekaboo ya filthy marmot"
+                    this.props.sideBarContent
                 )
             );
         }
     }]);
 
-    return SideNav;
+    return SideBar;
 }(React.Component);
 
 function VisitCell(props) {
@@ -326,12 +323,38 @@ function VisitCell(props) {
             )
         );
     } else {
-        return React.createElement("td", null);
+        return React.createElement("td", { className: props.visit.visitLabel });
     }
 }
 
-var StudyTrackerRow = function (_React$Component3) {
-    _inherits(StudyTrackerRow, _React$Component3);
+var PSCIDCell = function (_React$Component3) {
+    _inherits(PSCIDCell, _React$Component3);
+
+    function PSCIDCell() {
+        _classCallCheck(this, PSCIDCell);
+
+        return _possibleConstructorReturn(this, (PSCIDCell.__proto__ || Object.getPrototypeOf(PSCIDCell)).apply(this, arguments));
+    }
+
+    _createClass(PSCIDCell, [{
+        key: "render",
+        value: function render() {
+            return React.createElement(
+                "td",
+                {
+                    className: "PSCIDCell",
+                    onClick: this.props.showCandFocus
+                },
+                this.props.pscid
+            );
+        }
+    }]);
+
+    return PSCIDCell;
+}(React.Component);
+
+var StudyTrackerRow = function (_React$Component4) {
+    _inherits(StudyTrackerRow, _React$Component4);
 
     function StudyTrackerRow() {
         _classCallCheck(this, StudyTrackerRow);
@@ -352,7 +375,10 @@ var StudyTrackerRow = function (_React$Component3) {
             return React.createElement(
                 "tr",
                 { className: "StudyTrackerRow" },
-                React.createElement(PSCIDCell, { pscid: this.props.pscid }),
+                React.createElement(PSCIDCell, {
+                    pscid: this.props.pscid,
+                    showCandFocus: this.props.showCandFocus
+                }),
                 visits
             );
         }
@@ -361,20 +387,22 @@ var StudyTrackerRow = function (_React$Component3) {
     return StudyTrackerRow;
 }(React.Component);
 
-var StudyTrackerHeader = function (_React$Component4) {
-    _inherits(StudyTrackerHeader, _React$Component4);
+var StudyTrackerHeader = function (_React$Component5) {
+    _inherits(StudyTrackerHeader, _React$Component5);
 
     function StudyTrackerHeader(props) {
         _classCallCheck(this, StudyTrackerHeader);
 
-        var _this4 = _possibleConstructorReturn(this, (StudyTrackerHeader.__proto__ || Object.getPrototypeOf(StudyTrackerHeader)).call(this, props));
+        var _this5 = _possibleConstructorReturn(this, (StudyTrackerHeader.__proto__ || Object.getPrototypeOf(StudyTrackerHeader)).call(this, props));
 
-        _this4.highlightVisits = _this4.highlightVisits.bind(_this4);
-        _this4.unHighlightVisits = _this4.unHighlightVisits.bind(_this4);
-        return _this4;
+        _this5.highlightVisits = _this5.highlightVisits.bind(_this5);
+        _this5.unHighlightVisits = _this5.unHighlightVisits.bind(_this5);
+        return _this5;
     }
 
     // When mouse enters header cell, highlight all cells for that visit
+    // This means that the text that shows up in the column header
+    // must be equal to the css class name which is perhaps bad design
 
 
     _createClass(StudyTrackerHeader, [{
@@ -399,7 +427,7 @@ var StudyTrackerHeader = function (_React$Component4) {
                     {
                         onMouseEnter: this.highlightVisits,
                         onMouseLeave: this.unHighlightVisits,
-                        onClick: this.props.showSideNav,
+                        onClick: this.props.showVisitFocus,
                         key: vl,
                         className: cssClass },
                     vl
@@ -421,15 +449,15 @@ var StudyTrackerHeader = function (_React$Component4) {
     return StudyTrackerHeader;
 }(React.Component);
 
-var StudyTracker = function (_React$Component5) {
-    _inherits(StudyTracker, _React$Component5);
+var StudyTracker = function (_React$Component6) {
+    _inherits(StudyTracker, _React$Component6);
 
     function StudyTracker() {
         _classCallCheck(this, StudyTracker);
 
-        var _this5 = _possibleConstructorReturn(this, (StudyTracker.__proto__ || Object.getPrototypeOf(StudyTracker)).call(this));
+        var _this6 = _possibleConstructorReturn(this, (StudyTracker.__proto__ || Object.getPrototypeOf(StudyTracker)).call(this));
 
-        _this5.state = {
+        _this6.state = {
             rows: dummyData,
             visitLabels: visitLabels,
             currentSite: "all",
@@ -438,30 +466,53 @@ var StudyTracker = function (_React$Component5) {
             currentTeam: "COMPASS-ND",
             currentCohort: "all",
             cohorts: cohorts,
-            currentVisitFocus: null
+            currentVisitFocus: null,
+            currentCandFocus: null,
+            sideBarContent: ""
         };
 
-        _this5.showSideNav = _this5.showSideNav.bind(_this5);
-        _this5.closeSideNav = _this5.closeSideNav.bind(_this5);
-        _this5.filterSites = _this5.filterSites.bind(_this5);
-        _this5.filterTeams = _this5.filterTeams.bind(_this5);
-        _this5.filterCohorts = _this5.filterCohorts.bind(_this5);
-        _this5.rowHasCurrentCohortVisit = _this5.rowHasCurrentCohortVisit.bind(_this5);
-        return _this5;
+        _this6.showCandFocus = _this6.showCandFocus.bind(_this6);
+        _this6.showVisitFocus = _this6.showVisitFocus.bind(_this6);
+        _this6.showSideBar = _this6.showSideBar.bind(_this6);
+        _this6.closeSideBar = _this6.closeSideBar.bind(_this6);
+        _this6.filterSites = _this6.filterSites.bind(_this6);
+        _this6.filterTeams = _this6.filterTeams.bind(_this6);
+        _this6.filterCohorts = _this6.filterCohorts.bind(_this6);
+        _this6.rowHasCurrentCohortVisit = _this6.rowHasCurrentCohortVisit.bind(_this6);
+        return _this6;
     }
 
     _createClass(StudyTracker, [{
-        key: "showSideNav",
-        value: function showSideNav(event) {
-            var visit = $(event.target).text();
-            this.setState({ currentVisitFocus: visit });
-            console.log(visit);
-            $(".SideNav").css("width", "250px");
+        key: "showCandFocus",
+        value: function showCandFocus(event) {
+            var pscid = $(event.target).text();
+            this.setState({
+                sideBarContent: pscid + " Info"
+            });
+            this.showSideBar();
         }
     }, {
-        key: "closeSideNav",
-        value: function closeSideNav(event) {
-            $(".SideNav").css("width", "0px");
+        key: "showVisitFocus",
+        value: function showVisitFocus(event) {
+            var visit = $(event.target).text();
+            this.setState({
+                sideBarContent: visit + " Info"
+            });
+            this.showSideBar();
+        }
+    }, {
+        key: "showSideBar",
+        value: function showSideBar() {
+            /*var visit = $(event.target).text();
+            var target = $(event.target).attr("class");
+            console.log(target);*/
+            //this.setState({currentVisitFocus: visit});
+            $(".SideBar").css("width", "250px");
+        }
+    }, {
+        key: "closeSideBar",
+        value: function closeSideBar() {
+            $(".SideBar").css("width", "0px");
         }
 
         // Function which is called when cohort filter is changed
@@ -520,7 +571,8 @@ var StudyTracker = function (_React$Component5) {
                         key: row.pscid,
                         pscid: row.pscid,
                         visits: row.visits,
-                        currentCohort: this.state.currentCohort
+                        currentCohort: this.state.currentCohort,
+                        showCandFocus: this.showCandFocus
                     });
                 }
             }.bind(this));
@@ -545,7 +597,7 @@ var StudyTracker = function (_React$Component5) {
                     null,
                     React.createElement(StudyTrackerHeader, {
                         visitLabels: this.state.visitLabels,
-                        showSideNav: this.showSideNav
+                        showVisitFocus: this.showVisitFocus
                     }),
                     React.createElement(
                         "tbody",
@@ -553,7 +605,10 @@ var StudyTracker = function (_React$Component5) {
                         dataRows
                     )
                 ),
-                React.createElement(SideNav, { closeSideNav: this.closeSideNav })
+                React.createElement(SideBar, {
+                    closeSideBar: this.closeSideBar,
+                    sideBarContent: this.state.sideBarContent
+                })
             );
         }
     }]);

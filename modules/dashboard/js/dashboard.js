@@ -14,8 +14,9 @@ var dummyData = [{
     "visits": [{
         "sessionID": "1",
         "visitRegStatus": "complete-visit",
-        "dataEntryStatus": "deadline-past-data-entry",
-        "dueDate": randomDate(),
+        "dataEntryStatus": "complete-data-entry",
+        "visitRegDueDate": randomDate(),
+        "dataEntryDueDate": randomDate(),
         "instrumentsCompleted": 1,
         "totalInstruments": 22,
         "visitLabel": "Screening",
@@ -24,7 +25,8 @@ var dummyData = [{
         "sessionID": "2",
         "visitRegStatus": "no-deadline-visit",
         "dataEntryStatus": "deadline-approaching-data-entry",
-        "dueDate": randomDate(),
+        "visitRegDueDate": randomDate(),
+        "dataEntryDueDate": randomDate(),
         "instrumentsCompleted": 2,
         "totalInstruments": 22,
         "visitLabel": "Clinical",
@@ -33,7 +35,8 @@ var dummyData = [{
         "sessionID": "3",
         "visitRegStatus": "deadline-approaching-visit",
         "dataEntryStatus": "complete-data-entry",
-        "dueDate": randomDate(),
+        "visitRegDueDate": randomDate(),
+        "dataEntryDueDate": randomDate(),
         "instrumentsCompleted": 3,
         "totalInstruments": 22,
         "visitLabel": "Neuropsych",
@@ -46,7 +49,8 @@ var dummyData = [{
         "sessionID": "4",
         "visitRegStatus": "complete-visit",
         "dataEntryStatus": "cancelled-data",
-        "dueDate": randomDate(),
+        "visitRegDueDate": randomDate(),
+        "dataEntryDueDate": randomDate(),
         "instrumentsCompleted": 1,
         "totalInstruments": 22,
         "visitLabel": "Screening",
@@ -55,7 +59,8 @@ var dummyData = [{
         "sessionID": "5",
         "visitRegStatus": "deadline-past-visit",
         "dataEntryStatus": "deadline-approaching-data-entry",
-        "dueDate": randomDate(),
+        "visitRegDueDate": randomDate(),
+        "dataEntryDueDate": randomDate(),
         "instrumentsCompleted": 2,
         "totalInstruments": 22,
         "visitLabel": "Clinical",
@@ -64,7 +69,8 @@ var dummyData = [{
         "sessionID": "6",
         "visitRegStatus": "deadline-approaching-visit",
         "dataEntryStatus": "deadline-past-data-entry",
-        "dueDate": randomDate(),
+        "visitRegDueDate": randomDate(),
+        "dataEntryDueDate": randomDate(),
         "instrumentsCompleted": 3,
         "totalInstruments": 22,
         "visitLabel": "Neuropsych",
@@ -77,7 +83,8 @@ var dummyData = [{
         "sessionID": "7",
         "visitRegStatus": "complete-visit",
         "dataEntryStatus": "deadline-approaching-data-entry",
-        "dueDate": randomDate(),
+        "visitRegDueDate": randomDate(),
+        "dataEntryDueDate": randomDate(),
         "instrumentsCompleted": 1,
         "totalInstruments": 22,
         "visitLabel": "Screening",
@@ -86,7 +93,8 @@ var dummyData = [{
         "sessionID": "8",
         "visitRegStatus": "deadline-past-visit",
         "dataEntryStatus": "deadline-approaching-data-entry",
-        "dueDate": randomDate(),
+        "visitRegDueDate": randomDate(),
+        "dataEntryDueDate": randomDate(),
         "instrumentsCompleted": 2,
         "totalInstruments": 22,
         "visitLabel": "Clinical",
@@ -96,7 +104,8 @@ var dummyData = [{
         "sessionID": "9",
         "visitRegStatus": "deadline-past-visit",
         "dataEntryStatus": "deadline-approaching-data-entry",
-        "dueDate": randomDate(),
+        "visitRegDueDate": randomDate(),
+        "dataEntryDueDate": randomDate(),
         "instrumentsCompleted": 3,
         "totalInstruments": 22,
         "visitLabel": "Neuropsych",
@@ -109,7 +118,8 @@ var dummyData = [{
         "sessionID": "10",
         "visitRegStatus": "complete-visit",
         "dataEntryStatus": "deadline-approaching-data-entry",
-        "dueDate": randomDate(),
+        "visitRegDueDate": randomDate(),
+        "dataEntryDueDate": randomDate(),
         "instrumentsCompleted": 1,
         "totalInstruments": 22,
         "visitLabel": "Screening",
@@ -118,7 +128,8 @@ var dummyData = [{
         "sessionID": "11",
         "dataEntryStatus": "deadline-approaching-data-entry",
         "visitRegStatus": "deadline-approaching-visit",
-        "dueDate": randomDate(),
+        "visitRegDueDate": randomDate(),
+        "dataEntryDueDate": randomDate(),
         "instrumentsCompleted": 2,
         "totalInstruments": 22,
         "visitLabel": "Clinical",
@@ -127,7 +138,8 @@ var dummyData = [{
         "sessionID": "12",
         "visitRegStatus": "deadline-approaching-visit",
         "dataEntryStatus": "deadline-approaching-data-entry",
-        "dueDate": randomDate(),
+        "visitRegDueDate": randomDate(),
+        "dataEntryDueDate": randomDate(),
         "instrumentsCompleted": 3,
         "totalInstruments": 22,
         "visitLabel": "Neuropsych",
@@ -146,6 +158,8 @@ var sites = [{
 }];
 
 var cohorts = ["MCI", "SCI", "AD"];
+
+var MS_TO_DAYS = 1 / (1000 * 60 * 60 * 24);
 
 function SiteFilter(props) {
     var options = props.sites.map(function (site) {
@@ -290,8 +304,8 @@ function VisitCell(props) {
         var visitClass = "circle " + props.visit.dataEntryStatus + " " + props.visit.visitRegStatus;
 
         var now = new Date();
-        var dueDate = props.visit.dueDate;
-        var daysLeft = Math.floor((dueDate - now) / (1000 * 60 * 60 * 24));
+        var vrDisplay = props.prettyStatus(props.visit.visitRegStatus, props.visit.visitRegDueDate);
+        var deDisplay = props.prettyStatus(props.visit.dataEntryStatus, props.visit.dataEntryDueDate);
         return React.createElement(
             "td",
             { className: props.visit.visitLabel },
@@ -302,19 +316,28 @@ function VisitCell(props) {
                     ReactTooltip,
                     { id: props.visit.sessionID, place: "top", type: "dark", effect: "solid" },
                     React.createElement(
-                        "span",
-                        null,
-                        "Visit Registration: ",
-                        props.visit.visitRegStatus,
-                        React.createElement("br", null)
-                    ),
-                    React.createElement(
-                        "span",
-                        null,
-                        "Data Entry: due in ",
-                        daysLeft,
-                        " days",
-                        React.createElement("br", null)
+                        "table",
+                        { className: "ReactTooltipContent" },
+                        React.createElement(
+                            "tr",
+                            null,
+                            React.createElement(
+                                "td",
+                                null,
+                                "Visit Registration:"
+                            ),
+                            vrDisplay.html
+                        ),
+                        React.createElement(
+                            "tr",
+                            null,
+                            React.createElement(
+                                "td",
+                                null,
+                                "Data Entry:"
+                            ),
+                            deDisplay.html
+                        )
                     ),
                     React.createElement(
                         "span",
@@ -377,7 +400,9 @@ var StudyTrackerRow = function (_React$Component4) {
                 return React.createElement(VisitCell, {
                     key: v.sessionID,
                     visit: v,
-                    currentCohort: this.props.currentCohort });
+                    currentCohort: this.props.currentCohort,
+                    prettyStatus: this.props.prettyStatus
+                });
             }.bind(this));
             return React.createElement(
                 "tr",
@@ -475,7 +500,7 @@ var StudyTracker = function (_React$Component6) {
             cohorts: cohorts,
             sideBarContent: null
         };
-
+        _this6.prettyStatus = _this6.prettyStatus.bind(_this6);
         _this6.showCandFocus = _this6.showCandFocus.bind(_this6);
         _this6.showVisitFocus = _this6.showVisitFocus.bind(_this6);
         _this6.showSideBar = _this6.showSideBar.bind(_this6);
@@ -487,14 +512,84 @@ var StudyTracker = function (_React$Component6) {
         return _this6;
     }
 
+    // Returns an object which contains the status and the html to display
+
+
     _createClass(StudyTracker, [{
+        key: "prettyStatus",
+        value: function prettyStatus(status, dueDate) {
+            var html, toReturn;
+            if (~status.indexOf("complete")) {
+                html = React.createElement(
+                    "td",
+                    { className: "complete" },
+                    "Complete"
+                );
+                toReturn = {
+                    "status": "complete",
+                    "html": html
+                };
+            } else if (~status.indexOf("deadline-approaching")) {
+                var daysLeft = Math.floor((dueDate - new Date()) * MS_TO_DAYS);
+                html = React.createElement(
+                    "td",
+                    { className: "deadline-approaching" },
+                    "Due in ",
+                    daysLeft,
+                    " days"
+                );
+                toReturn = {
+                    "status": "deadline-approaching",
+                    "html": html
+                };
+            } else if (~status.indexOf("deadline-past")) {
+                var daysPast = Math.floor((new Date() - dueDate) * MS_TO_DAYS);
+                html = React.createElement(
+                    "td",
+                    { className: "deadline-past" },
+                    daysPast,
+                    " days late"
+                );
+                toReturn = {
+                    "status": "deadline-past",
+                    "html": html
+                };
+            } else if (~status.indexOf("cancelled")) {
+                html = React.createElement(
+                    "td",
+                    { className: "cancelled" },
+                    "Visit cancelled"
+                );
+                toReturn = {
+                    "status": "cancelled",
+                    "html": html
+                };
+            } else if (~status.indexOf("no-deadline")) {
+                html = React.createElement(
+                    "td",
+                    { className: "no-deadline" },
+                    "No deadline specified"
+                );
+                toReturn = {
+                    "status": "no-deadline",
+                    "html": html
+                };
+            }
+
+            return toReturn;
+        }
+
+        // Sets the content of the SideBar and then shows SideBar
+        // for Candidate Focus
+
+    }, {
         key: "showCandFocus",
         value: function showCandFocus(event) {
             var pscid = $(event.target).text();
             var content = [];
 
             content[0] = React.createElement(
-                "span",
+                "h4",
                 null,
                 "Participant ",
                 pscid
@@ -511,16 +606,45 @@ var StudyTracker = function (_React$Component6) {
             }
 
             var visitContent = visits.map(function (v) {
-                return React.createElement(
-                    "p",
-                    null,
-                    v.visitLabel,
-                    ": ",
-                    v.visitRegStatus,
-                    " ",
-                    v.dataEntryStatus,
-                    React.createElement("br", null)
-                );
+                var vr = this.prettyStatus(v.visitRegStatus, v.visitRegDueDate);
+                var de = this.prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
+                if (vr.status === "complete" && de.status === "complete") {
+                    return React.createElement(
+                        "tr",
+                        null,
+                        React.createElement(
+                            "td",
+                            null,
+                            v.visitLabel,
+                            ":"
+                        ),
+                        vr.html
+                    );
+                } else if (vr.status === "complete") {
+                    return React.createElement(
+                        "tr",
+                        null,
+                        React.createElement(
+                            "td",
+                            null,
+                            v.visitLabel,
+                            ": Data entry"
+                        ),
+                        de.html
+                    );
+                } else {
+                    return React.createElement(
+                        "tr",
+                        null,
+                        React.createElement(
+                            "td",
+                            null,
+                            v.visitLabel,
+                            ": Visit registration"
+                        ),
+                        vr.html
+                    );
+                }
             }.bind(this));
 
             content = content.concat(visitContent);
@@ -530,13 +654,17 @@ var StudyTracker = function (_React$Component6) {
             });
             this.showSideBar();
         }
+
+        // Sets the content of the SideBar and then shows SideBar
+        // for Visit Focus
+
     }, {
         key: "showVisitFocus",
         value: function showVisitFocus(event) {
             var visit = $(event.target).text();
 
             var content = React.createElement(
-                "p",
+                "span",
                 null,
                 visit,
                 " Visit"
@@ -549,7 +677,7 @@ var StudyTracker = function (_React$Component6) {
     }, {
         key: "showSideBar",
         value: function showSideBar() {
-            $(".SideBar").css("width", "250px");
+            $(".SideBar").css("width", "400px");
         }
     }, {
         key: "closeSideBar",
@@ -614,7 +742,8 @@ var StudyTracker = function (_React$Component6) {
                         pscid: row.pscid,
                         visits: row.visits,
                         currentCohort: this.state.currentCohort,
-                        showCandFocus: this.showCandFocus
+                        showCandFocus: this.showCandFocus,
+                        prettyStatus: this.prettyStatus
                     });
                 }
             }.bind(this));
@@ -657,13 +786,6 @@ var StudyTracker = function (_React$Component6) {
 
     return StudyTracker;
 }(React.Component);
-
-// Takes as input the status for visit registration and
-// data entry and returns a formatted nicer looking
-// text
-
-
-function prettyStatus(visitReg, dataEntry) {}
 
 function randomDate() {
     var now = new Date();

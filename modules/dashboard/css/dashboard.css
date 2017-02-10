@@ -12,6 +12,10 @@ th, td, tr {
     padding: 15px 60px;
 }
 
+.ReactTooltipContent td, tr {
+    padding: 1px;
+}
+
 .SideBar {
     height: 100%;
     width: 0;
@@ -26,17 +30,18 @@ th, td, tr {
     border: 1px solid #ccc;
 }
 
-.SideBar span {
+/*.SideBar span {
     padding: 8px 8px 8px 32px;
     text-decoration: none;
     font-size: 20px;
     color: #818181;
     display: block;
     transition: 0.3s
-}
+}*/
 
-.SideBar p {
-
+.SideBar td {
+    padding: 5px;
+    text-align: left;
 }
 
 .SideBar .closebtn {
@@ -70,6 +75,26 @@ th, td, tr {
 .StudyTracker {
     margin: auto;
     text-align: center;
+}
+
+.complete {
+    color: #4A90E2;
+}
+
+.deadline-approaching {
+    color: #FFCD0D;
+}
+
+.deadline-past {
+    color: #DD286A;
+}
+
+.no-deadline {
+    color: #9B9B9B;
+}
+
+.cancelled {
+    color: #DDDDDD;
 }
 
 .circle {

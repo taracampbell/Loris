@@ -498,10 +498,10 @@ class StudyTracker extends React.Component {
     showVisitFocus(event){
         let visit = $(event.target).text();
         let content = [];
-        content[0] = <h4>{visit} Visit</h4>;
+        content[0] = <h3>{visit} Visit</h3>;
 
-        let visitDeadlines = [<h5>Upcoming Visit Deadlines</h5>];
-        let dataDeadlines = [<h5>Upcoming Data Entry Deadlines</h5>];
+        let visitDeadlines = [<h4>Upcoming Visit Deadlines</h4>];
+        let dataDeadlines = [<h4>Upcoming Data Entry Deadlines</h4>];
         // Loop through rows
         for (let row of this.state.rows) {
             let pscid = row.pscid;

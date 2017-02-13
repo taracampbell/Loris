@@ -710,19 +710,19 @@ var StudyTracker = function (_React$Component7) {
             var visit = $(event.target).text();
             var content = [];
             content[0] = React.createElement(
-                "h4",
+                "h3",
                 null,
                 visit,
                 " Visit"
             );
 
             var visitDeadlines = [React.createElement(
-                "h5",
+                "h4",
                 null,
                 "Upcoming Visit Deadlines"
             )];
             var dataDeadlines = [React.createElement(
-                "h5",
+                "h4",
                 null,
                 "Upcoming Data Entry Deadlines"
             )];

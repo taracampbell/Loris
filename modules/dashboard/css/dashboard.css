@@ -54,8 +54,12 @@ th, td, tr {
 }
 
 .Filters {
-    margin-left: 500px;
-    padding: 10px;
+    display: inline;
+    margin-left: 100px;
+}
+
+.Filters td {
+    padding: 5px;
 }
 
 .VLHeader, .PSCIDCell {
@@ -74,7 +78,6 @@ th, td, tr {
 
 .StudyTracker {
     margin: auto;
-    text-align: center;
 }
 
 .complete {

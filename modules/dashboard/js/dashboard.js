@@ -286,7 +286,11 @@ var SideBar = function (_React$Component2) {
                 { className: "SideBar" },
                 React.createElement(
                     "a",
-                    { href: "#", className: "closebtn", onClick: this.props.closeSideBar },
+                    {
+                        href: "#",
+                        className: "closebtn",
+                        onClick: this.props.closeSideBar
+                    },
                     "\xD7"
                 ),
                 this.props.sideBarContent
@@ -297,70 +301,82 @@ var SideBar = function (_React$Component2) {
     return SideBar;
 }(React.Component);
 
-function VisitCell(props) {
-    // will need to include additional data
-    // for each visit
-    if (props.visit.cohort === props.currentCohort || props.currentCohort === "all") {
-        var visitClass = "circle " + props.visit.dataEntryStatus + " " + props.visit.visitRegStatus;
+var VisitCell = function (_React$Component3) {
+    _inherits(VisitCell, _React$Component3);
 
-        var now = new Date();
-        var vrDisplay = props.prettyStatus(props.visit.visitRegStatus, props.visit.visitRegDueDate);
-        var deDisplay = props.prettyStatus(props.visit.dataEntryStatus, props.visit.dataEntryDueDate);
-        return React.createElement(
-            "td",
-            { className: props.visit.visitLabel },
-            React.createElement(
-                "div",
-                { "data-tip": true, "data-for": props.visit.sessionID, className: visitClass },
-                React.createElement(
-                    ReactTooltip,
-                    { id: props.visit.sessionID, place: "top", type: "dark", effect: "solid" },
+    function VisitCell() {
+        _classCallCheck(this, VisitCell);
+
+        return _possibleConstructorReturn(this, (VisitCell.__proto__ || Object.getPrototypeOf(VisitCell)).apply(this, arguments));
+    }
+
+    _createClass(VisitCell, [{
+        key: "render",
+        value: function render() {
+            if (this.props.visit.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
+                var visitClass = "circle " + this.props.visit.dataEntryStatus + " " + this.props.visit.visitRegStatus;
+
+                var vr = this.props.prettyStatus(this.props.visit.visitRegStatus, this.props.visit.visitRegDueDate);
+                var de = this.props.prettyStatus(this.props.visit.dataEntryStatus, this.props.visit.dataEntryDueDate);
+                return React.createElement(
+                    "td",
+                    { className: this.props.visit.visitLabel },
                     React.createElement(
-                        "table",
-                        { className: "ReactTooltipContent" },
+                        "div",
+                        { "data-tip": true, "data-for": this.props.visit.sessionID, className: visitClass },
                         React.createElement(
-                            "tr",
-                            null,
+                            ReactTooltip,
+                            { id: this.props.visit.sessionID, place: "top", type: "dark", effect: "solid" },
                             React.createElement(
-                                "td",
-                                null,
-                                "Visit Registration:"
+                                "table",
+                                { className: "ReactTooltipContent" },
+                                React.createElement(
+                                    "tr",
+                                    null,
+                                    React.createElement(
+                                        "td",
+                                        null,
+                                        "Visit Registration:"
+                                    ),
+                                    vr.html
+                                ),
+                                React.createElement(
+                                    "tr",
+                                    null,
+                                    React.createElement(
+                                        "td",
+                                        null,
+                                        "Data Entry:"
+                                    ),
+                                    de.html
+                                )
                             ),
-                            vrDisplay.html
-                        ),
-                        React.createElement(
-                            "tr",
-                            null,
                             React.createElement(
-                                "td",
+                                "span",
                                 null,
-                                "Data Entry:"
-                            ),
-                            deDisplay.html
-                        )
-                    ),
-                    React.createElement(
-                        "span",
-                        null,
-                        React.createElement(
-                            "i",
-                            null,
-                            props.visit.instrumentsCompleted,
-                            "/",
-                            props.visit.totalInstruments,
-                            " instruments entered"
+                                React.createElement(
+                                    "i",
+                                    null,
+                                    this.props.visit.instrumentsCompleted,
+                                    "/",
+                                    this.props.visit.totalInstruments,
+                                    "instruments entered"
+                                )
+                            )
                         )
                     )
-                )
-            )
-        );
-    } else {
-        return React.createElement("td", { className: props.visit.visitLabel });
-    }
-}
+                );
+            } else {
+                return React.createElement("td", { className: this.props.visit.visitLabel });
+            }
+        }
+    }]);
 
-var PSCIDCell = function (_React$Component3) {
-    _inherits(PSCIDCell, _React$Component3);
+    return VisitCell;
+}(React.Component);
+
+var PSCIDCell = function (_React$Component4) {
+    _inherits(PSCIDCell, _React$Component4);
 
     function PSCIDCell() {
         _classCallCheck(this, PSCIDCell);
@@ -384,8 +400,8 @@ var PSCIDCell = function (_React$Component3) {
     return PSCIDCell;
 }(React.Component);
 
-var StudyTrackerRow = function (_React$Component4) {
-    _inherits(StudyTrackerRow, _React$Component4);
+var StudyTrackerRow = function (_React$Component5) {
+    _inherits(StudyTrackerRow, _React$Component5);
 
     function StudyTrackerRow() {
         _classCallCheck(this, StudyTrackerRow);
@@ -419,17 +435,17 @@ var StudyTrackerRow = function (_React$Component4) {
     return StudyTrackerRow;
 }(React.Component);
 
-var StudyTrackerHeader = function (_React$Component5) {
-    _inherits(StudyTrackerHeader, _React$Component5);
+var StudyTrackerHeader = function (_React$Component6) {
+    _inherits(StudyTrackerHeader, _React$Component6);
 
     function StudyTrackerHeader(props) {
         _classCallCheck(this, StudyTrackerHeader);
 
-        var _this5 = _possibleConstructorReturn(this, (StudyTrackerHeader.__proto__ || Object.getPrototypeOf(StudyTrackerHeader)).call(this, props));
+        var _this6 = _possibleConstructorReturn(this, (StudyTrackerHeader.__proto__ || Object.getPrototypeOf(StudyTrackerHeader)).call(this, props));
 
-        _this5.highlightVisits = _this5.highlightVisits.bind(_this5);
-        _this5.unHighlightVisits = _this5.unHighlightVisits.bind(_this5);
-        return _this5;
+        _this6.highlightVisits = _this6.highlightVisits.bind(_this6);
+        _this6.unHighlightVisits = _this6.unHighlightVisits.bind(_this6);
+        return _this6;
     }
 
     // When mouse enters header cell, highlight all cells for that visit
@@ -481,15 +497,15 @@ var StudyTrackerHeader = function (_React$Component5) {
     return StudyTrackerHeader;
 }(React.Component);
 
-var StudyTracker = function (_React$Component6) {
-    _inherits(StudyTracker, _React$Component6);
+var StudyTracker = function (_React$Component7) {
+    _inherits(StudyTracker, _React$Component7);
 
     function StudyTracker() {
         _classCallCheck(this, StudyTracker);
 
-        var _this6 = _possibleConstructorReturn(this, (StudyTracker.__proto__ || Object.getPrototypeOf(StudyTracker)).call(this));
+        var _this7 = _possibleConstructorReturn(this, (StudyTracker.__proto__ || Object.getPrototypeOf(StudyTracker)).call(this));
 
-        _this6.state = {
+        _this7.state = {
             rows: dummyData,
             visitLabels: visitLabels,
             currentSite: "all",
@@ -500,25 +516,26 @@ var StudyTracker = function (_React$Component6) {
             cohorts: cohorts,
             sideBarContent: null
         };
-        _this6.prettyStatus = _this6.prettyStatus.bind(_this6);
-        _this6.showCandFocus = _this6.showCandFocus.bind(_this6);
-        _this6.showVisitFocus = _this6.showVisitFocus.bind(_this6);
-        _this6.showSideBar = _this6.showSideBar.bind(_this6);
-        _this6.closeSideBar = _this6.closeSideBar.bind(_this6);
-        _this6.filterSites = _this6.filterSites.bind(_this6);
-        _this6.filterTeams = _this6.filterTeams.bind(_this6);
-        _this6.filterCohorts = _this6.filterCohorts.bind(_this6);
-        _this6.rowHasCurrentCohortVisit = _this6.rowHasCurrentCohortVisit.bind(_this6);
-        return _this6;
+        _this7.prettyStatus = _this7.prettyStatus.bind(_this7);
+        _this7.showCandFocus = _this7.showCandFocus.bind(_this7);
+        _this7.showVisitFocus = _this7.showVisitFocus.bind(_this7);
+        _this7.showSideBar = _this7.showSideBar.bind(_this7);
+        _this7.closeSideBar = _this7.closeSideBar.bind(_this7);
+        _this7.filterSites = _this7.filterSites.bind(_this7);
+        _this7.filterTeams = _this7.filterTeams.bind(_this7);
+        _this7.filterCohorts = _this7.filterCohorts.bind(_this7);
+        _this7.rowHasCurrentCohortVisit = _this7.rowHasCurrentCohortVisit.bind(_this7);
+        return _this7;
     }
 
-    // Returns an object which contains the status and the html to display
+    // Returns an object which contains a clean status and styled html to display
 
 
     _createClass(StudyTracker, [{
         key: "prettyStatus",
         value: function prettyStatus(status, dueDate) {
-            var html, toReturn;
+            var html = void 0,
+                toReturn = void 0;
             if (~status.indexOf("complete")) {
                 html = React.createElement(
                     "td",
@@ -531,12 +548,12 @@ var StudyTracker = function (_React$Component6) {
                 };
             } else if (~status.indexOf("deadline-approaching")) {
                 var daysLeft = Math.floor((dueDate - new Date()) * MS_TO_DAYS);
+                daysLeft += daysLeft == 1 ? " day" : " days";
                 html = React.createElement(
                     "td",
                     { className: "deadline-approaching" },
                     "Due in ",
-                    daysLeft,
-                    " days"
+                    daysLeft
                 );
                 toReturn = {
                     "status": "deadline-approaching",
@@ -544,11 +561,12 @@ var StudyTracker = function (_React$Component6) {
                 };
             } else if (~status.indexOf("deadline-past")) {
                 var daysPast = Math.floor((new Date() - dueDate) * MS_TO_DAYS);
+                daysPast += daysPast == 1 ? " day" : " days";
                 html = React.createElement(
                     "td",
                     { className: "deadline-past" },
                     daysPast,
-                    " days late"
+                    " late"
                 );
                 toReturn = {
                     "status": "deadline-past",
@@ -589,13 +607,13 @@ var StudyTracker = function (_React$Component6) {
             var content = [];
 
             content[0] = React.createElement(
-                "h4",
+                "h3",
                 null,
                 "Participant ",
                 pscid
             );
 
-            var visits;
+            var visits = void 0;
 
             for (var i = 0; i < this.state.rows.length; i++) {
                 var r = this.state.rows[i];
@@ -615,34 +633,62 @@ var StudyTracker = function (_React$Component6) {
                         React.createElement(
                             "td",
                             null,
-                            v.visitLabel,
-                            ":"
+                            React.createElement(
+                                "h4",
+                                null,
+                                v.visitLabel,
+                                ":"
+                            )
                         ),
                         vr.html
-                    );
-                } else if (vr.status === "complete") {
-                    return React.createElement(
-                        "tr",
-                        null,
-                        React.createElement(
-                            "td",
-                            null,
-                            v.visitLabel,
-                            ": Data entry"
-                        ),
-                        de.html
                     );
                 } else {
                     return React.createElement(
-                        "tr",
+                        "div",
                         null,
                         React.createElement(
-                            "td",
+                            "tr",
                             null,
-                            v.visitLabel,
-                            ": Visit registration"
+                            React.createElement(
+                                "td",
+                                null,
+                                React.createElement(
+                                    "h4",
+                                    null,
+                                    v.visitLabel,
+                                    ":"
+                                )
+                            ),
+                            React.createElement("td", null)
                         ),
-                        vr.html
+                        React.createElement(
+                            "tr",
+                            null,
+                            React.createElement(
+                                "td",
+                                null,
+                                "Visit Registration"
+                            ),
+                            React.createElement(
+                                "td",
+                                null,
+                                vr.html
+                            )
+                        ),
+                        React.createElement(
+                            "tr",
+                            null,
+                            React.createElement(
+                                "td",
+                                null,
+                                "Data Registration"
+                            ),
+                            React.createElement(
+                                "td",
+                                null,
+                                de.html
+                            )
+                        )
                     );
                 }
             }.bind(this));
@@ -662,13 +708,119 @@ var StudyTracker = function (_React$Component6) {
         key: "showVisitFocus",
         value: function showVisitFocus(event) {
             var visit = $(event.target).text();
-
-            var content = React.createElement(
-                "span",
+            var content = [];
+            content[0] = React.createElement(
+                "h4",
                 null,
                 visit,
                 " Visit"
             );
+
+            var visitDeadlines = [React.createElement(
+                "h5",
+                null,
+                "Upcoming Visit Deadlines"
+            )];
+            var dataDeadlines = [React.createElement(
+                "h5",
+                null,
+                "Upcoming Data Entry Deadlines"
+            )];
+            // Loop through rows
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+                for (var _iterator = this.state.rows[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var row = _step.value;
+
+                    var pscid = row.pscid;
+                    // Look for visit with corresponding visit label
+                    var _iteratorNormalCompletion2 = true;
+                    var _didIteratorError2 = false;
+                    var _iteratorError2 = undefined;
+
+                    try {
+                        for (var _iterator2 = row.visits[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                            var v = _step2.value;
+
+                            if (v.visitLabel === visit) {
+                                var vr = this.prettyStatus(v.visitRegStatus, v.visitRegDueDate);
+                                if (vr.status === "deadline-past" || vr.status === "deadline-approaching") {
+                                    visitDeadlines = visitDeadlines.concat(React.createElement(
+                                        "tr",
+                                        null,
+                                        React.createElement(
+                                            "td",
+                                            null,
+                                            pscid
+                                        ),
+                                        vr.html
+                                    ));
+                                }
+                                var de = this.prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
+                                if (de.status === "deadline-past" || de.status === "deadline-approaching") {
+                                    dataDeadlines = dataDeadlines.concat(React.createElement(
+                                        "tr",
+                                        null,
+                                        React.createElement(
+                                            "td",
+                                            null,
+                                            pscid
+                                        ),
+                                        de.html
+                                    ));
+                                }
+                                break;
+                            }
+                        }
+                    } catch (err) {
+                        _didIteratorError2 = true;
+                        _iteratorError2 = err;
+                    } finally {
+                        try {
+                            if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                                _iterator2.return();
+                            }
+                        } finally {
+                            if (_didIteratorError2) {
+                                throw _iteratorError2;
+                            }
+                        }
+                    }
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
+
+            if (visitDeadlines.length <= 1) {
+                visitDeadlines = visitDeadlines.concat(React.createElement(
+                    "p",
+                    { className: "complete" },
+                    "No upcoming visit deadlines"
+                ));
+            }
+            if (dataDeadlines.length <= 1) {
+                dataDeadlines = dataDeadlines.concat(React.createElement(
+                    "p",
+                    { className: "complete" },
+                    "No upcoming data entry deadlines"
+                ));
+            }
+
+            content = content.concat(visitDeadlines, dataDeadlines);
             this.setState({
                 sideBarContent: content
             });
@@ -751,9 +903,9 @@ var StudyTracker = function (_React$Component6) {
                 "div",
                 { className: "StudyTracker" },
                 React.createElement(
-                    "h1",
-                    null,
-                    "Hello, Study Tracker!"
+                    "span",
+                    { style: { fontSize: 24 } },
+                    "Study Progression"
                 ),
                 React.createElement(Filters, {
                     sites: this.state.sites,
@@ -789,7 +941,7 @@ var StudyTracker = function (_React$Component6) {
 
 function randomDate() {
     var now = new Date();
-    return new Date(now.getFullYear(), now.getMonth() + Math.floor(Math.random() * 6) + 1, now.getDate(), 0, 0, 0, 0);
+    return new Date(now.getFullYear(), now.getMonth() + Math.floor(Math.random() * 6) + 1, now.getDate() + 1, 0, 0, 0, 0);
 }
 
 window.onload = function () {

@@ -252,39 +252,52 @@ class SideBar extends React.Component {
     render() {
         return (
             <div className="SideBar">
-                <a href="#" className="closebtn" onClick={this.props.closeSideBar}>&times;</a>
+                <a
+                    href="#"
+                    className="closebtn"
+                    onClick={this.props.closeSideBar}
+                >
+                    &times;
+                </a>
                 {this.props.sideBarContent}
             </div>
         );
     }
 }
 
-function VisitCell(props) {
-    // will need to include additional data
-    // for each visit
-    if (props.visit.cohort === props.currentCohort || props.currentCohort === "all") {
-        var visitClass = "circle "
-            + props.visit.dataEntryStatus + " "
-            + props.visit.visitRegStatus;
+class VisitCell extends React.Component {
+    render () {
+        if (this.props.visit.cohort === this.props.currentCohort
+            || this.props.currentCohort === "all") {
+            let visitClass = "circle "
+                + this.props.visit.dataEntryStatus + " "
+                + this.props.visit.visitRegStatus;
 
-        var now = new Date();
-        var vrDisplay = props.prettyStatus(props.visit.visitRegStatus, props.visit.visitRegDueDate);
-        var deDisplay = props.prettyStatus(props.visit.dataEntryStatus, props.visit.dataEntryDueDate);
-        return (
-            <td className={props.visit.visitLabel}>
-                <div data-tip data-for={props.visit.sessionID} className={visitClass}>
-                    <ReactTooltip id={props.visit.sessionID} place="top" type="dark" effect="solid">
-                        <table className="ReactTooltipContent">
-                            <tr><td>Visit Registration:</td>{vrDisplay.html}</tr>
-                            <tr><td>Data Entry:</td>{deDisplay.html}</tr>
-                        </table>
-                        <span><i>{props.visit.instrumentsCompleted}/{props.visit.totalInstruments} instruments entered</i></span>
-                    </ReactTooltip>
-                </div>
-            </td>
-        );
-    } else {
-        return (<td className={props.visit.visitLabel}></td>);
+            let vr = this.props.prettyStatus(this.props.visit.visitRegStatus, this.props.visit.visitRegDueDate);
+            let de = this.props.prettyStatus(this.props.visit.dataEntryStatus, this.props.visit.dataEntryDueDate);
+            return (
+                <td className={this.props.visit.visitLabel}>
+                    <div data-tip data-for={this.props.visit.sessionID} className={visitClass}>
+                        <ReactTooltip id={this.props.visit.sessionID} place="top" type="dark" effect="solid">
+                            <table className="ReactTooltipContent">
+                                <tr>
+                                    <td>Visit Registration:</td>
+                                    {vr.html}
+                                </tr>
+                                <tr>
+                                    <td>Data Entry:</td>
+                                    {de.html}
+                                </tr>
+                            </table>
+                            <span><i>{this.props.visit.instrumentsCompleted}/{this.props.visit.totalInstruments}
+                                instruments entered</i></span>
+                        </ReactTooltip>
+                    </div>
+                </td>
+            );
+        } else {
+            return (<td className={this.props.visit.visitLabel}/>);
+        }
     }
 }
 
@@ -358,7 +371,7 @@ class StudyTrackerHeader extends React.Component {
     return (
         <thead className="StudyTrackerHeader">
             <tr>
-                <th></th>
+                <th/>
                 {visitLabelHeaders}
             </tr>
         </thead>
@@ -392,9 +405,9 @@ class StudyTracker extends React.Component {
         this.rowHasCurrentCohortVisit = this.rowHasCurrentCohortVisit.bind(this);
     }
 
-    // Returns an object which contains the status and the html to display
+    // Returns an object which contains a clean status and styled html to display
     prettyStatus(status, dueDate) {
-        var html, toReturn;
+        let html, toReturn;
         if (~status.indexOf("complete")) {
             html = <td className="complete">Complete</td>;
             toReturn = {
@@ -402,15 +415,17 @@ class StudyTracker extends React.Component {
                 "html":html
             };
         } else if (~status.indexOf("deadline-approaching")) {
-            var daysLeft = Math.floor((dueDate - new Date()) * MS_TO_DAYS);
-            html = <td className="deadline-approaching">Due in {daysLeft} days</td>;
+            let daysLeft = Math.floor((dueDate - new Date()) * MS_TO_DAYS);
+            daysLeft += daysLeft == 1 ? " day" : " days";
+            html = <td className="deadline-approaching">Due in {daysLeft}</td>;
             toReturn = {
                 "status":"deadline-approaching",
                 "html":html
             };
         } else if (~status.indexOf("deadline-past")) {
-            var daysPast = Math.floor((new Date() - dueDate) * MS_TO_DAYS);
-            html = <td className="deadline-past">{daysPast} days late</td>;
+            let daysPast = Math.floor((new Date() - dueDate) * MS_TO_DAYS);
+            daysPast += daysPast == 1 ? " day" : " days";
+            html = <td className="deadline-past">{daysPast} late</td>;
             toReturn = {
                 "status":"deadline-past",
                 "html":html
@@ -437,30 +452,35 @@ class StudyTracker extends React.Component {
     // Sets the content of the SideBar and then shows SideBar
     // for Candidate Focus
     showCandFocus(event) {
-        var pscid = $(event.target).text();
-        var content = [];
+        let pscid = $(event.target).text();
+        let content = [];
 
-        content[0] = <h4>Participant {pscid}</h4>;
+        content[0] = <h3>Participant {pscid}</h3>;
 
-        var visits;
+        let visits;
 
-        for(var i = 0; i < this.state.rows.length; i++) {
-            var r = this.state.rows[i];
+        for(let i = 0; i < this.state.rows.length; i++) {
+            let r = this.state.rows[i];
             if (r.pscid === pscid) {
                 visits = r.visits;
                 break;
             }
         }
 
-        var visitContent = visits.map( function(v) {
-                var vr = this.prettyStatus(v.visitRegStatus, v.visitRegDueDate);
-                var de = this.prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
+        let visitContent = visits.map(
+            function(v) {
+                let vr = this.prettyStatus(v.visitRegStatus, v.visitRegDueDate);
+                let de = this.prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
                 if (vr.status === "complete" && de.status === "complete") {
-                    return <tr><td>{v.visitLabel}:</td>{vr.html}</tr>
-                } else if (vr.status === "complete") {
-                    return <tr><td>{v.visitLabel}: Data entry</td>{de.html}</tr>
+                    return <tr><td><h4>{v.visitLabel}:</h4></td>{vr.html}</tr>
                 } else {
-                    return <tr><td>{v.visitLabel}: Visit registration</td>{vr.html}</tr>
+                    return (
+                    <div>
+                        <tr><td><h4>{v.visitLabel}:</h4></td><td/></tr>
+                        <tr><td>Visit Registration</td><td>{vr.html}</td></tr>
+                        <tr><td>Data Registration</td><td>{de.html}</td></tr>
+                    </div>
+                    )
                 }
             }.bind(this)
         );
@@ -476,9 +496,52 @@ class StudyTracker extends React.Component {
     // Sets the content of the SideBar and then shows SideBar
     // for Visit Focus
     showVisitFocus(event){
-        var visit = $(event.target).text();
+        let visit = $(event.target).text();
+        let content = [];
+        content[0] = <h4>{visit} Visit</h4>;
 
-        var content = <span>{visit} Visit</span>;
+        let visitDeadlines = [<h5>Upcoming Visit Deadlines</h5>];
+        let dataDeadlines = [<h5>Upcoming Data Entry Deadlines</h5>];
+        // Loop through rows
+        for (let row of this.state.rows) {
+            let pscid = row.pscid;
+            // Look for visit with corresponding visit label
+            for(let v of row.visits) {
+                if (v.visitLabel === visit) {
+                    let vr = this.prettyStatus(v.visitRegStatus, v.visitRegDueDate);
+                    if (vr.status === "deadline-past" || vr.status === "deadline-approaching") {
+                        visitDeadlines = visitDeadlines.concat(
+                            <tr>
+                                <td>{pscid}</td>
+                                {vr.html}
+                            </tr>
+                        );
+                    }
+                    let de = this.prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
+                    if (de.status === "deadline-past" || de.status === "deadline-approaching") {
+                        dataDeadlines = dataDeadlines.concat(
+                            <tr>
+                                <td>{pscid}</td>
+                                {de.html}
+                            </tr>
+                        );
+                    }
+                    break;
+                }
+            }
+        }
+        if (visitDeadlines.length <= 1) {
+            visitDeadlines = visitDeadlines.concat(
+                <p className="complete">No upcoming visit deadlines</p>
+            );
+        }
+        if (dataDeadlines.length <= 1) {
+            dataDeadlines = dataDeadlines.concat(
+                <p className="complete">No upcoming data entry deadlines</p>
+            );
+        }
+
+        content = content.concat(visitDeadlines, dataDeadlines);
         this.setState({
             sideBarContent: content
         });
@@ -516,7 +579,7 @@ class StudyTracker extends React.Component {
         if (this.state.currentCohort === "all") {
             return true;
         }
-        var result = false;
+        let result = false;
 
         row.visits.forEach( function (v) {
                 if (v.cohort === this.state.currentCohort) {
@@ -531,7 +594,7 @@ class StudyTracker extends React.Component {
         // Filter out the entire row for candidates at sites other than
         // the currently selected one or if the candidate has no visits for
         // the currently selected cohort
-        var dataRows = this.state.rows.map(function (row) {
+        let dataRows = this.state.rows.map(function (row) {
                 if(this.rowHasCurrentCohortVisit(row) &&
                     (row.psc === this.state.currentSite || this.state.currentSite === "all")) {
                     return (
@@ -549,7 +612,7 @@ class StudyTracker extends React.Component {
         );
         return (
             <div className="StudyTracker">
-                <h1>Hello, Study Tracker!</h1>
+                <span style={{fontSize:24}}>Study Progression</span>
                 <Filters
                     sites={this.state.sites}
                     filterSites={this.filterSites}
@@ -578,17 +641,17 @@ class StudyTracker extends React.Component {
 
 
 function randomDate() {
-    var now = new Date();
+    let now = new Date();
     return new Date(
         now.getFullYear(),
         now.getMonth() + Math.floor(Math.random() * 6) + 1,
-        now.getDate(),
+        now.getDate() + 1,
         0,0,0,0
     );
 }
 
 window.onload = function() {
-    var dashboard = (
+    let dashboard = (
         <StudyTracker />
     );
 

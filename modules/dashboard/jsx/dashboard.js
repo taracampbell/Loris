@@ -5,8 +5,10 @@ var dummyData = [
         "visits": [
             {
                 "sessionID": "1",
-                "status": "deadline-past-data-entry",
-                "dueDate": randomDate(),
+                "visitRegStatus": "complete-visit",
+                "dataEntryStatus": "complete-data-entry",
+                "visitRegDueDate": randomDate(),
+                "dataEntryDueDate": randomDate(),
                 "instrumentsCompleted": 1,
                 "totalInstruments": 22,
                 "visitLabel": "Screening",
@@ -14,8 +16,10 @@ var dummyData = [
             },
             {
                 "sessionID": "2",
-                "status": "no-deadline-visit",
-                "dueDate": randomDate(),
+                "visitRegStatus": "no-deadline-visit",
+                "dataEntryStatus": "deadline-approaching-data-entry",
+                "visitRegDueDate": randomDate(),
+                "dataEntryDueDate": randomDate(),
                 "instrumentsCompleted": 2,
                 "totalInstruments": 22,
                 "visitLabel": "Clinical",
@@ -23,8 +27,10 @@ var dummyData = [
             },
             {
                 "sessionID": "3",
-                "status": "complete-data-entry",
-                "dueDate": randomDate(),
+                "visitRegStatus": "deadline-approaching-visit",
+                "dataEntryStatus": "complete-data-entry",
+                "visitRegDueDate": randomDate(),
+                "dataEntryDueDate": randomDate(),
                 "instrumentsCompleted": 3,
                 "totalInstruments": 22,
                 "visitLabel": "Neuropsych",
@@ -38,8 +44,10 @@ var dummyData = [
         "visits": [
             {
                 "sessionID": "4",
-                "status": "cancelled-data",
-                "dueDate": randomDate(),
+                "visitRegStatus": "complete-visit",
+                "dataEntryStatus": "cancelled-data",
+                "visitRegDueDate": randomDate(),
+                "dataEntryDueDate": randomDate(),
                 "instrumentsCompleted": 1,
                 "totalInstruments": 22,
                 "visitLabel": "Screening",
@@ -47,8 +55,10 @@ var dummyData = [
             },
             {
                 "sessionID": "5",
-                "status": "deadline-past-visit",
-                "dueDate": randomDate(),
+                "visitRegStatus": "deadline-past-visit",
+                "dataEntryStatus": "deadline-approaching-data-entry",
+                "visitRegDueDate": randomDate(),
+                "dataEntryDueDate": randomDate(),
                 "instrumentsCompleted": 2,
                 "totalInstruments": 22,
                 "visitLabel": "Clinical",
@@ -56,8 +66,10 @@ var dummyData = [
             },
             {
                 "sessionID": "6",
-                "status": "deadline-past-data-entry",
-                "dueDate": randomDate(),
+                "visitRegStatus": "deadline-approaching-visit",
+                "dataEntryStatus": "deadline-past-data-entry",
+                "visitRegDueDate": randomDate(),
+                "dataEntryDueDate": randomDate(),
                 "instrumentsCompleted": 3,
                 "totalInstruments": 22,
                 "visitLabel": "Neuropsych",
@@ -71,8 +83,10 @@ var dummyData = [
         "visits": [
             {
                 "sessionID": "7",
-                "status": "no-deadline-visit",
-                "dueDate": randomDate(),
+                "visitRegStatus": "complete-visit",
+                "dataEntryStatus": "deadline-approaching-data-entry",
+                "visitRegDueDate": randomDate(),
+                "dataEntryDueDate": randomDate(),
                 "instrumentsCompleted": 1,
                 "totalInstruments": 22,
                 "visitLabel": "Screening",
@@ -80,8 +94,10 @@ var dummyData = [
             },
             {
                 "sessionID": "8",
-                "status": "deadline-past-visit",
-                "dueDate": randomDate(),
+                "visitRegStatus": "deadline-past-visit",
+                "dataEntryStatus": "deadline-approaching-data-entry",
+                "visitRegDueDate": randomDate(),
+                "dataEntryDueDate": randomDate(),
                 "instrumentsCompleted": 2,
                 "totalInstruments": 22,
                 "visitLabel": "Clinical",
@@ -90,8 +106,10 @@ var dummyData = [
             },
             {
                 "sessionID": "9",
-                "status": "deadline-past-visit",
-                "dueDate": randomDate(),
+                "visitRegStatus": "deadline-past-visit",
+                "dataEntryStatus": "deadline-approaching-data-entry",
+                "visitRegDueDate": randomDate(),
+                "dataEntryDueDate": randomDate(),
                 "instrumentsCompleted": 3,
                 "totalInstruments": 22,
                 "visitLabel": "Neuropsych",
@@ -105,8 +123,10 @@ var dummyData = [
         "visits": [
             {
                 "sessionID": "10",
-                "status": "no-deadline-visit",
-                "dueDate": randomDate(),
+                "visitRegStatus": "complete-visit",
+                "dataEntryStatus": "deadline-approaching-data-entry",
+                "visitRegDueDate": randomDate(),
+                "dataEntryDueDate": randomDate(),
                 "instrumentsCompleted": 1,
                 "totalInstruments": 22,
                 "visitLabel": "Screening",
@@ -114,8 +134,10 @@ var dummyData = [
             },
             {
                 "sessionID": "11",
-                "status": "deadline-approaching-data-entry",
-                "dueDate": randomDate(),
+                "dataEntryStatus": "deadline-approaching-data-entry",
+                "visitRegStatus": "deadline-approaching-visit",
+                "visitRegDueDate": randomDate(),
+                "dataEntryDueDate": randomDate(),
                 "instrumentsCompleted": 2,
                 "totalInstruments": 22,
                 "visitLabel": "Clinical",
@@ -123,8 +145,10 @@ var dummyData = [
             },
             {
                 "sessionID": "12",
-                "status": "deadline-approaching-visit",
-                "dueDate": randomDate(),
+                "visitRegStatus": "deadline-approaching-visit",
+                "dataEntryStatus": "deadline-approaching-data-entry",
+                "visitRegDueDate": randomDate(),
+                "dataEntryDueDate": randomDate(),
                 "instrumentsCompleted": 3,
                 "totalInstruments": 22,
                 "visitLabel": "Neuropsych",
@@ -156,6 +180,8 @@ var cohorts = [
     "SCI",
     "AD"
 ];
+
+var MS_TO_DAYS = 1/(1000 * 60 * 60 * 24);
 
 function SiteFilter(props) {
     var options = props.sites.map((site) =>
@@ -202,9 +228,18 @@ class Filters extends React.Component {
             <table className="Filters">
                 <tbody>
                     <tr>
-                        <SiteFilter sites={this.props.sites} filterSites={this.props.filterSites}/>
-                        <TeamFilter teams={this.props.teams} filterTeams={this.props.filterTeams}/>
-                        <CohortFilter cohorts={this.props.cohorts} filterCohorts={this.props.filterCohorts}/>
+                        <SiteFilter
+                            sites={this.props.sites}
+                            filterSites={this.props.filterSites}
+                        />
+                        <TeamFilter
+                            teams={this.props.teams}
+                            filterTeams={this.props.filterTeams}
+                        />
+                        <CohortFilter
+                            cohorts={this.props.cohorts}
+                            filterCohorts={this.props.filterCohorts}
+                        />
                     </tr>
                 </tbody>
             </table>
@@ -212,51 +247,71 @@ class Filters extends React.Component {
     }
 }
 
-// Change to class if there is to be more than just
-// rendering
-function PSCIDCell(props) {
-    return (
-        <td>{props.pscid}</td>
-    );
-}
 
-class SideNav extends React.Component {
+class SideBar extends React.Component {
     render() {
         return (
-            <div className="SideNav">
-                <a href="#" className="closebtn" onClick={this.props.closeSideNav}>&times;</a>
-                <span>peekaboo ya filthy marmot</span>
+            <div className="SideBar">
+                <a
+                    href="#"
+                    className="closebtn"
+                    onClick={this.props.closeSideBar}
+                >
+                    &times;
+                </a>
+                {this.props.sideBarContent}
             </div>
         );
     }
 }
 
-function VisitCell(props) {
-    // will need to include additional data
-    // for each visit
-    if (props.visit.cohort === props.currentCohort || props.currentCohort === "all") {
-        var visitClass = "circle " + props.visit.status;
+class VisitCell extends React.Component {
+    render () {
+        if (this.props.visit.cohort === this.props.currentCohort
+            || this.props.currentCohort === "all") {
+            let visitClass = "circle "
+                + this.props.visit.dataEntryStatus + " "
+                + this.props.visit.visitRegStatus;
 
-        var now = new Date();
-        var dueDate = props.visit.dueDate;
-        var daysLeft = Math.floor((dueDate - now) / (1000 * 60 * 60 * 24));
-        return (
-            <td className={props.visit.visitLabel}>
-                <div data-tip data-for={props.visit.sessionID} className={visitClass}>
-                    <ReactTooltip id={props.visit.sessionID} place="top" type="dark" effect="solid">
-                        <span>Visit Registration: <br/></span>
-                        <span>Data Entry: due in {daysLeft} days<br/></span>
-                        <span><i>{props.visit.instrumentsCompleted}/{props.visit.totalInstruments}
-                            instruments entered</i></span>
-                    </ReactTooltip>
-                </div>
-            </td>
-        );
-    } else {
-        return (<td></td>);
+            let vr = this.props.prettyStatus(this.props.visit.visitRegStatus, this.props.visit.visitRegDueDate);
+            let de = this.props.prettyStatus(this.props.visit.dataEntryStatus, this.props.visit.dataEntryDueDate);
+            return (
+                <td className={this.props.visit.visitLabel}>
+                    <div data-tip data-for={this.props.visit.sessionID} className={visitClass}>
+                        <ReactTooltip id={this.props.visit.sessionID} place="top" type="dark" effect="solid">
+                            <table className="ReactTooltipContent">
+                                <tr>
+                                    <td>Visit Registration:</td>
+                                    {vr.html}
+                                </tr>
+                                <tr>
+                                    <td>Data Entry:</td>
+                                    {de.html}
+                                </tr>
+                            </table>
+                            <span><i>{this.props.visit.instrumentsCompleted}/{this.props.visit.totalInstruments}
+                                instruments entered</i></span>
+                        </ReactTooltip>
+                    </div>
+                </td>
+            );
+        } else {
+            return (<td className={this.props.visit.visitLabel}/>);
+        }
     }
 }
 
+class PSCIDCell extends React.Component {
+    render() {
+        return (
+            <td
+                className='PSCIDCell'
+                onClick={this.props.showCandFocus}>
+                {this.props.pscid}
+            </td>
+        );
+    }
+}
 
 class StudyTrackerRow extends React.Component {
     render() {
@@ -265,12 +320,16 @@ class StudyTrackerRow extends React.Component {
                     key={v.sessionID}
                     visit={v}
                     currentCohort={this.props.currentCohort}
+                    prettyStatus={this.props.prettyStatus}
                 />
             }.bind(this)
         );
         return(
             <tr className="StudyTrackerRow">
-                <PSCIDCell pscid={this.props.pscid}/>
+                <PSCIDCell
+                    pscid={this.props.pscid}
+                    showCandFocus={this.props.showCandFocus}
+                />
                 {visits}
             </tr>
         );
@@ -285,6 +344,8 @@ class StudyTrackerHeader extends React.Component {
     }
 
     // When mouse enters header cell, highlight all cells for that visit
+    // This means that the text that shows up in the column header
+    // must be equal to the css class name which is perhaps bad design
     highlightVisits(event) {
         var visitClass = "." + $(event.target).text();
         $(visitClass).css("background-color", "#f5f5f5");
@@ -300,7 +361,7 @@ class StudyTrackerHeader extends React.Component {
             <th
                 onMouseEnter={this.highlightVisits}
                 onMouseLeave={this.unHighlightVisits}
-                onClick={this.props.showSideNav}
+                onClick={this.props.showVisitFocus}
                 key={vl}
                 className={cssClass}>
                 {vl}
@@ -310,7 +371,7 @@ class StudyTrackerHeader extends React.Component {
     return (
         <thead className="StudyTrackerHeader">
             <tr>
-                <th></th>
+                <th/>
                 {visitLabelHeaders}
             </tr>
         </thead>
@@ -331,26 +392,168 @@ class StudyTracker extends React.Component {
              currentTeam: "COMPASS-ND",
              currentCohort: "all",
              cohorts: cohorts,
-             currentVisitFocus: null
+             sideBarContent: null
         };
-
-        this.showSideNav = this.showSideNav.bind(this);
-        this.closeSideNav = this.closeSideNav.bind(this);
+        this.prettyStatus = this.prettyStatus.bind(this);
+        this.showCandFocus = this.showCandFocus.bind(this);
+        this.showVisitFocus = this.showVisitFocus.bind(this);
+        this.showSideBar = this.showSideBar.bind(this);
+        this.closeSideBar = this.closeSideBar.bind(this);
         this.filterSites = this.filterSites.bind(this);
         this.filterTeams = this.filterTeams.bind(this);
         this.filterCohorts = this.filterCohorts.bind(this);
         this.rowHasCurrentCohortVisit = this.rowHasCurrentCohortVisit.bind(this);
     }
 
-    showSideNav(event) {
-        var visit = $(event.target).text();
-        this.setState({currentVisitFocus: visit});
-        console.log(visit);
-        $(".SideNav").css("width", "250px");
+    // Returns an object which contains a clean status and styled html to display
+    prettyStatus(status, dueDate) {
+        let html, toReturn;
+        if (~status.indexOf("complete")) {
+            html = <td className="complete">Complete</td>;
+            toReturn = {
+                "status":"complete",
+                "html":html
+            };
+        } else if (~status.indexOf("deadline-approaching")) {
+            let daysLeft = Math.floor((dueDate - new Date()) * MS_TO_DAYS);
+            daysLeft += daysLeft == 1 ? " day" : " days";
+            html = <td className="deadline-approaching">Due in {daysLeft}</td>;
+            toReturn = {
+                "status":"deadline-approaching",
+                "html":html
+            };
+        } else if (~status.indexOf("deadline-past")) {
+            let daysPast = Math.floor((new Date() - dueDate) * MS_TO_DAYS);
+            daysPast += daysPast == 1 ? " day" : " days";
+            html = <td className="deadline-past">{daysPast} late</td>;
+            toReturn = {
+                "status":"deadline-past",
+                "html":html
+            };
+        } else if (~status.indexOf("cancelled")) {
+            html = <td className="cancelled">Visit cancelled</td>;
+            toReturn = {
+                "status":"cancelled",
+                "html":html
+            };
+
+        } else if (~status.indexOf("no-deadline")) {
+            html = <td className="no-deadline">No deadline specified</td>;
+            toReturn = {
+                "status":"no-deadline",
+                "html":html
+            };
+        }
+
+        return toReturn;
     }
 
-    closeSideNav(event) {
-        $(".SideNav").css("width", "0px");
+
+    // Sets the content of the SideBar and then shows SideBar
+    // for Candidate Focus
+    showCandFocus(event) {
+        let pscid = $(event.target).text();
+        let content = [];
+
+        content[0] = <h3>Participant {pscid}</h3>;
+
+        let visits;
+
+        for(let i = 0; i < this.state.rows.length; i++) {
+            let r = this.state.rows[i];
+            if (r.pscid === pscid) {
+                visits = r.visits;
+                break;
+            }
+        }
+
+        let visitContent = visits.map(
+            function(v) {
+                let vr = this.prettyStatus(v.visitRegStatus, v.visitRegDueDate);
+                let de = this.prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
+                if (vr.status === "complete" && de.status === "complete") {
+                    return <tr><td><h4>{v.visitLabel}:</h4></td>{vr.html}</tr>
+                } else {
+                    return (
+                    <div>
+                        <tr><td><h4>{v.visitLabel}:</h4></td><td/></tr>
+                        <tr><td>Visit Registration</td><td>{vr.html}</td></tr>
+                        <tr><td>Data Registration</td><td>{de.html}</td></tr>
+                    </div>
+                    )
+                }
+            }.bind(this)
+        );
+
+        content = content.concat(visitContent);
+
+        this.setState({
+            sideBarContent: content
+        });
+        this.showSideBar();
+    }
+
+    // Sets the content of the SideBar and then shows SideBar
+    // for Visit Focus
+    showVisitFocus(event){
+        let visit = $(event.target).text();
+        let content = [];
+        content[0] = <h4>{visit} Visit</h4>;
+
+        let visitDeadlines = [<h5>Upcoming Visit Deadlines</h5>];
+        let dataDeadlines = [<h5>Upcoming Data Entry Deadlines</h5>];
+        // Loop through rows
+        for (let row of this.state.rows) {
+            let pscid = row.pscid;
+            // Look for visit with corresponding visit label
+            for(let v of row.visits) {
+                if (v.visitLabel === visit) {
+                    let vr = this.prettyStatus(v.visitRegStatus, v.visitRegDueDate);
+                    if (vr.status === "deadline-past" || vr.status === "deadline-approaching") {
+                        visitDeadlines = visitDeadlines.concat(
+                            <tr>
+                                <td>{pscid}</td>
+                                {vr.html}
+                            </tr>
+                        );
+                    }
+                    let de = this.prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
+                    if (de.status === "deadline-past" || de.status === "deadline-approaching") {
+                        dataDeadlines = dataDeadlines.concat(
+                            <tr>
+                                <td>{pscid}</td>
+                                {de.html}
+                            </tr>
+                        );
+                    }
+                    break;
+                }
+            }
+        }
+        if (visitDeadlines.length <= 1) {
+            visitDeadlines = visitDeadlines.concat(
+                <p className="complete">No upcoming visit deadlines</p>
+            );
+        }
+        if (dataDeadlines.length <= 1) {
+            dataDeadlines = dataDeadlines.concat(
+                <p className="complete">No upcoming data entry deadlines</p>
+            );
+        }
+
+        content = content.concat(visitDeadlines, dataDeadlines);
+        this.setState({
+            sideBarContent: content
+        });
+        this.showSideBar();
+    }
+
+    showSideBar() {
+        $(".SideBar").css("width", "400px");
+    }
+
+    closeSideBar() {
+        $(".SideBar").css("width", "0px");
     }
 
     // Function which is called when cohort filter is changed
@@ -376,7 +579,7 @@ class StudyTracker extends React.Component {
         if (this.state.currentCohort === "all") {
             return true;
         }
-        var result = false;
+        let result = false;
 
         row.visits.forEach( function (v) {
                 if (v.cohort === this.state.currentCohort) {
@@ -391,7 +594,7 @@ class StudyTracker extends React.Component {
         // Filter out the entire row for candidates at sites other than
         // the currently selected one or if the candidate has no visits for
         // the currently selected cohort
-        var dataRows = this.state.rows.map(function (row) {
+        let dataRows = this.state.rows.map(function (row) {
                 if(this.rowHasCurrentCohortVisit(row) &&
                     (row.psc === this.state.currentSite || this.state.currentSite === "all")) {
                     return (
@@ -400,6 +603,8 @@ class StudyTracker extends React.Component {
                             pscid={row.pscid}
                             visits={row.visits}
                             currentCohort={this.state.currentCohort}
+                            showCandFocus={this.showCandFocus}
+                            prettyStatus={this.prettyStatus}
                         />
                     )
                 }
@@ -407,7 +612,7 @@ class StudyTracker extends React.Component {
         );
         return (
             <div className="StudyTracker">
-                <h1>Hello, Study Tracker!</h1>
+                <span style={{fontSize:24}}>Study Progression</span>
                 <Filters
                     sites={this.state.sites}
                     filterSites={this.filterSites}
@@ -419,30 +624,34 @@ class StudyTracker extends React.Component {
                 <table>
                     <StudyTrackerHeader
                         visitLabels={this.state.visitLabels}
-                        showSideNav={this.showSideNav}
+                        showVisitFocus={this.showVisitFocus}
                     />
                     <tbody>
                     {dataRows}
                     </tbody>
                 </table>
-                <SideNav closeSideNav={this.closeSideNav}/>
+                <SideBar
+                    closeSideBar={this.closeSideBar}
+                    sideBarContent={this.state.sideBarContent}
+                />
             </div>
         );
     }
 }
 
+
 function randomDate() {
-    var now = new Date();
+    let now = new Date();
     return new Date(
         now.getFullYear(),
         now.getMonth() + Math.floor(Math.random() * 6) + 1,
-        now.getDate(),
+        now.getDate() + 1,
         0,0,0,0
     );
 }
 
 window.onload = function() {
-    var dashboard = (
+    let dashboard = (
         <StudyTracker />
     );
 

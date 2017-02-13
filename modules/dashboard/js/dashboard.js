@@ -13,24 +13,30 @@ var dummyData = [{
     "psc": "JGH",
     "visits": [{
         "sessionID": "1",
-        "status": "deadline-past-data-entry",
-        "dueDate": randomDate(),
+        "visitRegStatus": "complete-visit",
+        "dataEntryStatus": "complete-data-entry",
+        "visitRegDueDate": randomDate(),
+        "dataEntryDueDate": randomDate(),
         "instrumentsCompleted": 1,
         "totalInstruments": 22,
         "visitLabel": "Screening",
         "cohort": "MCI"
     }, {
         "sessionID": "2",
-        "status": "no-deadline-visit",
-        "dueDate": randomDate(),
+        "visitRegStatus": "no-deadline-visit",
+        "dataEntryStatus": "deadline-approaching-data-entry",
+        "visitRegDueDate": randomDate(),
+        "dataEntryDueDate": randomDate(),
         "instrumentsCompleted": 2,
         "totalInstruments": 22,
         "visitLabel": "Clinical",
         "cohort": "AD"
     }, {
         "sessionID": "3",
-        "status": "complete-data-entry",
-        "dueDate": randomDate(),
+        "visitRegStatus": "deadline-approaching-visit",
+        "dataEntryStatus": "complete-data-entry",
+        "visitRegDueDate": randomDate(),
+        "dataEntryDueDate": randomDate(),
         "instrumentsCompleted": 3,
         "totalInstruments": 22,
         "visitLabel": "Neuropsych",
@@ -41,24 +47,30 @@ var dummyData = [{
     "psc": "PKD",
     "visits": [{
         "sessionID": "4",
-        "status": "cancelled-data",
-        "dueDate": randomDate(),
+        "visitRegStatus": "complete-visit",
+        "dataEntryStatus": "cancelled-data",
+        "visitRegDueDate": randomDate(),
+        "dataEntryDueDate": randomDate(),
         "instrumentsCompleted": 1,
         "totalInstruments": 22,
         "visitLabel": "Screening",
         "cohort": "AD"
     }, {
         "sessionID": "5",
-        "status": "deadline-past-visit",
-        "dueDate": randomDate(),
+        "visitRegStatus": "deadline-past-visit",
+        "dataEntryStatus": "deadline-approaching-data-entry",
+        "visitRegDueDate": randomDate(),
+        "dataEntryDueDate": randomDate(),
         "instrumentsCompleted": 2,
         "totalInstruments": 22,
         "visitLabel": "Clinical",
         "cohort": "SCI"
     }, {
         "sessionID": "6",
-        "status": "deadline-past-data-entry",
-        "dueDate": randomDate(),
+        "visitRegStatus": "deadline-approaching-visit",
+        "dataEntryStatus": "deadline-past-data-entry",
+        "visitRegDueDate": randomDate(),
+        "dataEntryDueDate": randomDate(),
         "instrumentsCompleted": 3,
         "totalInstruments": 22,
         "visitLabel": "Neuropsych",
@@ -69,16 +81,20 @@ var dummyData = [{
     "psc": "JGH",
     "visits": [{
         "sessionID": "7",
-        "status": "no-deadline-visit",
-        "dueDate": randomDate(),
+        "visitRegStatus": "complete-visit",
+        "dataEntryStatus": "deadline-approaching-data-entry",
+        "visitRegDueDate": randomDate(),
+        "dataEntryDueDate": randomDate(),
         "instrumentsCompleted": 1,
         "totalInstruments": 22,
         "visitLabel": "Screening",
         "cohort": "SCI"
     }, {
         "sessionID": "8",
-        "status": "deadline-past-visit",
-        "dueDate": randomDate(),
+        "visitRegStatus": "deadline-past-visit",
+        "dataEntryStatus": "deadline-approaching-data-entry",
+        "visitRegDueDate": randomDate(),
+        "dataEntryDueDate": randomDate(),
         "instrumentsCompleted": 2,
         "totalInstruments": 22,
         "visitLabel": "Clinical",
@@ -86,8 +102,10 @@ var dummyData = [{
 
     }, {
         "sessionID": "9",
-        "status": "deadline-past-visit",
-        "dueDate": randomDate(),
+        "visitRegStatus": "deadline-past-visit",
+        "dataEntryStatus": "deadline-approaching-data-entry",
+        "visitRegDueDate": randomDate(),
+        "dataEntryDueDate": randomDate(),
         "instrumentsCompleted": 3,
         "totalInstruments": 22,
         "visitLabel": "Neuropsych",
@@ -98,24 +116,30 @@ var dummyData = [{
     "psc": "PKD",
     "visits": [{
         "sessionID": "10",
-        "status": "no-deadline-visit",
-        "dueDate": randomDate(),
+        "visitRegStatus": "complete-visit",
+        "dataEntryStatus": "deadline-approaching-data-entry",
+        "visitRegDueDate": randomDate(),
+        "dataEntryDueDate": randomDate(),
         "instrumentsCompleted": 1,
         "totalInstruments": 22,
         "visitLabel": "Screening",
         "cohort": "AD"
     }, {
         "sessionID": "11",
-        "status": "deadline-approaching-data-entry",
-        "dueDate": randomDate(),
+        "dataEntryStatus": "deadline-approaching-data-entry",
+        "visitRegStatus": "deadline-approaching-visit",
+        "visitRegDueDate": randomDate(),
+        "dataEntryDueDate": randomDate(),
         "instrumentsCompleted": 2,
         "totalInstruments": 22,
         "visitLabel": "Clinical",
         "cohort": "AD"
     }, {
         "sessionID": "12",
-        "status": "deadline-approaching-visit",
-        "dueDate": randomDate(),
+        "visitRegStatus": "deadline-approaching-visit",
+        "dataEntryStatus": "deadline-approaching-data-entry",
+        "visitRegDueDate": randomDate(),
+        "dataEntryDueDate": randomDate(),
         "instrumentsCompleted": 3,
         "totalInstruments": 22,
         "visitLabel": "Neuropsych",
@@ -134,6 +158,8 @@ var sites = [{
 }];
 
 var cohorts = ["MCI", "SCI", "AD"];
+
+var MS_TO_DAYS = 1 / (1000 * 60 * 60 * 24);
 
 function SiteFilter(props) {
     var options = props.sites.map(function (site) {
@@ -222,9 +248,18 @@ var Filters = function (_React$Component) {
                     React.createElement(
                         "tr",
                         null,
-                        React.createElement(SiteFilter, { sites: this.props.sites, filterSites: this.props.filterSites }),
-                        React.createElement(TeamFilter, { teams: this.props.teams, filterTeams: this.props.filterTeams }),
-                        React.createElement(CohortFilter, { cohorts: this.props.cohorts, filterCohorts: this.props.filterCohorts })
+                        React.createElement(SiteFilter, {
+                            sites: this.props.sites,
+                            filterSites: this.props.filterSites
+                        }),
+                        React.createElement(TeamFilter, {
+                            teams: this.props.teams,
+                            filterTeams: this.props.filterTeams
+                        }),
+                        React.createElement(CohortFilter, {
+                            cohorts: this.props.cohorts,
+                            filterCohorts: this.props.filterCohorts
+                        })
                     )
                 )
             );
@@ -234,104 +269,139 @@ var Filters = function (_React$Component) {
     return Filters;
 }(React.Component);
 
-// Change to class if there is to be more than just
-// rendering
+var SideBar = function (_React$Component2) {
+    _inherits(SideBar, _React$Component2);
 
+    function SideBar() {
+        _classCallCheck(this, SideBar);
 
-function PSCIDCell(props) {
-    return React.createElement(
-        "td",
-        null,
-        props.pscid
-    );
-}
-
-var SideNav = function (_React$Component2) {
-    _inherits(SideNav, _React$Component2);
-
-    function SideNav() {
-        _classCallCheck(this, SideNav);
-
-        return _possibleConstructorReturn(this, (SideNav.__proto__ || Object.getPrototypeOf(SideNav)).apply(this, arguments));
+        return _possibleConstructorReturn(this, (SideBar.__proto__ || Object.getPrototypeOf(SideBar)).apply(this, arguments));
     }
 
-    _createClass(SideNav, [{
+    _createClass(SideBar, [{
         key: "render",
         value: function render() {
             return React.createElement(
                 "div",
-                { className: "SideNav" },
+                { className: "SideBar" },
                 React.createElement(
                     "a",
-                    { href: "#", className: "closebtn", onClick: this.props.closeSideNav },
+                    {
+                        href: "#",
+                        className: "closebtn",
+                        onClick: this.props.closeSideBar
+                    },
                     "\xD7"
                 ),
-                React.createElement(
-                    "span",
-                    null,
-                    "peekaboo ya filthy marmot"
-                )
+                this.props.sideBarContent
             );
         }
     }]);
 
-    return SideNav;
+    return SideBar;
 }(React.Component);
 
-function VisitCell(props) {
-    // will need to include additional data
-    // for each visit
-    if (props.visit.cohort === props.currentCohort || props.currentCohort === "all") {
-        var visitClass = "circle " + props.visit.status;
+var VisitCell = function (_React$Component3) {
+    _inherits(VisitCell, _React$Component3);
 
-        var now = new Date();
-        var dueDate = props.visit.dueDate;
-        var daysLeft = Math.floor((dueDate - now) / (1000 * 60 * 60 * 24));
-        return React.createElement(
-            "td",
-            { className: props.visit.visitLabel },
-            React.createElement(
-                "div",
-                { "data-tip": true, "data-for": props.visit.sessionID, className: visitClass },
-                React.createElement(
-                    ReactTooltip,
-                    { id: props.visit.sessionID, place: "top", type: "dark", effect: "solid" },
+    function VisitCell() {
+        _classCallCheck(this, VisitCell);
+
+        return _possibleConstructorReturn(this, (VisitCell.__proto__ || Object.getPrototypeOf(VisitCell)).apply(this, arguments));
+    }
+
+    _createClass(VisitCell, [{
+        key: "render",
+        value: function render() {
+            if (this.props.visit.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
+                var visitClass = "circle " + this.props.visit.dataEntryStatus + " " + this.props.visit.visitRegStatus;
+
+                var vr = this.props.prettyStatus(this.props.visit.visitRegStatus, this.props.visit.visitRegDueDate);
+                var de = this.props.prettyStatus(this.props.visit.dataEntryStatus, this.props.visit.dataEntryDueDate);
+                return React.createElement(
+                    "td",
+                    { className: this.props.visit.visitLabel },
                     React.createElement(
-                        "span",
-                        null,
-                        "Visit Registration: ",
-                        React.createElement("br", null)
-                    ),
-                    React.createElement(
-                        "span",
-                        null,
-                        "Data Entry: due in ",
-                        daysLeft,
-                        " days",
-                        React.createElement("br", null)
-                    ),
-                    React.createElement(
-                        "span",
-                        null,
+                        "div",
+                        { "data-tip": true, "data-for": this.props.visit.sessionID, className: visitClass },
                         React.createElement(
-                            "i",
-                            null,
-                            props.visit.instrumentsCompleted,
-                            "/",
-                            props.visit.totalInstruments,
-                            "instruments entered"
+                            ReactTooltip,
+                            { id: this.props.visit.sessionID, place: "top", type: "dark", effect: "solid" },
+                            React.createElement(
+                                "table",
+                                { className: "ReactTooltipContent" },
+                                React.createElement(
+                                    "tr",
+                                    null,
+                                    React.createElement(
+                                        "td",
+                                        null,
+                                        "Visit Registration:"
+                                    ),
+                                    vr.html
+                                ),
+                                React.createElement(
+                                    "tr",
+                                    null,
+                                    React.createElement(
+                                        "td",
+                                        null,
+                                        "Data Entry:"
+                                    ),
+                                    de.html
+                                )
+                            ),
+                            React.createElement(
+                                "span",
+                                null,
+                                React.createElement(
+                                    "i",
+                                    null,
+                                    this.props.visit.instrumentsCompleted,
+                                    "/",
+                                    this.props.visit.totalInstruments,
+                                    "instruments entered"
+                                )
+                            )
                         )
                     )
-                )
-            )
-        );
-    } else {
-        return React.createElement("td", null);
-    }
-}
+                );
+            } else {
+                return React.createElement("td", { className: this.props.visit.visitLabel });
+            }
+        }
+    }]);
 
-var StudyTrackerRow = function (_React$Component3) {
-    _inherits(StudyTrackerRow, _React$Component3);
+    return VisitCell;
+}(React.Component);
+
+var PSCIDCell = function (_React$Component4) {
+    _inherits(PSCIDCell, _React$Component4);
+
+    function PSCIDCell() {
+        _classCallCheck(this, PSCIDCell);
+
+        return _possibleConstructorReturn(this, (PSCIDCell.__proto__ || Object.getPrototypeOf(PSCIDCell)).apply(this, arguments));
+    }
+
+    _createClass(PSCIDCell, [{
+        key: "render",
+        value: function render() {
+            return React.createElement(
+                "td",
+                {
+                    className: "PSCIDCell",
+                    onClick: this.props.showCandFocus },
+                this.props.pscid
+            );
+        }
+    }]);
+
+    return PSCIDCell;
+}(React.Component);
+
+var StudyTrackerRow = function (_React$Component5) {
+    _inherits(StudyTrackerRow, _React$Component5);
 
     function StudyTrackerRow() {
         _classCallCheck(this, StudyTrackerRow);
@@ -346,13 +416,17 @@ var StudyTrackerRow = function (_React$Component3) {
                 return React.createElement(VisitCell, {
                     key: v.sessionID,
                     visit: v,
-                    currentCohort: this.props.currentCohort
+                    currentCohort: this.props.currentCohort,
+                    prettyStatus: this.props.prettyStatus
                 });
             }.bind(this));
             return React.createElement(
                 "tr",
                 { className: "StudyTrackerRow" },
-                React.createElement(PSCIDCell, { pscid: this.props.pscid }),
+                React.createElement(PSCIDCell, {
+                    pscid: this.props.pscid,
+                    showCandFocus: this.props.showCandFocus
+                }),
                 visits
             );
         }
@@ -361,20 +435,22 @@ var StudyTrackerRow = function (_React$Component3) {
     return StudyTrackerRow;
 }(React.Component);
 
-var StudyTrackerHeader = function (_React$Component4) {
-    _inherits(StudyTrackerHeader, _React$Component4);
+var StudyTrackerHeader = function (_React$Component6) {
+    _inherits(StudyTrackerHeader, _React$Component6);
 
     function StudyTrackerHeader(props) {
         _classCallCheck(this, StudyTrackerHeader);
 
-        var _this4 = _possibleConstructorReturn(this, (StudyTrackerHeader.__proto__ || Object.getPrototypeOf(StudyTrackerHeader)).call(this, props));
+        var _this6 = _possibleConstructorReturn(this, (StudyTrackerHeader.__proto__ || Object.getPrototypeOf(StudyTrackerHeader)).call(this, props));
 
-        _this4.highlightVisits = _this4.highlightVisits.bind(_this4);
-        _this4.unHighlightVisits = _this4.unHighlightVisits.bind(_this4);
-        return _this4;
+        _this6.highlightVisits = _this6.highlightVisits.bind(_this6);
+        _this6.unHighlightVisits = _this6.unHighlightVisits.bind(_this6);
+        return _this6;
     }
 
     // When mouse enters header cell, highlight all cells for that visit
+    // This means that the text that shows up in the column header
+    // must be equal to the css class name which is perhaps bad design
 
 
     _createClass(StudyTrackerHeader, [{
@@ -399,7 +475,7 @@ var StudyTrackerHeader = function (_React$Component4) {
                     {
                         onMouseEnter: this.highlightVisits,
                         onMouseLeave: this.unHighlightVisits,
-                        onClick: this.props.showSideNav,
+                        onClick: this.props.showVisitFocus,
                         key: vl,
                         className: cssClass },
                     vl
@@ -421,15 +497,15 @@ var StudyTrackerHeader = function (_React$Component4) {
     return StudyTrackerHeader;
 }(React.Component);
 
-var StudyTracker = function (_React$Component5) {
-    _inherits(StudyTracker, _React$Component5);
+var StudyTracker = function (_React$Component7) {
+    _inherits(StudyTracker, _React$Component7);
 
     function StudyTracker() {
         _classCallCheck(this, StudyTracker);
 
-        var _this5 = _possibleConstructorReturn(this, (StudyTracker.__proto__ || Object.getPrototypeOf(StudyTracker)).call(this));
+        var _this7 = _possibleConstructorReturn(this, (StudyTracker.__proto__ || Object.getPrototypeOf(StudyTracker)).call(this));
 
-        _this5.state = {
+        _this7.state = {
             rows: dummyData,
             visitLabels: visitLabels,
             currentSite: "all",
@@ -438,30 +514,327 @@ var StudyTracker = function (_React$Component5) {
             currentTeam: "COMPASS-ND",
             currentCohort: "all",
             cohorts: cohorts,
-            currentVisitFocus: null
+            sideBarContent: null
         };
-
-        _this5.showSideNav = _this5.showSideNav.bind(_this5);
-        _this5.closeSideNav = _this5.closeSideNav.bind(_this5);
-        _this5.filterSites = _this5.filterSites.bind(_this5);
-        _this5.filterTeams = _this5.filterTeams.bind(_this5);
-        _this5.filterCohorts = _this5.filterCohorts.bind(_this5);
-        _this5.rowHasCurrentCohortVisit = _this5.rowHasCurrentCohortVisit.bind(_this5);
-        return _this5;
+        _this7.prettyStatus = _this7.prettyStatus.bind(_this7);
+        _this7.showCandFocus = _this7.showCandFocus.bind(_this7);
+        _this7.showVisitFocus = _this7.showVisitFocus.bind(_this7);
+        _this7.showSideBar = _this7.showSideBar.bind(_this7);
+        _this7.closeSideBar = _this7.closeSideBar.bind(_this7);
+        _this7.filterSites = _this7.filterSites.bind(_this7);
+        _this7.filterTeams = _this7.filterTeams.bind(_this7);
+        _this7.filterCohorts = _this7.filterCohorts.bind(_this7);
+        _this7.rowHasCurrentCohortVisit = _this7.rowHasCurrentCohortVisit.bind(_this7);
+        return _this7;
     }
 
+    // Returns an object which contains a clean status and styled html to display
+
+
     _createClass(StudyTracker, [{
-        key: "showSideNav",
-        value: function showSideNav(event) {
+        key: "prettyStatus",
+        value: function prettyStatus(status, dueDate) {
+            var html = void 0,
+                toReturn = void 0;
+            if (~status.indexOf("complete")) {
+                html = React.createElement(
+                    "td",
+                    { className: "complete" },
+                    "Complete"
+                );
+                toReturn = {
+                    "status": "complete",
+                    "html": html
+                };
+            } else if (~status.indexOf("deadline-approaching")) {
+                var daysLeft = Math.floor((dueDate - new Date()) * MS_TO_DAYS);
+                daysLeft += daysLeft == 1 ? " day" : " days";
+                html = React.createElement(
+                    "td",
+                    { className: "deadline-approaching" },
+                    "Due in ",
+                    daysLeft
+                );
+                toReturn = {
+                    "status": "deadline-approaching",
+                    "html": html
+                };
+            } else if (~status.indexOf("deadline-past")) {
+                var daysPast = Math.floor((new Date() - dueDate) * MS_TO_DAYS);
+                daysPast += daysPast == 1 ? " day" : " days";
+                html = React.createElement(
+                    "td",
+                    { className: "deadline-past" },
+                    daysPast,
+                    " late"
+                );
+                toReturn = {
+                    "status": "deadline-past",
+                    "html": html
+                };
+            } else if (~status.indexOf("cancelled")) {
+                html = React.createElement(
+                    "td",
+                    { className: "cancelled" },
+                    "Visit cancelled"
+                );
+                toReturn = {
+                    "status": "cancelled",
+                    "html": html
+                };
+            } else if (~status.indexOf("no-deadline")) {
+                html = React.createElement(
+                    "td",
+                    { className: "no-deadline" },
+                    "No deadline specified"
+                );
+                toReturn = {
+                    "status": "no-deadline",
+                    "html": html
+                };
+            }
+
+            return toReturn;
+        }
+
+        // Sets the content of the SideBar and then shows SideBar
+        // for Candidate Focus
+
+    }, {
+        key: "showCandFocus",
+        value: function showCandFocus(event) {
+            var pscid = $(event.target).text();
+            var content = [];
+
+            content[0] = React.createElement(
+                "h3",
+                null,
+                "Participant ",
+                pscid
+            );
+
+            var visits = void 0;
+
+            for (var i = 0; i < this.state.rows.length; i++) {
+                var r = this.state.rows[i];
+                if (r.pscid === pscid) {
+                    visits = r.visits;
+                    break;
+                }
+            }
+
+            var visitContent = visits.map(function (v) {
+                var vr = this.prettyStatus(v.visitRegStatus, v.visitRegDueDate);
+                var de = this.prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
+                if (vr.status === "complete" && de.status === "complete") {
+                    return React.createElement(
+                        "tr",
+                        null,
+                        React.createElement(
+                            "td",
+                            null,
+                            React.createElement(
+                                "h4",
+                                null,
+                                v.visitLabel,
+                                ":"
+                            )
+                        ),
+                        vr.html
+                    );
+                } else {
+                    return React.createElement(
+                        "div",
+                        null,
+                        React.createElement(
+                            "tr",
+                            null,
+                            React.createElement(
+                                "td",
+                                null,
+                                React.createElement(
+                                    "h4",
+                                    null,
+                                    v.visitLabel,
+                                    ":"
+                                )
+                            ),
+                            React.createElement("td", null)
+                        ),
+                        React.createElement(
+                            "tr",
+                            null,
+                            React.createElement(
+                                "td",
+                                null,
+                                "Visit Registration"
+                            ),
+                            React.createElement(
+                                "td",
+                                null,
+                                vr.html
+                            )
+                        ),
+                        React.createElement(
+                            "tr",
+                            null,
+                            React.createElement(
+                                "td",
+                                null,
+                                "Data Registration"
+                            ),
+                            React.createElement(
+                                "td",
+                                null,
+                                de.html
+                            )
+                        )
+                    );
+                }
+            }.bind(this));
+
+            content = content.concat(visitContent);
+
+            this.setState({
+                sideBarContent: content
+            });
+            this.showSideBar();
+        }
+
+        // Sets the content of the SideBar and then shows SideBar
+        // for Visit Focus
+
+    }, {
+        key: "showVisitFocus",
+        value: function showVisitFocus(event) {
             var visit = $(event.target).text();
-            this.setState({ currentVisitFocus: visit });
-            console.log(visit);
-            $(".SideNav").css("width", "250px");
+            var content = [];
+            content[0] = React.createElement(
+                "h4",
+                null,
+                visit,
+                " Visit"
+            );
+
+            var visitDeadlines = [React.createElement(
+                "h5",
+                null,
+                "Upcoming Visit Deadlines"
+            )];
+            var dataDeadlines = [React.createElement(
+                "h5",
+                null,
+                "Upcoming Data Entry Deadlines"
+            )];
+            // Loop through rows
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+                for (var _iterator = this.state.rows[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var row = _step.value;
+
+                    var pscid = row.pscid;
+                    // Look for visit with corresponding visit label
+                    var _iteratorNormalCompletion2 = true;
+                    var _didIteratorError2 = false;
+                    var _iteratorError2 = undefined;
+
+                    try {
+                        for (var _iterator2 = row.visits[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                            var v = _step2.value;
+
+                            if (v.visitLabel === visit) {
+                                var vr = this.prettyStatus(v.visitRegStatus, v.visitRegDueDate);
+                                if (vr.status === "deadline-past" || vr.status === "deadline-approaching") {
+                                    visitDeadlines = visitDeadlines.concat(React.createElement(
+                                        "tr",
+                                        null,
+                                        React.createElement(
+                                            "td",
+                                            null,
+                                            pscid
+                                        ),
+                                        vr.html
+                                    ));
+                                }
+                                var de = this.prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
+                                if (de.status === "deadline-past" || de.status === "deadline-approaching") {
+                                    dataDeadlines = dataDeadlines.concat(React.createElement(
+                                        "tr",
+                                        null,
+                                        React.createElement(
+                                            "td",
+                                            null,
+                                            pscid
+                                        ),
+                                        de.html
+                                    ));
+                                }
+                                break;
+                            }
+                        }
+                    } catch (err) {
+                        _didIteratorError2 = true;
+                        _iteratorError2 = err;
+                    } finally {
+                        try {
+                            if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                                _iterator2.return();
+                            }
+                        } finally {
+                            if (_didIteratorError2) {
+                                throw _iteratorError2;
+                            }
+                        }
+                    }
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
+
+            if (visitDeadlines.length <= 1) {
+                visitDeadlines = visitDeadlines.concat(React.createElement(
+                    "p",
+                    { className: "complete" },
+                    "No upcoming visit deadlines"
+                ));
+            }
+            if (dataDeadlines.length <= 1) {
+                dataDeadlines = dataDeadlines.concat(React.createElement(
+                    "p",
+                    { className: "complete" },
+                    "No upcoming data entry deadlines"
+                ));
+            }
+
+            content = content.concat(visitDeadlines, dataDeadlines);
+            this.setState({
+                sideBarContent: content
+            });
+            this.showSideBar();
         }
     }, {
-        key: "closeSideNav",
-        value: function closeSideNav(event) {
-            $(".SideNav").css("width", "0px");
+        key: "showSideBar",
+        value: function showSideBar() {
+            $(".SideBar").css("width", "400px");
+        }
+    }, {
+        key: "closeSideBar",
+        value: function closeSideBar() {
+            $(".SideBar").css("width", "0px");
         }
 
         // Function which is called when cohort filter is changed
@@ -520,7 +893,9 @@ var StudyTracker = function (_React$Component5) {
                         key: row.pscid,
                         pscid: row.pscid,
                         visits: row.visits,
-                        currentCohort: this.state.currentCohort
+                        currentCohort: this.state.currentCohort,
+                        showCandFocus: this.showCandFocus,
+                        prettyStatus: this.prettyStatus
                     });
                 }
             }.bind(this));
@@ -528,9 +903,9 @@ var StudyTracker = function (_React$Component5) {
                 "div",
                 { className: "StudyTracker" },
                 React.createElement(
-                    "h1",
-                    null,
-                    "Hello, Study Tracker!"
+                    "span",
+                    { style: { fontSize: 24 } },
+                    "Study Progression"
                 ),
                 React.createElement(Filters, {
                     sites: this.state.sites,
@@ -545,7 +920,7 @@ var StudyTracker = function (_React$Component5) {
                     null,
                     React.createElement(StudyTrackerHeader, {
                         visitLabels: this.state.visitLabels,
-                        showSideNav: this.showSideNav
+                        showVisitFocus: this.showVisitFocus
                     }),
                     React.createElement(
                         "tbody",
@@ -553,7 +928,10 @@ var StudyTracker = function (_React$Component5) {
                         dataRows
                     )
                 ),
-                React.createElement(SideNav, { closeSideNav: this.closeSideNav })
+                React.createElement(SideBar, {
+                    closeSideBar: this.closeSideBar,
+                    sideBarContent: this.state.sideBarContent
+                })
             );
         }
     }]);
@@ -563,7 +941,7 @@ var StudyTracker = function (_React$Component5) {
 
 function randomDate() {
     var now = new Date();
-    return new Date(now.getFullYear(), now.getMonth() + Math.floor(Math.random() * 6) + 1, now.getDate(), 0, 0, 0, 0);
+    return new Date(now.getFullYear(), now.getMonth() + Math.floor(Math.random() * 6) + 1, now.getDate() + 1, 0, 0, 0, 0);
 }
 
 window.onload = function () {

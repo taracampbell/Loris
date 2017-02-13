@@ -9,23 +9,42 @@ table {
 }
 
 th, td, tr {
-    padding: 15px;
+    padding: 15px 60px;
 }
 
-.SideNav {
+.ReactTooltipContent td, tr {
+    padding: 1px;
+}
+
+.SideBar {
     height: 100%;
     width: 0;
     position: fixed;
     z-index: 1;
     top: 0;
     right: 0;
-    background-color: #111;
+    background-color: #fff;
     overflow-x: hidden;
     padding-top: 60px;
     transition: 0.3s;
+    border: 1px solid #ccc;
 }
 
-.SideNav span {
+/*.SideBar span {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 20px;
+    color: #818181;
+    display: block;
+    transition: 0.3s
+}*/
+
+.SideBar td {
+    padding: 5px;
+    text-align: left;
+}
+
+.SideBar .closebtn {
     padding: 8px 8px 8px 32px;
     text-decoration: none;
     font-size: 25px;
@@ -34,20 +53,21 @@ th, td, tr {
     transition: 0.3s
 }
 
-.SideNav .closebtn {
-    padding: 8px 8px 8px 32px;
-    text-decoration: none;
-    font-size: 25px;
-    color: #818181;
-    display: block;
-    transition: 0.3s
+.Filters {
+    display: inline;
+    margin-left: 100px;
 }
 
-.VLHeader {
+.Filters td {
+    padding: 5px;
+}
+
+.VLHeader, .PSCIDCell {
     color: black;
+    cursor: pointer;
 }
 
-.StudyTrackerRow {
+.StudyTrackerRow, .StudyTrackerHeader{
     border-bottom: 1px solid #ccc;
     border-top: 1px solid #ccc;
 }
@@ -58,14 +78,27 @@ th, td, tr {
 
 .StudyTracker {
     margin: auto;
-    text-align: center;
 }
 
-.Filters {
-    margin-left: 500px;
-    padding: 10px;
+.complete {
+    color: #4A90E2;
 }
 
+.deadline-approaching {
+    color: #FFCD0D;
+}
+
+.deadline-past {
+    color: #DD286A;
+}
+
+.no-deadline {
+    color: #9B9B9B;
+}
+
+.cancelled {
+    color: #DDDDDD;
+}
 
 .circle {
     border-radius: 50%;

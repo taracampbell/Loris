@@ -12,8 +12,20 @@ th, td, tr {
     padding: 15px 60px;
 }
 
-.ReactTooltipContent td, tr {
-    padding: 1px;
+.ReactTooltipContent p {
+    margin: 0;
+}
+
+.indent {
+    margin-left: 20px;
+}
+
+.right-align {
+    float: right;
+}
+
+.center {
+    text-align: center;
 }
 
 .SideBar {

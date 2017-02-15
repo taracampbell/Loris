@@ -175,16 +175,16 @@ var sites = [
     }
 ];
 
-var cohorts = [
+const cohorts = [
     "MCI",
     "SCI",
     "AD"
 ];
 
-var MS_TO_DAYS = 1/(1000 * 60 * 60 * 24);
+const MS_TO_DAYS = 1/(1000 * 60 * 60 * 24);
 
 function SiteFilter(props) {
-    var options = props.sites.map((site) =>
+    let options = props.sites.map((site) =>
         <option key={site.psc} value={site.psc}>{site.fullname}</option>
     );
     return (
@@ -208,7 +208,7 @@ function TeamFilter(props) {
 }
 
 function CohortFilter(props) {
-    var options = props.cohorts.map((cohort) =>
+    let options = props.cohorts.map((cohort) =>
         <option key={cohort} value={cohort}>{cohort}</option>
     );
     return (
@@ -279,18 +279,15 @@ class VisitCell extends React.Component {
                 <td className={this.props.visit.visitLabel}>
                     <div data-tip data-for={this.props.visit.sessionID} className={visitClass}>
                         <ReactTooltip id={this.props.visit.sessionID} place="top" type="dark" effect="solid">
-                            <table className="ReactTooltipContent">
-                                <tr>
-                                    <td>Visit Registration:</td>
-                                    {vr.html}
-                                </tr>
-                                <tr>
-                                    <td>Data Entry:</td>
-                                    {de.html}
-                                </tr>
-                            </table>
-                            <span><i>{this.props.visit.instrumentsCompleted}/{this.props.visit.totalInstruments}
-                                instruments entered</i></span>
+                            <div className="ReactTooltipContent">
+                                <p>Visit Registration: {vr.html}</p>
+                                <p>Data Entry: {de.html}</p>
+                            </div>
+                            <p className="center">
+                                <i>
+                                    {this.props.visit.instrumentsCompleted}/{this.props.visit.totalInstruments} instruments entered
+                                </i>
+                            </p>
                         </ReactTooltip>
                     </div>
                 </td>
@@ -315,7 +312,7 @@ class PSCIDCell extends React.Component {
 
 class StudyTrackerRow extends React.Component {
     render() {
-        var visits = this.props.visits.map(function(v) {
+        let visits = this.props.visits.map(function(v) {
                 return <VisitCell
                     key={v.sessionID}
                     visit={v}
@@ -347,16 +344,16 @@ class StudyTrackerHeader extends React.Component {
     // This means that the text that shows up in the column header
     // must be equal to the css class name which is perhaps bad design
     highlightVisits(event) {
-        var visitClass = "." + $(event.target).text();
+        let visitClass = "." + $(event.target).text();
         $(visitClass).css("background-color", "#f5f5f5");
     }
     unHighlightVisits(event) {
-        var visitClass = "." + $(event.target).text();
+        let visitClass = "." + $(event.target).text();
         $(visitClass).css("background-color", "");
     }
   render() {
-    var visitLabelHeaders = this.props.visitLabels.map(function(vl) {
-            var cssClass = "VLHeader " + vl;
+    let visitLabelHeaders = this.props.visitLabels.map(function(vl) {
+            let cssClass = "VLHeader " + vl;
             return (
             <th
                 onMouseEnter={this.highlightVisits}
@@ -409,7 +406,7 @@ class StudyTracker extends React.Component {
     prettyStatus(status, dueDate) {
         let html, toReturn;
         if (~status.indexOf("complete")) {
-            html = <td className="complete">Complete</td>;
+            html = <span className="complete right-align">Complete</span>;
             toReturn = {
                 "status":"complete",
                 "html":html
@@ -417,7 +414,7 @@ class StudyTracker extends React.Component {
         } else if (~status.indexOf("deadline-approaching")) {
             let daysLeft = Math.floor((dueDate - new Date()) * MS_TO_DAYS);
             daysLeft += daysLeft == 1 ? " day" : " days";
-            html = <td className="deadline-approaching">Due in {daysLeft}</td>;
+            html = <span className="deadline-approaching right-align">Due in {daysLeft}</span>;
             toReturn = {
                 "status":"deadline-approaching",
                 "html":html
@@ -425,20 +422,20 @@ class StudyTracker extends React.Component {
         } else if (~status.indexOf("deadline-past")) {
             let daysPast = Math.floor((new Date() - dueDate) * MS_TO_DAYS);
             daysPast += daysPast == 1 ? " day" : " days";
-            html = <td className="deadline-past">{daysPast} late</td>;
+            html = <span className="deadline-past right-align">{daysPast} late</span>;
             toReturn = {
                 "status":"deadline-past",
                 "html":html
             };
         } else if (~status.indexOf("cancelled")) {
-            html = <td className="cancelled">Visit cancelled</td>;
+            html = <span className="cancelled right-align">Visit cancelled</span>;
             toReturn = {
                 "status":"cancelled",
                 "html":html
             };
 
         } else if (~status.indexOf("no-deadline")) {
-            html = <td className="no-deadline">No deadline specified</td>;
+            html = <span className="no-deadline right-align">No deadline specified</span>;
             toReturn = {
                 "status":"no-deadline",
                 "html":html
@@ -455,7 +452,7 @@ class StudyTracker extends React.Component {
         let pscid = $(event.target).text();
         let content = [];
 
-        content[0] = <h3>Participant {pscid}</h3>;
+        content[0] = <h3 className="center">Participant {pscid}</h3>;
 
         let visits;
 
@@ -472,13 +469,13 @@ class StudyTracker extends React.Component {
                 let vr = this.prettyStatus(v.visitRegStatus, v.visitRegDueDate);
                 let de = this.prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
                 if (vr.status === "complete" && de.status === "complete") {
-                    return <tr><td><h4>{v.visitLabel}:</h4></td>{vr.html}</tr>
+                    return <p style={{fontSize: "18px"}}>{v.visitLabel}: {vr.html}</p>
                 } else {
                     return (
                     <div>
-                        <tr><td><h4>{v.visitLabel}:</h4></td><td/></tr>
-                        <tr><td>Visit Registration</td><td>{vr.html}</td></tr>
-                        <tr><td>Data Registration</td><td>{de.html}</td></tr>
+                        <h4>{v.visitLabel}:</h4>
+                        <p className="indent">Visit Registration: {vr.html}</p>
+                        <p className="indent">Data Registration: {de.html}</p>
                     </div>
                     )
                 }
@@ -498,10 +495,10 @@ class StudyTracker extends React.Component {
     showVisitFocus(event){
         let visit = $(event.target).text();
         let content = [];
-        content[0] = <h4>{visit} Visit</h4>;
+        content[0] = <h3 className="center">{visit} Visit</h3>;
 
-        let visitDeadlines = [<h5>Upcoming Visit Deadlines</h5>];
-        let dataDeadlines = [<h5>Upcoming Data Entry Deadlines</h5>];
+        let visitDeadlines = [<h4>Upcoming Visit Deadlines</h4>];
+        let dataDeadlines = [<h4>Upcoming Data Entry Deadlines</h4>];
         // Loop through rows
         for (let row of this.state.rows) {
             let pscid = row.pscid;
@@ -511,19 +508,13 @@ class StudyTracker extends React.Component {
                     let vr = this.prettyStatus(v.visitRegStatus, v.visitRegDueDate);
                     if (vr.status === "deadline-past" || vr.status === "deadline-approaching") {
                         visitDeadlines = visitDeadlines.concat(
-                            <tr>
-                                <td>{pscid}</td>
-                                {vr.html}
-                            </tr>
+                            <p className="indent">{pscid}: {vr.html}</p>
                         );
                     }
                     let de = this.prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
                     if (de.status === "deadline-past" || de.status === "deadline-approaching") {
                         dataDeadlines = dataDeadlines.concat(
-                            <tr>
-                                <td>{pscid}</td>
-                                {de.html}
-                            </tr>
+                            <p className="indent">{pscid}: {de.html}</p>
                         );
                     }
                     break;
@@ -532,12 +523,12 @@ class StudyTracker extends React.Component {
         }
         if (visitDeadlines.length <= 1) {
             visitDeadlines = visitDeadlines.concat(
-                <p className="complete">No upcoming visit deadlines</p>
+                <p className="complete indent">No upcoming visit deadlines</p>
             );
         }
         if (dataDeadlines.length <= 1) {
             dataDeadlines = dataDeadlines.concat(
-                <p className="complete">No upcoming data entry deadlines</p>
+                <p className="complete indent">No upcoming data entry deadlines</p>
             );
         }
 
@@ -549,7 +540,7 @@ class StudyTracker extends React.Component {
     }
 
     showSideBar() {
-        $(".SideBar").css("width", "400px");
+        $(".SideBar").css("width", "300px");
     }
 
     closeSideBar() {

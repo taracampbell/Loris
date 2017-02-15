@@ -328,39 +328,31 @@ var VisitCell = function (_React$Component3) {
                             ReactTooltip,
                             { id: this.props.visit.sessionID, place: "top", type: "dark", effect: "solid" },
                             React.createElement(
-                                "table",
+                                "div",
                                 { className: "ReactTooltipContent" },
                                 React.createElement(
-                                    "tr",
+                                    "p",
                                     null,
-                                    React.createElement(
-                                        "td",
-                                        null,
-                                        "Visit Registration:"
-                                    ),
+                                    "Visit Registration: ",
                                     vr.html
                                 ),
                                 React.createElement(
-                                    "tr",
+                                    "p",
                                     null,
-                                    React.createElement(
-                                        "td",
-                                        null,
-                                        "Data Entry:"
-                                    ),
+                                    "Data Entry: ",
                                     de.html
                                 )
                             ),
                             React.createElement(
-                                "span",
-                                null,
+                                "p",
+                                { className: "center" },
                                 React.createElement(
                                     "i",
                                     null,
                                     this.props.visit.instrumentsCompleted,
                                     "/",
                                     this.props.visit.totalInstruments,
-                                    "instruments entered"
+                                    " instruments entered"
                                 )
                             )
                         )
@@ -538,8 +530,8 @@ var StudyTracker = function (_React$Component7) {
                 toReturn = void 0;
             if (~status.indexOf("complete")) {
                 html = React.createElement(
-                    "td",
-                    { className: "complete" },
+                    "span",
+                    { className: "complete right-align" },
                     "Complete"
                 );
                 toReturn = {
@@ -550,8 +542,8 @@ var StudyTracker = function (_React$Component7) {
                 var daysLeft = Math.floor((dueDate - new Date()) * MS_TO_DAYS);
                 daysLeft += daysLeft == 1 ? " day" : " days";
                 html = React.createElement(
-                    "td",
-                    { className: "deadline-approaching" },
+                    "span",
+                    { className: "deadline-approaching right-align" },
                     "Due in ",
                     daysLeft
                 );
@@ -563,8 +555,8 @@ var StudyTracker = function (_React$Component7) {
                 var daysPast = Math.floor((new Date() - dueDate) * MS_TO_DAYS);
                 daysPast += daysPast == 1 ? " day" : " days";
                 html = React.createElement(
-                    "td",
-                    { className: "deadline-past" },
+                    "span",
+                    { className: "deadline-past right-align" },
                     daysPast,
                     " late"
                 );
@@ -574,8 +566,8 @@ var StudyTracker = function (_React$Component7) {
                 };
             } else if (~status.indexOf("cancelled")) {
                 html = React.createElement(
-                    "td",
-                    { className: "cancelled" },
+                    "span",
+                    { className: "cancelled right-align" },
                     "Visit cancelled"
                 );
                 toReturn = {
@@ -584,8 +576,8 @@ var StudyTracker = function (_React$Component7) {
                 };
             } else if (~status.indexOf("no-deadline")) {
                 html = React.createElement(
-                    "td",
-                    { className: "no-deadline" },
+                    "span",
+                    { className: "no-deadline right-align" },
                     "No deadline specified"
                 );
                 toReturn = {
@@ -608,7 +600,7 @@ var StudyTracker = function (_React$Component7) {
 
             content[0] = React.createElement(
                 "h3",
-                null,
+                { className: "center" },
                 "Participant ",
                 pscid
             );
@@ -628,18 +620,10 @@ var StudyTracker = function (_React$Component7) {
                 var de = this.prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
                 if (vr.status === "complete" && de.status === "complete") {
                     return React.createElement(
-                        "tr",
-                        null,
-                        React.createElement(
-                            "td",
-                            null,
-                            React.createElement(
-                                "h4",
-                                null,
-                                v.visitLabel,
-                                ":"
-                            )
-                        ),
+                        "p",
+                        { style: { fontSize: "18px" } },
+                        v.visitLabel,
+                        ": ",
                         vr.html
                     );
                 } else {
@@ -647,47 +631,22 @@ var StudyTracker = function (_React$Component7) {
                         "div",
                         null,
                         React.createElement(
-                            "tr",
+                            "h4",
                             null,
-                            React.createElement(
-                                "td",
-                                null,
-                                React.createElement(
-                                    "h4",
-                                    null,
-                                    v.visitLabel,
-                                    ":"
-                                )
-                            ),
-                            React.createElement("td", null)
+                            v.visitLabel,
+                            ":"
                         ),
                         React.createElement(
-                            "tr",
-                            null,
-                            React.createElement(
-                                "td",
-                                null,
-                                "Visit Registration"
-                            ),
-                            React.createElement(
-                                "td",
-                                null,
-                                vr.html
-                            )
+                            "p",
+                            { className: "indent" },
+                            "Visit Registration: ",
+                            vr.html
                         ),
                         React.createElement(
-                            "tr",
-                            null,
-                            React.createElement(
-                                "td",
-                                null,
-                                "Data Registration"
-                            ),
-                            React.createElement(
-                                "td",
-                                null,
-                                de.html
-                            )
+                            "p",
+                            { className: "indent" },
+                            "Data Registration: ",
+                            de.html
                         )
                     );
                 }
@@ -710,19 +669,19 @@ var StudyTracker = function (_React$Component7) {
             var visit = $(event.target).text();
             var content = [];
             content[0] = React.createElement(
-                "h4",
-                null,
+                "h3",
+                { className: "center" },
                 visit,
                 " Visit"
             );
 
             var visitDeadlines = [React.createElement(
-                "h5",
+                "h4",
                 null,
                 "Upcoming Visit Deadlines"
             )];
             var dataDeadlines = [React.createElement(
-                "h5",
+                "h4",
                 null,
                 "Upcoming Data Entry Deadlines"
             )];
@@ -749,26 +708,20 @@ var StudyTracker = function (_React$Component7) {
                                 var vr = this.prettyStatus(v.visitRegStatus, v.visitRegDueDate);
                                 if (vr.status === "deadline-past" || vr.status === "deadline-approaching") {
                                     visitDeadlines = visitDeadlines.concat(React.createElement(
-                                        "tr",
-                                        null,
-                                        React.createElement(
-                                            "td",
-                                            null,
-                                            pscid
-                                        ),
+                                        "p",
+                                        { className: "indent" },
+                                        pscid,
+                                        ": ",
                                         vr.html
                                     ));
                                 }
                                 var de = this.prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
                                 if (de.status === "deadline-past" || de.status === "deadline-approaching") {
                                     dataDeadlines = dataDeadlines.concat(React.createElement(
-                                        "tr",
-                                        null,
-                                        React.createElement(
-                                            "td",
-                                            null,
-                                            pscid
-                                        ),
+                                        "p",
+                                        { className: "indent" },
+                                        pscid,
+                                        ": ",
                                         de.html
                                     ));
                                 }
@@ -808,14 +761,14 @@ var StudyTracker = function (_React$Component7) {
             if (visitDeadlines.length <= 1) {
                 visitDeadlines = visitDeadlines.concat(React.createElement(
                     "p",
-                    { className: "complete" },
+                    { className: "complete indent" },
                     "No upcoming visit deadlines"
                 ));
             }
             if (dataDeadlines.length <= 1) {
                 dataDeadlines = dataDeadlines.concat(React.createElement(
                     "p",
-                    { className: "complete" },
+                    { className: "complete indent" },
                     "No upcoming data entry deadlines"
                 ));
             }
@@ -829,7 +782,7 @@ var StudyTracker = function (_React$Component7) {
     }, {
         key: "showSideBar",
         value: function showSideBar() {
-            $(".SideBar").css("width", "400px");
+            $(".SideBar").css("width", "300px");
         }
     }, {
         key: "closeSideBar",

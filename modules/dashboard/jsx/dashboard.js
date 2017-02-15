@@ -452,7 +452,7 @@ class StudyTracker extends React.Component {
         let pscid = $(event.target).text();
         let content = [];
 
-        content[0] = <h3>Participant {pscid}</h3>;
+        content[0] = <h3 className="center">Participant {pscid}</h3>;
 
         let visits;
 
@@ -495,7 +495,7 @@ class StudyTracker extends React.Component {
     showVisitFocus(event){
         let visit = $(event.target).text();
         let content = [];
-        content[0] = <h3>{visit} Visit</h3>;
+        content[0] = <h3 className="center">{visit} Visit</h3>;
 
         let visitDeadlines = [<h4>Upcoming Visit Deadlines</h4>];
         let dataDeadlines = [<h4>Upcoming Data Entry Deadlines</h4>];

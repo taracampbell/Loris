@@ -600,7 +600,7 @@ var StudyTracker = function (_React$Component7) {
 
             content[0] = React.createElement(
                 "h3",
-                null,
+                { className: "center" },
                 "Participant ",
                 pscid
             );
@@ -670,7 +670,7 @@ var StudyTracker = function (_React$Component7) {
             var content = [];
             content[0] = React.createElement(
                 "h3",
-                null,
+                { className: "center" },
                 visit,
                 " Visit"
             );

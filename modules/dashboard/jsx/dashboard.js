@@ -282,12 +282,12 @@ class VisitCell extends React.Component {
                             <div className="ReactTooltipContent">
                                 <p>Visit Registration: {vr.html}</p>
                                 <p>Data Entry: {de.html}</p>
+                                <p className="center">
+                                    <i>
+                                        {this.props.visit.instrumentsCompleted}/{this.props.visit.totalInstruments} instruments entered
+                                    </i>
+                                </p>
                             </div>
-                            <p className="center">
-                                <i>
-                                    {this.props.visit.instrumentsCompleted}/{this.props.visit.totalInstruments} instruments entered
-                                </i>
-                            </p>
                         </ReactTooltip>
                     </div>
                 </td>
@@ -469,7 +469,13 @@ class StudyTracker extends React.Component {
                 let vr = this.prettyStatus(v.visitRegStatus, v.visitRegDueDate);
                 let de = this.prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
                 if (vr.status === "complete" && de.status === "complete") {
-                    return <p style={{fontSize: "18px"}}>{v.visitLabel}: {vr.html}</p>
+                    return (
+                    <p style={{fontSize: "18px"}}>
+                        {v.visitLabel}:
+                        <span className="complete right-align">&#10003;</span>
+                        {vr.html}
+                    </p>
+                    )
                 } else {
                     return (
                     <div>

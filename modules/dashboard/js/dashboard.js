@@ -341,18 +341,18 @@ var VisitCell = function (_React$Component3) {
                                     null,
                                     "Data Entry: ",
                                     de.html
-                                )
-                            ),
-                            React.createElement(
-                                "p",
-                                { className: "center" },
+                                ),
                                 React.createElement(
-                                    "i",
-                                    null,
-                                    this.props.visit.instrumentsCompleted,
-                                    "/",
-                                    this.props.visit.totalInstruments,
-                                    " instruments entered"
+                                    "p",
+                                    { className: "center" },
+                                    React.createElement(
+                                        "i",
+                                        null,
+                                        this.props.visit.instrumentsCompleted,
+                                        "/",
+                                        this.props.visit.totalInstruments,
+                                        " instruments entered"
+                                    )
                                 )
                             )
                         )
@@ -623,7 +623,12 @@ var StudyTracker = function (_React$Component7) {
                         "p",
                         { style: { fontSize: "18px" } },
                         v.visitLabel,
-                        ": ",
+                        ":",
+                        React.createElement(
+                            "span",
+                            { className: "complete right-align" },
+                            "\u2713"
+                        ),
                         vr.html
                     );
                 } else {

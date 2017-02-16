@@ -80,6 +80,10 @@ th, td, tr {
     cursor: pointer;
 }
 
+.VLHeader:hover, .PSCIDCell:hover {
+    text-decoration: underline;
+}
+
 .StudyTrackerRow, .StudyTrackerHeader{
     border-bottom: 1px solid #ccc;
     border-top: 1px solid #ccc;

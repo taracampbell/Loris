@@ -389,7 +389,9 @@ class StudyTracker extends React.Component {
              currentTeam: "COMPASS-ND",
              currentCohort: "all",
              cohorts: cohorts,
-             sideBarContent: null
+             sideBarContent: null,
+             currentPSCID: null,
+             currentVisit: null
         };
         this.prettyStatus = this.prettyStatus.bind(this);
         this.showCandFocus = this.showCandFocus.bind(this);
@@ -449,7 +451,13 @@ class StudyTracker extends React.Component {
     // Sets the content of the SideBar and then shows SideBar
     // for Candidate Focus
     showCandFocus(event) {
-        let pscid = $(event.target).text();
+        let pscid;
+        if(event) {
+           pscid = $(event.target).text();
+           this.setState({currentPSCID: pscid});
+        } else {
+            pscid = this.state.currentPSCID;
+        }
         let content = [];
 
         content[0] = <h3 className="center">Participant {pscid}</h3>;
@@ -466,24 +474,27 @@ class StudyTracker extends React.Component {
 
         let visitContent = visits.map(
             function(v) {
-                let vr = this.prettyStatus(v.visitRegStatus, v.visitRegDueDate);
-                let de = this.prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
-                if (vr.status === "complete" && de.status === "complete") {
-                    return (
-                    <p style={{fontSize: "18px"}}>
-                        {v.visitLabel}:
-                        <span className="complete right-align">&#10003;</span>
-                        {vr.html}
-                    </p>
-                    )
-                } else {
-                    return (
-                    <div>
-                        <h4>{v.visitLabel}:</h4>
-                        <p className="indent">Visit Registration: {vr.html}</p>
-                        <p className="indent">Data Registration: {de.html}</p>
-                    </div>
-                    )
+                console.log(this.state.currentCohort);
+                if (v.cohort === this.state.currentCohort || this.state.currentCohort === "all") {
+                    let vr = this.prettyStatus(v.visitRegStatus, v.visitRegDueDate);
+                    let de = this.prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
+                    if (vr.status === "complete" && de.status === "complete") {
+                        return (
+                            <p style={{fontSize: "18px"}}>
+                                {v.visitLabel}:
+                                <span className="complete right-align">&#10003;</span>
+                                {vr.html}
+                            </p>
+                        )
+                    } else {
+                        return (
+                            <div>
+                                <h4>{v.visitLabel}:</h4>
+                                <p className="indent">Visit Registration: {vr.html}</p>
+                                <p className="indent">Data Registration: {de.html}</p>
+                            </div>
+                        )
+                    }
                 }
             }.bind(this)
         );
@@ -553,9 +564,12 @@ class StudyTracker extends React.Component {
         $(".SideBar").css("width", "0px");
     }
 
-    // Function which is called when cohort filter is changed
+    /* Function which is called when cohort filter is changed
+        event is onChange when the select changes
+     */
     filterCohorts(event) {
-        this.setState({currentCohort: event.target.value});
+        // second argument defines callback so setState may behave synchronously
+        this.setState({currentCohort: event.target.value}, this.showCandFocus);
     }
 
     // Function which will handle team filtering
@@ -630,6 +644,7 @@ class StudyTracker extends React.Component {
                 <SideBar
                     closeSideBar={this.closeSideBar}
                     sideBarContent={this.state.sideBarContent}
+                    currentCohort={this.state.currentCohort}
                 />
             </div>
         );

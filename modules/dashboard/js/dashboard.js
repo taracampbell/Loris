@@ -506,7 +506,9 @@ var StudyTracker = function (_React$Component7) {
             currentTeam: "COMPASS-ND",
             currentCohort: "all",
             cohorts: cohorts,
-            sideBarContent: null
+            sideBarContent: null,
+            currentPSCID: null,
+            currentVisit: null
         };
         _this7.prettyStatus = _this7.prettyStatus.bind(_this7);
         _this7.showCandFocus = _this7.showCandFocus.bind(_this7);
@@ -595,7 +597,13 @@ var StudyTracker = function (_React$Component7) {
     }, {
         key: "showCandFocus",
         value: function showCandFocus(event) {
-            var pscid = $(event.target).text();
+            var pscid = void 0;
+            if (event) {
+                pscid = $(event.target).text();
+                this.setState({ currentPSCID: pscid });
+            } else {
+                pscid = this.state.currentPSCID;
+            }
             var content = [];
 
             content[0] = React.createElement(
@@ -616,44 +624,47 @@ var StudyTracker = function (_React$Component7) {
             }
 
             var visitContent = visits.map(function (v) {
-                var vr = this.prettyStatus(v.visitRegStatus, v.visitRegDueDate);
-                var de = this.prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
-                if (vr.status === "complete" && de.status === "complete") {
-                    return React.createElement(
-                        "p",
-                        { style: { fontSize: "18px" } },
-                        v.visitLabel,
-                        ":",
-                        React.createElement(
-                            "span",
-                            { className: "complete right-align" },
-                            "\u2713"
-                        ),
-                        vr.html
-                    );
-                } else {
-                    return React.createElement(
-                        "div",
-                        null,
-                        React.createElement(
-                            "h4",
-                            null,
+                console.log(this.state.currentCohort);
+                if (v.cohort === this.state.currentCohort || this.state.currentCohort === "all") {
+                    var vr = this.prettyStatus(v.visitRegStatus, v.visitRegDueDate);
+                    var de = this.prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
+                    if (vr.status === "complete" && de.status === "complete") {
+                        return React.createElement(
+                            "p",
+                            { style: { fontSize: "18px" } },
                             v.visitLabel,
-                            ":"
-                        ),
-                        React.createElement(
-                            "p",
-                            { className: "indent" },
-                            "Visit Registration: ",
+                            ":",
+                            React.createElement(
+                                "span",
+                                { className: "complete right-align" },
+                                "\u2713"
+                            ),
                             vr.html
-                        ),
-                        React.createElement(
-                            "p",
-                            { className: "indent" },
-                            "Data Registration: ",
-                            de.html
-                        )
-                    );
+                        );
+                    } else {
+                        return React.createElement(
+                            "div",
+                            null,
+                            React.createElement(
+                                "h4",
+                                null,
+                                v.visitLabel,
+                                ":"
+                            ),
+                            React.createElement(
+                                "p",
+                                { className: "indent" },
+                                "Visit Registration: ",
+                                vr.html
+                            ),
+                            React.createElement(
+                                "p",
+                                { className: "indent" },
+                                "Data Registration: ",
+                                de.html
+                            )
+                        );
+                    }
                 }
             }.bind(this));
 
@@ -795,12 +806,15 @@ var StudyTracker = function (_React$Component7) {
             $(".SideBar").css("width", "0px");
         }
 
-        // Function which is called when cohort filter is changed
+        /* Function which is called when cohort filter is changed
+            event is onChange when the select changes
+         */
 
     }, {
         key: "filterCohorts",
         value: function filterCohorts(event) {
-            this.setState({ currentCohort: event.target.value });
+            // second argument defines callback so setState may behave synchronously
+            this.setState({ currentCohort: event.target.value }, this.showCandFocus);
         }
 
         // Function which will handle team filtering
@@ -888,7 +902,8 @@ var StudyTracker = function (_React$Component7) {
                 ),
                 React.createElement(SideBar, {
                     closeSideBar: this.closeSideBar,
-                    sideBarContent: this.state.sideBarContent
+                    sideBarContent: this.state.sideBarContent,
+                    currentCohort: this.state.currentCohort
                 })
             );
         }

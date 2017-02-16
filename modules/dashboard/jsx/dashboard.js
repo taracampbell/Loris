@@ -189,7 +189,7 @@ function SiteFilter(props) {
     );
     return (
         <td>
-            <select onChange={props.filterSites}>
+            <select className="form-control input-sm" onChange={props.filterSites}>
                 <option value="all">Show All Sites</option>
                 {options}
             </select>
@@ -200,7 +200,7 @@ function SiteFilter(props) {
 function TeamFilter(props) {
     return (
         <td>
-            <select onChange={props.filterTeams}>
+            <select className="form-control input-sm" onChange={props.filterTeams}>
                 <option value="COMPASS-ND">COMPASS-ND</option>
             </select>
         </td>
@@ -213,7 +213,7 @@ function CohortFilter(props) {
     );
     return (
         <td>
-            <select onChange={props.filterCohorts}>
+            <select className="form-control input-sm" onChange={props.filterCohorts}>
                 <option value="all">Show All Cohorts</option>
                 {options}
             </select>

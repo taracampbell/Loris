@@ -63,8 +63,7 @@ th, td, tr {
     color: #818181;
     display: inline-block;
     transition: 0.3s;
-    height: 0;
-    width: 50%;
+    float: right;
 }
 
 .Filters {

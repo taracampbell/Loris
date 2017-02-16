@@ -174,7 +174,7 @@ function SiteFilter(props) {
         null,
         React.createElement(
             "select",
-            { onChange: props.filterSites },
+            { className: "form-control input-sm", onChange: props.filterSites },
             React.createElement(
                 "option",
                 { value: "all" },
@@ -191,7 +191,7 @@ function TeamFilter(props) {
         null,
         React.createElement(
             "select",
-            { onChange: props.filterTeams },
+            { className: "form-control input-sm", onChange: props.filterTeams },
             React.createElement(
                 "option",
                 { value: "COMPASS-ND" },
@@ -214,7 +214,7 @@ function CohortFilter(props) {
         null,
         React.createElement(
             "select",
-            { onChange: props.filterCohorts },
+            { className: "form-control input-sm", onChange: props.filterCohorts },
             React.createElement(
                 "option",
                 { value: "all" },

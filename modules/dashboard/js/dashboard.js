@@ -174,7 +174,7 @@ function SiteFilter(props) {
         null,
         React.createElement(
             "select",
-            { onChange: props.filterSites },
+            { className: "form-control input-sm", onChange: props.filterSites },
             React.createElement(
                 "option",
                 { value: "all" },
@@ -191,7 +191,7 @@ function TeamFilter(props) {
         null,
         React.createElement(
             "select",
-            { onChange: props.filterTeams },
+            { className: "form-control input-sm", onChange: props.filterTeams },
             React.createElement(
                 "option",
                 { value: "COMPASS-ND" },
@@ -214,7 +214,7 @@ function CohortFilter(props) {
         null,
         React.createElement(
             "select",
-            { onChange: props.filterCohorts },
+            { className: "form-control input-sm", onChange: props.filterCohorts },
             React.createElement(
                 "option",
                 { value: "all" },
@@ -341,18 +341,18 @@ var VisitCell = function (_React$Component3) {
                                     null,
                                     "Data Entry: ",
                                     de.html
-                                )
-                            ),
-                            React.createElement(
-                                "p",
-                                { className: "center" },
+                                ),
                                 React.createElement(
-                                    "i",
-                                    null,
-                                    this.props.visit.instrumentsCompleted,
-                                    "/",
-                                    this.props.visit.totalInstruments,
-                                    " instruments entered"
+                                    "p",
+                                    { className: "center" },
+                                    React.createElement(
+                                        "i",
+                                        null,
+                                        this.props.visit.instrumentsCompleted,
+                                        "/",
+                                        this.props.visit.totalInstruments,
+                                        " instruments entered"
+                                    )
                                 )
                             )
                         )
@@ -623,7 +623,12 @@ var StudyTracker = function (_React$Component7) {
                         "p",
                         { style: { fontSize: "18px" } },
                         v.visitLabel,
-                        ": ",
+                        ":",
+                        React.createElement(
+                            "span",
+                            { className: "complete right-align" },
+                            "\u2713"
+                        ),
                         vr.html
                     );
                 } else {

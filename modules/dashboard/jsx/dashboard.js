@@ -189,7 +189,7 @@ function SiteFilter(props) {
     );
     return (
         <td>
-            <select onChange={props.filterSites}>
+            <select className="form-control input-sm" onChange={props.filterSites}>
                 <option value="all">Show All Sites</option>
                 {options}
             </select>
@@ -200,7 +200,7 @@ function SiteFilter(props) {
 function TeamFilter(props) {
     return (
         <td>
-            <select onChange={props.filterTeams}>
+            <select className="form-control input-sm" onChange={props.filterTeams}>
                 <option value="COMPASS-ND">COMPASS-ND</option>
             </select>
         </td>
@@ -213,7 +213,7 @@ function CohortFilter(props) {
     );
     return (
         <td>
-            <select onChange={props.filterCohorts}>
+            <select className="form-control input-sm" onChange={props.filterCohorts}>
                 <option value="all">Show All Cohorts</option>
                 {options}
             </select>
@@ -282,12 +282,12 @@ class VisitCell extends React.Component {
                             <div className="ReactTooltipContent">
                                 <p>Visit Registration: {vr.html}</p>
                                 <p>Data Entry: {de.html}</p>
+                                <p className="center">
+                                    <i>
+                                        {this.props.visit.instrumentsCompleted}/{this.props.visit.totalInstruments} instruments entered
+                                    </i>
+                                </p>
                             </div>
-                            <p className="center">
-                                <i>
-                                    {this.props.visit.instrumentsCompleted}/{this.props.visit.totalInstruments} instruments entered
-                                </i>
-                            </p>
                         </ReactTooltip>
                     </div>
                 </td>
@@ -469,7 +469,13 @@ class StudyTracker extends React.Component {
                 let vr = this.prettyStatus(v.visitRegStatus, v.visitRegDueDate);
                 let de = this.prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
                 if (vr.status === "complete" && de.status === "complete") {
-                    return <p style={{fontSize: "18px"}}>{v.visitLabel}: {vr.html}</p>
+                    return (
+                    <p style={{fontSize: "18px"}}>
+                        {v.visitLabel}:
+                        <span className="complete right-align">&#10003;</span>
+                        {vr.html}
+                    </p>
+                    )
                 } else {
                     return (
                     <div>

@@ -17,8 +17,8 @@ var dummyData = [{
         "dataEntryStatus": "complete-data-entry",
         "visitRegDueDate": randomDate(),
         "dataEntryDueDate": randomDate(),
-        "instrumentsCompleted": 1,
-        "totalInstruments": 22,
+        "instrCompleted": 1,
+        "totalInstrs": 22,
         "visitLabel": "Screening",
         "cohort": "MCI"
     }, {
@@ -27,8 +27,8 @@ var dummyData = [{
         "dataEntryStatus": "deadline-approaching-data-entry",
         "visitRegDueDate": randomDate(),
         "dataEntryDueDate": randomDate(),
-        "instrumentsCompleted": 2,
-        "totalInstruments": 22,
+        "instrCompleted": 2,
+        "totalInstrs": 22,
         "visitLabel": "Clinical",
         "cohort": "AD"
     }, {
@@ -37,8 +37,8 @@ var dummyData = [{
         "dataEntryStatus": "complete-data-entry",
         "visitRegDueDate": randomDate(),
         "dataEntryDueDate": randomDate(),
-        "instrumentsCompleted": 3,
-        "totalInstruments": 22,
+        "instrCompleted": 3,
+        "totalInstrs": 22,
         "visitLabel": "Neuropsych",
         "cohort": "AD"
     }]
@@ -51,8 +51,8 @@ var dummyData = [{
         "dataEntryStatus": "cancelled-data",
         "visitRegDueDate": randomDate(),
         "dataEntryDueDate": randomDate(),
-        "instrumentsCompleted": 1,
-        "totalInstruments": 22,
+        "instrCompleted": 1,
+        "totalInstrs": 22,
         "visitLabel": "Screening",
         "cohort": "AD"
     }, {
@@ -61,8 +61,8 @@ var dummyData = [{
         "dataEntryStatus": "deadline-approaching-data-entry",
         "visitRegDueDate": randomDate(),
         "dataEntryDueDate": randomDate(),
-        "instrumentsCompleted": 2,
-        "totalInstruments": 22,
+        "instrCompleted": 2,
+        "totalInstrs": 22,
         "visitLabel": "Clinical",
         "cohort": "SCI"
     }, {
@@ -71,8 +71,8 @@ var dummyData = [{
         "dataEntryStatus": "deadline-past-data-entry",
         "visitRegDueDate": randomDate(),
         "dataEntryDueDate": randomDate(),
-        "instrumentsCompleted": 3,
-        "totalInstruments": 22,
+        "instrCompleted": 3,
+        "totalInstrs": 22,
         "visitLabel": "Neuropsych",
         "cohort": "MCI"
     }]
@@ -85,8 +85,8 @@ var dummyData = [{
         "dataEntryStatus": "deadline-approaching-data-entry",
         "visitRegDueDate": randomDate(),
         "dataEntryDueDate": randomDate(),
-        "instrumentsCompleted": 1,
-        "totalInstruments": 22,
+        "instrCompleted": 1,
+        "totalInstrs": 22,
         "visitLabel": "Screening",
         "cohort": "SCI"
     }, {
@@ -95,8 +95,8 @@ var dummyData = [{
         "dataEntryStatus": "deadline-approaching-data-entry",
         "visitRegDueDate": randomDate(),
         "dataEntryDueDate": randomDate(),
-        "instrumentsCompleted": 2,
-        "totalInstruments": 22,
+        "instrCompleted": 2,
+        "totalInstrs": 22,
         "visitLabel": "Clinical",
         "cohort": "SCI"
 
@@ -106,8 +106,8 @@ var dummyData = [{
         "dataEntryStatus": "deadline-approaching-data-entry",
         "visitRegDueDate": randomDate(),
         "dataEntryDueDate": randomDate(),
-        "instrumentsCompleted": 3,
-        "totalInstruments": 22,
+        "instrCompleted": 3,
+        "totalInstrs": 22,
         "visitLabel": "Neuropsych",
         "cohort": "SCI"
     }]
@@ -120,8 +120,8 @@ var dummyData = [{
         "dataEntryStatus": "deadline-approaching-data-entry",
         "visitRegDueDate": randomDate(),
         "dataEntryDueDate": randomDate(),
-        "instrumentsCompleted": 1,
-        "totalInstruments": 22,
+        "instrCompleted": 1,
+        "totalInstrs": 22,
         "visitLabel": "Screening",
         "cohort": "AD"
     }, {
@@ -130,8 +130,8 @@ var dummyData = [{
         "visitRegStatus": "deadline-approaching-visit",
         "visitRegDueDate": randomDate(),
         "dataEntryDueDate": randomDate(),
-        "instrumentsCompleted": 2,
-        "totalInstruments": 22,
+        "instrCompleted": 2,
+        "totalInstrs": 22,
         "visitLabel": "Clinical",
         "cohort": "AD"
     }, {
@@ -140,8 +140,8 @@ var dummyData = [{
         "dataEntryStatus": "deadline-approaching-data-entry",
         "visitRegDueDate": randomDate(),
         "dataEntryDueDate": randomDate(),
-        "instrumentsCompleted": 3,
-        "totalInstruments": 22,
+        "instrCompleted": 3,
+        "totalInstrs": 22,
         "visitLabel": "Neuropsych",
         "cohort": "AD"
     }]
@@ -313,14 +313,19 @@ var VisitCell = function (_React$Component3) {
     _createClass(VisitCell, [{
         key: "render",
         value: function render() {
+            var style = {};
+            if (this.props.visit.visitLabel === this.props.currentVisit) {
+                style = { backgroundColor: "#f5f5f5" };
+            }
             if (this.props.visit.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
                 var visitClass = "circle " + this.props.visit.dataEntryStatus + " " + this.props.visit.visitRegStatus;
 
                 var vr = this.props.prettyStatus(this.props.visit.visitRegStatus, this.props.visit.visitRegDueDate);
                 var de = this.props.prettyStatus(this.props.visit.dataEntryStatus, this.props.visit.dataEntryDueDate);
+
                 return React.createElement(
                     "td",
-                    { className: this.props.visit.visitLabel },
+                    { className: this.props.visit.visitLabel, style: style },
                     React.createElement(
                         "div",
                         { "data-tip": true, "data-for": this.props.visit.sessionID, className: visitClass },
@@ -348,9 +353,9 @@ var VisitCell = function (_React$Component3) {
                                     React.createElement(
                                         "i",
                                         null,
-                                        this.props.visit.instrumentsCompleted,
+                                        this.props.visit.instrCompleted,
                                         "/",
-                                        this.props.visit.totalInstruments,
+                                        this.props.visit.totalInstrs,
                                         " instruments entered"
                                     )
                                 )
@@ -359,7 +364,7 @@ var VisitCell = function (_React$Component3) {
                     )
                 );
             } else {
-                return React.createElement("td", { className: this.props.visit.visitLabel });
+                return React.createElement("td", { className: this.props.visit.visitLabel, style: style });
             }
         }
     }]);
@@ -383,7 +388,7 @@ var PSCIDCell = function (_React$Component4) {
                 "td",
                 {
                     className: "PSCIDCell",
-                    onClick: this.props.showCandFocus },
+                    onClick: this.props.clickHandler },
                 this.props.pscid
             );
         }
@@ -395,13 +400,41 @@ var PSCIDCell = function (_React$Component4) {
 var StudyTrackerRow = function (_React$Component5) {
     _inherits(StudyTrackerRow, _React$Component5);
 
-    function StudyTrackerRow() {
+    function StudyTrackerRow(props) {
         _classCallCheck(this, StudyTrackerRow);
 
-        return _possibleConstructorReturn(this, (StudyTrackerRow.__proto__ || Object.getPrototypeOf(StudyTrackerRow)).apply(this, arguments));
+        var _this5 = _possibleConstructorReturn(this, (StudyTrackerRow.__proto__ || Object.getPrototypeOf(StudyTrackerRow)).call(this, props));
+
+        _this5.highlightRow = _this5.highlightRow.bind(_this5);
+        _this5.unhighlightRow = _this5.unhighlightRow.bind(_this5);
+        _this5.keepHighlightedShowCandFocus = _this5.keepHighlightedShowCandFocus.bind(_this5);
+        return _this5;
     }
 
     _createClass(StudyTrackerRow, [{
+        key: "highlightRow",
+        value: function highlightRow() {
+            $("#" + this.props.pscid).css("background-color", "#f5f5f5");
+        }
+    }, {
+        key: "unhighlightRow",
+        value: function unhighlightRow() {
+            if (this.props.currentPSCID !== this.props.pscid) {
+                $("#" + this.props.pscid).css("background-color", "");
+            }
+        }
+    }, {
+        key: "keepHighlightedShowCandFocus",
+        value: function keepHighlightedShowCandFocus(event) {
+            // unset all other highlights
+            $(".StudyTrackerRow").css("background-color", "");
+            this.props.visits.forEach(function (v) {
+                $("." + v.visitLabel).css("background-color", "");
+            });
+            this.highlightRow();
+            this.props.showCandFocus(event);
+        }
+    }, {
         key: "render",
         value: function render() {
             var visits = this.props.visits.map(function (v) {
@@ -409,15 +442,21 @@ var StudyTrackerRow = function (_React$Component5) {
                     key: v.sessionID,
                     visit: v,
                     currentCohort: this.props.currentCohort,
+                    currentVisit: this.props.currentVisit,
                     prettyStatus: this.props.prettyStatus
                 });
             }.bind(this));
             return React.createElement(
                 "tr",
-                { className: "StudyTrackerRow" },
+                {
+                    className: "StudyTrackerRow",
+                    id: this.props.pscid,
+                    onMouseEnter: this.highlightRow,
+                    onMouseLeave: this.unhighlightRow
+                },
                 React.createElement(PSCIDCell, {
                     pscid: this.props.pscid,
-                    showCandFocus: this.props.showCandFocus
+                    clickHandler: this.keepHighlightedShowCandFocus
                 }),
                 visits
             );
@@ -433,7 +472,15 @@ var StudyTrackerHeader = function (_React$Component6) {
     function StudyTrackerHeader(props) {
         _classCallCheck(this, StudyTrackerHeader);
 
-        return _possibleConstructorReturn(this, (StudyTrackerHeader.__proto__ || Object.getPrototypeOf(StudyTrackerHeader)).call(this, props));
+        var _this6 = _possibleConstructorReturn(this, (StudyTrackerHeader.__proto__ || Object.getPrototypeOf(StudyTrackerHeader)).call(this, props));
+
+        _this6.state = {
+            visitInFocus: null
+        };
+        _this6.highlightColumns = _this6.highlightColumns.bind(_this6);
+        _this6.unhighlightColumns = _this6.unhighlightColumns.bind(_this6);
+        _this6.keepHighlightedShowVisitFocus = _this6.keepHighlightedShowVisitFocus.bind(_this6);
+        return _this6;
     }
 
     // When mouse enters header cell, highlight all cells for that visit
@@ -442,6 +489,33 @@ var StudyTrackerHeader = function (_React$Component6) {
 
 
     _createClass(StudyTrackerHeader, [{
+        key: "highlightColumns",
+        value: function highlightColumns(event) {
+            var visitClass = "." + $(event.target).text();
+            $(visitClass).css("background-color", "#f5f5f5");
+        }
+    }, {
+        key: "unhighlightColumns",
+        value: function unhighlightColumns(event) {
+            if (this.props.currentVisit !== $(event.target).text()) {
+                var visitClass = "." + $(event.target).text();
+                $(visitClass).css("background-color", "");
+            }
+        }
+    }, {
+        key: "keepHighlightedShowVisitFocus",
+        value: function keepHighlightedShowVisitFocus(event) {
+            // // first unset all other highlights
+            $(".StudyTrackerRow").css("background-color", "");
+            this.props.visitLabels.forEach(function (vl) {
+                $("." + vl).css("background-color", "");
+            });
+            // // then apply highlighting to only this column
+            this.highlightColumns(event);
+
+            this.props.showVisitFocus(event);
+        }
+    }, {
         key: "render",
         value: function render() {
             var visitLabelHeaders = this.props.visitLabels.map(function (vl) {
@@ -449,9 +523,9 @@ var StudyTrackerHeader = function (_React$Component6) {
                 return React.createElement(
                     "th",
                     {
-                        onMouseEnter: StudyTrackerHeader.highlightColumns,
-                        onMouseLeave: StudyTrackerHeader.unhighlightColumns,
-                        onClick: this.props.showVisitFocus,
+                        onMouseEnter: this.highlightColumns,
+                        onMouseLeave: this.unhighlightColumns,
+                        onClick: this.keepHighlightedShowVisitFocus,
                         key: vl,
                         className: cssClass },
                     vl
@@ -467,18 +541,6 @@ var StudyTrackerHeader = function (_React$Component6) {
                     visitLabelHeaders
                 )
             );
-        }
-    }], [{
-        key: "highlightColumns",
-        value: function highlightColumns(event) {
-            var visitClass = "." + $(event.target).text();
-            $(visitClass).css("background-color", "#f5f5f5");
-        }
-    }, {
-        key: "unhighlightColumns",
-        value: function unhighlightColumns(event) {
-            var visitClass = "." + $(event.target).text();
-            $(visitClass).css("background-color", "");
         }
     }]);
 
@@ -597,6 +659,7 @@ var StudyTracker = function (_React$Component7) {
                 pscid = $(event.target).text();
                 this.setState({
                     currentPSCID: pscid,
+                    currentVisit: null,
                     currentSideBarFocus: "candidate"
                 });
             } else {
@@ -701,9 +764,9 @@ var StudyTracker = function (_React$Component7) {
                 visit = $(event.target).text();
                 this.setState({
                     currentVisit: visit,
+                    currentPSCID: null,
                     currentSideBarFocus: "visit"
                 });
-                StudyTrackerHeader.highlightColumns(event);
             } else {
                 visit = this.state.currentVisit;
             }
@@ -917,6 +980,8 @@ var StudyTracker = function (_React$Component7) {
                         pscid: row.pscid,
                         visits: row.visits,
                         currentCohort: this.state.currentCohort,
+                        currentVisit: this.state.currentVisit,
+                        currentPSCID: this.state.currentPSCID,
                         showCandFocus: this.showCandFocus,
                         prettyStatus: this.prettyStatus
                     });
@@ -943,6 +1008,7 @@ var StudyTracker = function (_React$Component7) {
                     null,
                     React.createElement(StudyTrackerHeader, {
                         visitLabels: this.state.visitLabels,
+                        currentVisit: this.state.currentVisit,
                         showVisitFocus: this.showVisitFocus
                     }),
                     React.createElement(

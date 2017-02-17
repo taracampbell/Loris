@@ -9,8 +9,8 @@ var dummyData = [
                 "dataEntryStatus": "complete-data-entry",
                 "visitRegDueDate": randomDate(),
                 "dataEntryDueDate": randomDate(),
-                "instrumentsCompleted": 1,
-                "totalInstruments": 22,
+                "instrCompleted": 1,
+                "totalInstrs": 22,
                 "visitLabel": "Screening",
                 "cohort": "MCI"
             },
@@ -20,8 +20,8 @@ var dummyData = [
                 "dataEntryStatus": "deadline-approaching-data-entry",
                 "visitRegDueDate": randomDate(),
                 "dataEntryDueDate": randomDate(),
-                "instrumentsCompleted": 2,
-                "totalInstruments": 22,
+                "instrCompleted": 2,
+                "totalInstrs": 22,
                 "visitLabel": "Clinical",
                 "cohort": "AD"
             },
@@ -31,8 +31,8 @@ var dummyData = [
                 "dataEntryStatus": "complete-data-entry",
                 "visitRegDueDate": randomDate(),
                 "dataEntryDueDate": randomDate(),
-                "instrumentsCompleted": 3,
-                "totalInstruments": 22,
+                "instrCompleted": 3,
+                "totalInstrs": 22,
                 "visitLabel": "Neuropsych",
                 "cohort": "AD"
             }
@@ -48,8 +48,8 @@ var dummyData = [
                 "dataEntryStatus": "cancelled-data",
                 "visitRegDueDate": randomDate(),
                 "dataEntryDueDate": randomDate(),
-                "instrumentsCompleted": 1,
-                "totalInstruments": 22,
+                "instrCompleted": 1,
+                "totalInstrs": 22,
                 "visitLabel": "Screening",
                 "cohort": "AD"
             },
@@ -59,8 +59,8 @@ var dummyData = [
                 "dataEntryStatus": "deadline-approaching-data-entry",
                 "visitRegDueDate": randomDate(),
                 "dataEntryDueDate": randomDate(),
-                "instrumentsCompleted": 2,
-                "totalInstruments": 22,
+                "instrCompleted": 2,
+                "totalInstrs": 22,
                 "visitLabel": "Clinical",
                 "cohort": "SCI"
             },
@@ -70,8 +70,8 @@ var dummyData = [
                 "dataEntryStatus": "deadline-past-data-entry",
                 "visitRegDueDate": randomDate(),
                 "dataEntryDueDate": randomDate(),
-                "instrumentsCompleted": 3,
-                "totalInstruments": 22,
+                "instrCompleted": 3,
+                "totalInstrs": 22,
                 "visitLabel": "Neuropsych",
                 "cohort": "MCI"
             }
@@ -87,8 +87,8 @@ var dummyData = [
                 "dataEntryStatus": "deadline-approaching-data-entry",
                 "visitRegDueDate": randomDate(),
                 "dataEntryDueDate": randomDate(),
-                "instrumentsCompleted": 1,
-                "totalInstruments": 22,
+                "instrCompleted": 1,
+                "totalInstrs": 22,
                 "visitLabel": "Screening",
                 "cohort": "SCI"
             },
@@ -98,8 +98,8 @@ var dummyData = [
                 "dataEntryStatus": "deadline-approaching-data-entry",
                 "visitRegDueDate": randomDate(),
                 "dataEntryDueDate": randomDate(),
-                "instrumentsCompleted": 2,
-                "totalInstruments": 22,
+                "instrCompleted": 2,
+                "totalInstrs": 22,
                 "visitLabel": "Clinical",
                 "cohort": "SCI"
 
@@ -110,8 +110,8 @@ var dummyData = [
                 "dataEntryStatus": "deadline-approaching-data-entry",
                 "visitRegDueDate": randomDate(),
                 "dataEntryDueDate": randomDate(),
-                "instrumentsCompleted": 3,
-                "totalInstruments": 22,
+                "instrCompleted": 3,
+                "totalInstrs": 22,
                 "visitLabel": "Neuropsych",
                 "cohort": "SCI"
             }
@@ -127,8 +127,8 @@ var dummyData = [
                 "dataEntryStatus": "deadline-approaching-data-entry",
                 "visitRegDueDate": randomDate(),
                 "dataEntryDueDate": randomDate(),
-                "instrumentsCompleted": 1,
-                "totalInstruments": 22,
+                "instrCompleted": 1,
+                "totalInstrs": 22,
                 "visitLabel": "Screening",
                 "cohort": "AD"
             },
@@ -138,8 +138,8 @@ var dummyData = [
                 "visitRegStatus": "deadline-approaching-visit",
                 "visitRegDueDate": randomDate(),
                 "dataEntryDueDate": randomDate(),
-                "instrumentsCompleted": 2,
-                "totalInstruments": 22,
+                "instrCompleted": 2,
+                "totalInstrs": 22,
                 "visitLabel": "Clinical",
                 "cohort": "AD"
             },
@@ -149,8 +149,8 @@ var dummyData = [
                 "dataEntryStatus": "deadline-approaching-data-entry",
                 "visitRegDueDate": randomDate(),
                 "dataEntryDueDate": randomDate(),
-                "instrumentsCompleted": 3,
-                "totalInstruments": 22,
+                "instrCompleted": 3,
+                "totalInstrs": 22,
                 "visitLabel": "Neuropsych",
                 "cohort": "AD"
             }
@@ -247,7 +247,6 @@ class Filters extends React.Component {
     }
 }
 
-
 class SideBar extends React.Component {
     render() {
         return (
@@ -267,6 +266,10 @@ class SideBar extends React.Component {
 
 class VisitCell extends React.Component {
     render () {
+        let style = {};
+        if (this.props.visit.visitLabel === this.props.currentVisit) {
+            style = {backgroundColor: "#f5f5f5"};
+        }
         if (this.props.visit.cohort === this.props.currentCohort
             || this.props.currentCohort === "all") {
             let visitClass = "circle "
@@ -275,8 +278,9 @@ class VisitCell extends React.Component {
 
             let vr = this.props.prettyStatus(this.props.visit.visitRegStatus, this.props.visit.visitRegDueDate);
             let de = this.props.prettyStatus(this.props.visit.dataEntryStatus, this.props.visit.dataEntryDueDate);
+
             return (
-                <td className={this.props.visit.visitLabel}>
+                <td className={this.props.visit.visitLabel} style={style}>
                     <div data-tip data-for={this.props.visit.sessionID} className={visitClass}>
                         <ReactTooltip id={this.props.visit.sessionID} place="top" type="dark" effect="solid">
                             <div className="ReactTooltipContent">
@@ -284,7 +288,7 @@ class VisitCell extends React.Component {
                                 <p>Data Entry: {de.html}</p>
                                 <p className="center">
                                     <i>
-                                        {this.props.visit.instrumentsCompleted}/{this.props.visit.totalInstruments} instruments entered
+                                        {this.props.visit.instrCompleted}/{this.props.visit.totalInstrs} instruments entered
                                     </i>
                                 </p>
                             </div>
@@ -293,7 +297,7 @@ class VisitCell extends React.Component {
                 </td>
             );
         } else {
-            return (<td className={this.props.visit.visitLabel}/>);
+            return (<td className={this.props.visit.visitLabel} style={style}/>);
         }
     }
 }
@@ -303,7 +307,7 @@ class PSCIDCell extends React.Component {
         return (
             <td
                 className='PSCIDCell'
-                onClick={this.props.showCandFocus}>
+                onClick={this.props.clickHandler}>
                 {this.props.pscid}
             </td>
         );
@@ -311,21 +315,55 @@ class PSCIDCell extends React.Component {
 }
 
 class StudyTrackerRow extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.highlightRow = this.highlightRow.bind(this);
+        this.unhighlightRow = this.unhighlightRow.bind(this);
+        this.keepHighlightedShowCandFocus = this.keepHighlightedShowCandFocus.bind(this);
+    }
+
+    highlightRow() {
+        $("#"+this.props.pscid).css("background-color", "#f5f5f5");
+    }
+
+    unhighlightRow() {
+        if (this.props.currentPSCID !== this.props.pscid) {
+            $("#" + this.props.pscid).css("background-color", "");
+        }
+    }
+
+    keepHighlightedShowCandFocus(event){
+        // unset all other highlights
+        $(".StudyTrackerRow").css("background-color", "");
+        this.props.visits.forEach( function(v) {
+            $("."+v.visitLabel).css("background-color","");
+        });
+        this.highlightRow();
+        this.props.showCandFocus(event);
+    }
+
     render() {
         let visits = this.props.visits.map(function(v) {
                 return <VisitCell
                     key={v.sessionID}
                     visit={v}
                     currentCohort={this.props.currentCohort}
+                    currentVisit={this.props.currentVisit}
                     prettyStatus={this.props.prettyStatus}
                 />
             }.bind(this)
         );
         return(
-            <tr className="StudyTrackerRow">
+            <tr
+                className="StudyTrackerRow"
+                id={this.props.pscid}
+                onMouseEnter={this.highlightRow}
+                onMouseLeave={this.unhighlightRow}
+            >
                 <PSCIDCell
                     pscid={this.props.pscid}
-                    showCandFocus={this.props.showCandFocus}
+                    clickHandler={this.keepHighlightedShowCandFocus}
                 />
                 {visits}
             </tr>
@@ -336,27 +374,46 @@ class StudyTrackerRow extends React.Component {
 class StudyTrackerHeader extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+          visitInFocus: null
+        };
+        this.highlightColumns = this.highlightColumns.bind(this);
+        this.unhighlightColumns = this.unhighlightColumns.bind(this);
+        this.keepHighlightedShowVisitFocus = this.keepHighlightedShowVisitFocus.bind(this);
     }
 
     // When mouse enters header cell, highlight all cells for that visit
     // This means that the text that shows up in the column header
     // must be equal to the css class name which is perhaps bad design
-    static highlightColumns(event) {
+     highlightColumns(event) {
         let visitClass = "." + $(event.target).text();
         $(visitClass).css("background-color", "#f5f5f5");
     }
-    static unhighlightColumns(event) {
-        let visitClass = "." + $(event.target).text();
-        $(visitClass).css("background-color", "");
+     unhighlightColumns(event) {
+        if (this.props.currentVisit !== $(event.target).text()) {
+            let visitClass = "." + $(event.target).text();
+            $(visitClass).css("background-color", "");
+        }
+    }
+    keepHighlightedShowVisitFocus(event) {
+        // // first unset all other highlights
+         $(".StudyTrackerRow").css("background-color", "");
+         this.props.visitLabels.forEach( function(vl) {
+             $("."+vl).css("background-color","");
+         });
+        // // then apply highlighting to only this column
+        this.highlightColumns(event);
+
+        this.props.showVisitFocus(event);
     }
   render() {
     let visitLabelHeaders = this.props.visitLabels.map(function(vl) {
             let cssClass = "VLHeader " + vl;
             return (
             <th
-                onMouseEnter={StudyTrackerHeader.highlightColumns}
-                onMouseLeave={StudyTrackerHeader.unhighlightColumns}
-                onClick={this.props.showVisitFocus}
+                onMouseEnter={this.highlightColumns}
+                onMouseLeave={this.unhighlightColumns}
+                onClick={this.keepHighlightedShowVisitFocus}
                 key={vl}
                 className={cssClass}>
                 {vl}
@@ -453,6 +510,7 @@ class StudyTracker extends React.Component {
            pscid = $(event.target).text();
            this.setState({
                currentPSCID: pscid,
+               currentVisit: null,
                currentSideBarFocus: "candidate"
            });
         } else {
@@ -521,9 +579,9 @@ class StudyTracker extends React.Component {
             visit = $(event.target).text();
             this.setState({
                 currentVisit: visit,
+                currentPSCID: null,
                 currentSideBarFocus: "visit"
             });
-            StudyTrackerHeader.highlightColumns(event);
         } else {
             visit = this.state.currentVisit;
         }
@@ -663,6 +721,8 @@ class StudyTracker extends React.Component {
                             pscid={row.pscid}
                             visits={row.visits}
                             currentCohort={this.state.currentCohort}
+                            currentVisit={this.state.currentVisit}
+                            currentPSCID={this.state.currentPSCID}
                             showCandFocus={this.showCandFocus}
                             prettyStatus={this.prettyStatus}
                         />
@@ -684,6 +744,7 @@ class StudyTracker extends React.Component {
                 <table>
                     <StudyTrackerHeader
                         visitLabels={this.state.visitLabels}
+                        currentVisit={this.state.currentVisit}
                         showVisitFocus={this.showVisitFocus}
                     />
                     <tbody>

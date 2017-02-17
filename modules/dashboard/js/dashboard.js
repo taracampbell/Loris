@@ -433,11 +433,7 @@ var StudyTrackerHeader = function (_React$Component6) {
     function StudyTrackerHeader(props) {
         _classCallCheck(this, StudyTrackerHeader);
 
-        var _this6 = _possibleConstructorReturn(this, (StudyTrackerHeader.__proto__ || Object.getPrototypeOf(StudyTrackerHeader)).call(this, props));
-
-        _this6.highlightVisits = _this6.highlightVisits.bind(_this6);
-        _this6.unHighlightVisits = _this6.unHighlightVisits.bind(_this6);
-        return _this6;
+        return _possibleConstructorReturn(this, (StudyTrackerHeader.__proto__ || Object.getPrototypeOf(StudyTrackerHeader)).call(this, props));
     }
 
     // When mouse enters header cell, highlight all cells for that visit
@@ -446,18 +442,6 @@ var StudyTrackerHeader = function (_React$Component6) {
 
 
     _createClass(StudyTrackerHeader, [{
-        key: "highlightVisits",
-        value: function highlightVisits(event) {
-            var visitClass = "." + $(event.target).text();
-            $(visitClass).css("background-color", "#f5f5f5");
-        }
-    }, {
-        key: "unHighlightVisits",
-        value: function unHighlightVisits(event) {
-            var visitClass = "." + $(event.target).text();
-            $(visitClass).css("background-color", "");
-        }
-    }, {
         key: "render",
         value: function render() {
             var visitLabelHeaders = this.props.visitLabels.map(function (vl) {
@@ -465,8 +449,8 @@ var StudyTrackerHeader = function (_React$Component6) {
                 return React.createElement(
                     "th",
                     {
-                        onMouseEnter: this.highlightVisits,
-                        onMouseLeave: this.unHighlightVisits,
+                        onMouseEnter: StudyTrackerHeader.highlightColumns,
+                        onMouseLeave: StudyTrackerHeader.unhighlightColumns,
                         onClick: this.props.showVisitFocus,
                         key: vl,
                         className: cssClass },
@@ -483,6 +467,18 @@ var StudyTrackerHeader = function (_React$Component6) {
                     visitLabelHeaders
                 )
             );
+        }
+    }], [{
+        key: "highlightColumns",
+        value: function highlightColumns(event) {
+            var visitClass = "." + $(event.target).text();
+            $(visitClass).css("background-color", "#f5f5f5");
+        }
+    }, {
+        key: "unhighlightColumns",
+        value: function unhighlightColumns(event) {
+            var visitClass = "." + $(event.target).text();
+            $(visitClass).css("background-color", "");
         }
     }]);
 
@@ -514,8 +510,6 @@ var StudyTracker = function (_React$Component7) {
         _this7.prettyStatus = _this7.prettyStatus.bind(_this7);
         _this7.showCandFocus = _this7.showCandFocus.bind(_this7);
         _this7.showVisitFocus = _this7.showVisitFocus.bind(_this7);
-        _this7.showSideBar = _this7.showSideBar.bind(_this7);
-        _this7.closeSideBar = _this7.closeSideBar.bind(_this7);
         _this7.filterSites = _this7.filterSites.bind(_this7);
         _this7.filterTeams = _this7.filterTeams.bind(_this7);
         _this7.filterCohorts = _this7.filterCohorts.bind(_this7);
@@ -692,7 +686,7 @@ var StudyTracker = function (_React$Component7) {
                 sideBarContent: content
             });
             if (event) {
-                this.showSideBar();
+                StudyTracker.showSideBar();
             }
         }
 
@@ -709,6 +703,7 @@ var StudyTracker = function (_React$Component7) {
                     currentVisit: visit,
                     currentSideBarFocus: "visit"
                 });
+                StudyTrackerHeader.highlightColumns(event);
             } else {
                 visit = this.state.currentVisit;
             }
@@ -847,26 +842,16 @@ var StudyTracker = function (_React$Component7) {
             // only show if event is set, i.e., when the PSCID is clicked
             // not when filter by cohort is done
             if (event) {
-                this.showSideBar();
+                StudyTracker.showSideBar();
             }
         }
     }, {
-        key: "showSideBar",
-        value: function showSideBar() {
-            $(".SideBar").css("width", "350px");
-        }
-    }, {
-        key: "closeSideBar",
-        value: function closeSideBar() {
-            $(".SideBar").css("width", "0px");
-        }
+        key: "filterCohorts",
+
 
         /* Function which is called when cohort filter is changed
             event is onChange when the select changes
          */
-
-    }, {
-        key: "filterCohorts",
         value: function filterCohorts(event) {
             var callback = function callback() {};
             if (this.state.currentSideBarFocus === "visit") {
@@ -967,11 +952,21 @@ var StudyTracker = function (_React$Component7) {
                     )
                 ),
                 React.createElement(SideBar, {
-                    closeSideBar: this.closeSideBar,
+                    closeSideBar: StudyTracker.closeSideBar,
                     sideBarContent: this.state.sideBarContent,
                     currentCohort: this.state.currentCohort
                 })
             );
+        }
+    }], [{
+        key: "showSideBar",
+        value: function showSideBar() {
+            $(".SideBar").css("width", "350px");
+        }
+    }, {
+        key: "closeSideBar",
+        value: function closeSideBar() {
+            $(".SideBar").css("width", "0px");
         }
     }]);
 

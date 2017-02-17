@@ -336,18 +336,16 @@ class StudyTrackerRow extends React.Component {
 class StudyTrackerHeader extends React.Component {
     constructor(props) {
         super(props);
-        this.highlightVisits = this.highlightVisits.bind(this);
-        this.unHighlightVisits = this.unHighlightVisits.bind(this);
     }
 
     // When mouse enters header cell, highlight all cells for that visit
     // This means that the text that shows up in the column header
     // must be equal to the css class name which is perhaps bad design
-    highlightVisits(event) {
+    static highlightColumns(event) {
         let visitClass = "." + $(event.target).text();
         $(visitClass).css("background-color", "#f5f5f5");
     }
-    unHighlightVisits(event) {
+    static unhighlightColumns(event) {
         let visitClass = "." + $(event.target).text();
         $(visitClass).css("background-color", "");
     }
@@ -356,8 +354,8 @@ class StudyTrackerHeader extends React.Component {
             let cssClass = "VLHeader " + vl;
             return (
             <th
-                onMouseEnter={this.highlightVisits}
-                onMouseLeave={this.unHighlightVisits}
+                onMouseEnter={StudyTrackerHeader.highlightColumns}
+                onMouseLeave={StudyTrackerHeader.unhighlightColumns}
                 onClick={this.props.showVisitFocus}
                 key={vl}
                 className={cssClass}>
@@ -397,8 +395,6 @@ class StudyTracker extends React.Component {
         this.prettyStatus = this.prettyStatus.bind(this);
         this.showCandFocus = this.showCandFocus.bind(this);
         this.showVisitFocus = this.showVisitFocus.bind(this);
-        this.showSideBar = this.showSideBar.bind(this);
-        this.closeSideBar = this.closeSideBar.bind(this);
         this.filterSites = this.filterSites.bind(this);
         this.filterTeams = this.filterTeams.bind(this);
         this.filterCohorts = this.filterCohorts.bind(this);
@@ -513,7 +509,7 @@ class StudyTracker extends React.Component {
             sideBarContent: content
         });
         if (event) {
-            this.showSideBar();
+            StudyTracker.showSideBar();
         }
     }
 
@@ -527,6 +523,7 @@ class StudyTracker extends React.Component {
                 currentVisit: visit,
                 currentSideBarFocus: "visit"
             });
+            StudyTrackerHeader.highlightColumns(event);
         } else {
             visit = this.state.currentVisit;
         }
@@ -593,15 +590,15 @@ class StudyTracker extends React.Component {
         // only show if event is set, i.e., when the PSCID is clicked
         // not when filter by cohort is done
         if (event) {
-            this.showSideBar();
+            StudyTracker.showSideBar();
         }
     }
 
-    showSideBar() {
+    static showSideBar() {
         $(".SideBar").css("width", "350px");
     }
 
-    closeSideBar() {
+    static closeSideBar() {
         $(".SideBar").css("width", "0px");
     }
 
@@ -694,7 +691,7 @@ class StudyTracker extends React.Component {
                     </tbody>
                 </table>
                 <SideBar
-                    closeSideBar={this.closeSideBar}
+                    closeSideBar={StudyTracker.closeSideBar}
                     sideBarContent={this.state.sideBarContent}
                     currentCohort={this.state.currentCohort}
                 />

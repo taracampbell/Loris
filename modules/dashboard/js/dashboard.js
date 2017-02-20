@@ -270,8 +270,161 @@ var Filters = function (_React$Component) {
     return Filters;
 }(React.Component);
 
-var SideBar = function (_React$Component2) {
-    _inherits(SideBar, _React$Component2);
+var SideBarVisitContent = function (_React$Component2) {
+    _inherits(SideBarVisitContent, _React$Component2);
+
+    function SideBarVisitContent() {
+        _classCallCheck(this, SideBarVisitContent);
+
+        return _possibleConstructorReturn(this, (SideBarVisitContent.__proto__ || Object.getPrototypeOf(SideBarVisitContent)).apply(this, arguments));
+    }
+
+    _createClass(SideBarVisitContent, [{
+        key: "render",
+        value: function render() {
+            var content = [];
+            content = content.concat(React.createElement(
+                "h3",
+                { className: "center" },
+                this.props.visit,
+                " Visit"
+            ));
+
+            var subheader = void 0; // Displays which cohort and visit is in focus
+            if (this.props.currentSite !== "all" && this.props.currentCohort !== "all") {
+                subheader = "Visits for " + this.props.currentCohort + " at " + this.props.currentSite;
+            } else if (this.props.currentSite !== "all") {
+                subheader = "Visits at " + this.props.currentSite;
+            } else if (this.props.currentCohort !== "all") {
+                subheader = "Visits for " + this.props.currentCohort;
+            }
+
+            if (subheader) {
+                content = content.concat(React.createElement(
+                    "h4",
+                    { className: "center" },
+                    subheader
+                ));
+            }
+
+            var visitDeadlines = [React.createElement(
+                "h4",
+                null,
+                "Upcoming Visit Deadlines"
+            )];
+            var dataDeadlines = [React.createElement(
+                "h4",
+                null,
+                "Upcoming Data Entry Deadlines"
+            )];
+            // Loop through rows
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+                for (var _iterator = this.props.rows[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var row = _step.value;
+
+                    if (row.psc !== this.props.currentSite && this.props.currentSite !== "all") {
+                        continue;
+                    }
+                    var pscid = row.pscid;
+                    // Look for visit with corresponding visit label
+                    var _iteratorNormalCompletion2 = true;
+                    var _didIteratorError2 = false;
+                    var _iteratorError2 = undefined;
+
+                    try {
+                        for (var _iterator2 = row.visits[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                            var v = _step2.value;
+
+                            if (v.visitLabel === this.props.visit) {
+                                if (v.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
+                                    var vr = this.props.prettyStatus(v.visitRegStatus, v.visitRegDueDate);
+                                    if (vr.status === "deadline-past" || vr.status === "deadline-approaching") {
+                                        visitDeadlines = visitDeadlines.concat(React.createElement(
+                                            "p",
+                                            { className: "indent" },
+                                            pscid,
+                                            ": ",
+                                            vr.html
+                                        ));
+                                    }
+                                    var de = this.props.prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
+                                    if (de.status === "deadline-past" || de.status === "deadline-approaching") {
+                                        dataDeadlines = dataDeadlines.concat(React.createElement(
+                                            "p",
+                                            { className: "indent" },
+                                            pscid,
+                                            ": ",
+                                            de.html
+                                        ));
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                    } catch (err) {
+                        _didIteratorError2 = true;
+                        _iteratorError2 = err;
+                    } finally {
+                        try {
+                            if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                                _iterator2.return();
+                            }
+                        } finally {
+                            if (_didIteratorError2) {
+                                throw _iteratorError2;
+                            }
+                        }
+                    }
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
+
+            if (visitDeadlines.length <= 1) {
+                visitDeadlines = visitDeadlines.concat(React.createElement(
+                    "p",
+                    { className: "complete indent" },
+                    "No upcoming visit deadlines"
+                ));
+            }
+            if (dataDeadlines.length <= 1) {
+                dataDeadlines = dataDeadlines.concat(React.createElement(
+                    "p",
+                    { className: "complete indent" },
+                    "No upcoming data entry deadlines"
+                ));
+            }
+
+            content = content.concat(visitDeadlines, dataDeadlines);
+
+            return React.createElement(
+                "div",
+                { className: "SideBarVisitContent" },
+                content
+            );
+        }
+    }]);
+
+    return SideBarVisitContent;
+}(React.Component);
+
+var SideBar = function (_React$Component3) {
+    _inherits(SideBar, _React$Component3);
 
     function SideBar() {
         _classCallCheck(this, SideBar);
@@ -302,8 +455,8 @@ var SideBar = function (_React$Component2) {
     return SideBar;
 }(React.Component);
 
-var VisitCell = function (_React$Component3) {
-    _inherits(VisitCell, _React$Component3);
+var VisitCell = function (_React$Component4) {
+    _inherits(VisitCell, _React$Component4);
 
     function VisitCell() {
         _classCallCheck(this, VisitCell);
@@ -373,8 +526,8 @@ var VisitCell = function (_React$Component3) {
     return VisitCell;
 }(React.Component);
 
-var PSCIDCell = function (_React$Component4) {
-    _inherits(PSCIDCell, _React$Component4);
+var PSCIDCell = function (_React$Component5) {
+    _inherits(PSCIDCell, _React$Component5);
 
     function PSCIDCell() {
         _classCallCheck(this, PSCIDCell);
@@ -398,18 +551,18 @@ var PSCIDCell = function (_React$Component4) {
     return PSCIDCell;
 }(React.Component);
 
-var StudyTrackerRow = function (_React$Component5) {
-    _inherits(StudyTrackerRow, _React$Component5);
+var StudyTrackerRow = function (_React$Component6) {
+    _inherits(StudyTrackerRow, _React$Component6);
 
     function StudyTrackerRow(props) {
         _classCallCheck(this, StudyTrackerRow);
 
-        var _this5 = _possibleConstructorReturn(this, (StudyTrackerRow.__proto__ || Object.getPrototypeOf(StudyTrackerRow)).call(this, props));
+        var _this6 = _possibleConstructorReturn(this, (StudyTrackerRow.__proto__ || Object.getPrototypeOf(StudyTrackerRow)).call(this, props));
 
-        _this5.highlightRow = _this5.highlightRow.bind(_this5);
-        _this5.unhighlightRow = _this5.unhighlightRow.bind(_this5);
-        _this5.keepHighlightedShowCandFocus = _this5.keepHighlightedShowCandFocus.bind(_this5);
-        return _this5;
+        _this6.highlightRow = _this6.highlightRow.bind(_this6);
+        _this6.unhighlightRow = _this6.unhighlightRow.bind(_this6);
+        _this6.keepHighlightedShowCandFocus = _this6.keepHighlightedShowCandFocus.bind(_this6);
+        return _this6;
     }
 
     _createClass(StudyTrackerRow, [{
@@ -467,21 +620,21 @@ var StudyTrackerRow = function (_React$Component5) {
     return StudyTrackerRow;
 }(React.Component);
 
-var StudyTrackerHeader = function (_React$Component6) {
-    _inherits(StudyTrackerHeader, _React$Component6);
+var StudyTrackerHeader = function (_React$Component7) {
+    _inherits(StudyTrackerHeader, _React$Component7);
 
     function StudyTrackerHeader(props) {
         _classCallCheck(this, StudyTrackerHeader);
 
-        var _this6 = _possibleConstructorReturn(this, (StudyTrackerHeader.__proto__ || Object.getPrototypeOf(StudyTrackerHeader)).call(this, props));
+        var _this7 = _possibleConstructorReturn(this, (StudyTrackerHeader.__proto__ || Object.getPrototypeOf(StudyTrackerHeader)).call(this, props));
 
-        _this6.state = {
+        _this7.state = {
             visitInFocus: null
         };
-        _this6.highlightColumns = _this6.highlightColumns.bind(_this6);
-        _this6.unhighlightColumns = _this6.unhighlightColumns.bind(_this6);
-        _this6.keepHighlightedShowVisitFocus = _this6.keepHighlightedShowVisitFocus.bind(_this6);
-        return _this6;
+        _this7.highlightColumns = _this7.highlightColumns.bind(_this7);
+        _this7.unhighlightColumns = _this7.unhighlightColumns.bind(_this7);
+        _this7.keepHighlightedShowVisitFocus = _this7.keepHighlightedShowVisitFocus.bind(_this7);
+        return _this7;
     }
 
     // When mouse enters header cell, highlight all cells for that visit
@@ -548,15 +701,15 @@ var StudyTrackerHeader = function (_React$Component6) {
     return StudyTrackerHeader;
 }(React.Component);
 
-var StudyTracker = function (_React$Component7) {
-    _inherits(StudyTracker, _React$Component7);
+var StudyTracker = function (_React$Component8) {
+    _inherits(StudyTracker, _React$Component8);
 
     function StudyTracker() {
         _classCallCheck(this, StudyTracker);
 
-        var _this7 = _possibleConstructorReturn(this, (StudyTracker.__proto__ || Object.getPrototypeOf(StudyTracker)).call(this));
+        var _this8 = _possibleConstructorReturn(this, (StudyTracker.__proto__ || Object.getPrototypeOf(StudyTracker)).call(this));
 
-        _this7.state = {
+        _this8.state = {
             rows: dummyData,
             visitLabels: visitLabels,
             currentSite: "all",
@@ -570,14 +723,14 @@ var StudyTracker = function (_React$Component7) {
             currentVisit: null,
             currentSideBarFocus: null
         };
-        _this7.prettyStatus = _this7.prettyStatus.bind(_this7);
-        _this7.showCandFocus = _this7.showCandFocus.bind(_this7);
-        _this7.showVisitFocus = _this7.showVisitFocus.bind(_this7);
-        _this7.filterSites = _this7.filterSites.bind(_this7);
-        _this7.filterTeams = _this7.filterTeams.bind(_this7);
-        _this7.filterCohorts = _this7.filterCohorts.bind(_this7);
-        _this7.rowHasCurrentCohortVisit = _this7.rowHasCurrentCohortVisit.bind(_this7);
-        return _this7;
+        _this8.prettyStatus = _this8.prettyStatus.bind(_this8);
+        _this8.showCandFocus = _this8.showCandFocus.bind(_this8);
+        _this8.showVisitFocus = _this8.showVisitFocus.bind(_this8);
+        _this8.filterSites = _this8.filterSites.bind(_this8);
+        _this8.filterTeams = _this8.filterTeams.bind(_this8);
+        _this8.filterCohorts = _this8.filterCohorts.bind(_this8);
+        _this8.rowHasCurrentCohortVisit = _this8.rowHasCurrentCohortVisit.bind(_this8);
+        return _this8;
     }
 
     // Returns an object which contains a clean status and styled html to display
@@ -771,138 +924,76 @@ var StudyTracker = function (_React$Component7) {
             } else {
                 visit = this.state.currentVisit;
             }
-            var content = [];
-            content[0] = React.createElement(
-                "h3",
-                { className: "center" },
-                visit,
-                " Visit"
-            );
 
-            var subheader = void 0; // Displays which cohort and visit is in focus
-            if (this.state.currentSite !== "all" && this.state.currentCohort !== "all") {
-                subheader = "Visits for " + this.state.currentCohort + " at " + this.state.currentSite;
-            } else if (this.state.currentSite !== "all") {
-                subheader = "Visits at " + this.state.currentSite;
-            } else if (this.state.currentCohort !== "all") {
-                subheader = "Visits for " + this.state.currentCohort;
-            }
-
-            if (subheader) {
-                content = content.concat(React.createElement(
-                    "h4",
-                    { className: "center" },
-                    subheader
-                ));
-            }
-
-            var visitDeadlines = [React.createElement(
-                "h4",
-                null,
-                "Upcoming Visit Deadlines"
-            )];
-            var dataDeadlines = [React.createElement(
-                "h4",
-                null,
-                "Upcoming Data Entry Deadlines"
-            )];
-            // Loop through rows
-            var _iteratorNormalCompletion = true;
-            var _didIteratorError = false;
-            var _iteratorError = undefined;
-
-            try {
-                for (var _iterator = this.state.rows[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                    var row = _step.value;
-
-                    if (row.psc !== this.state.currentSite && this.state.currentSite !== "all") {
-                        continue;
-                    }
-                    var pscid = row.pscid;
-                    // Look for visit with corresponding visit label
-                    var _iteratorNormalCompletion2 = true;
-                    var _didIteratorError2 = false;
-                    var _iteratorError2 = undefined;
-
-                    try {
-                        for (var _iterator2 = row.visits[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                            var v = _step2.value;
-
-                            if (v.visitLabel === visit) {
-                                if (v.cohort === this.state.currentCohort || this.state.currentCohort === "all") {
-                                    var vr = this.prettyStatus(v.visitRegStatus, v.visitRegDueDate);
-                                    if (vr.status === "deadline-past" || vr.status === "deadline-approaching") {
-                                        visitDeadlines = visitDeadlines.concat(React.createElement(
-                                            "p",
-                                            { className: "indent" },
-                                            pscid,
-                                            ": ",
-                                            vr.html
-                                        ));
-                                    }
-                                    var de = this.prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
-                                    if (de.status === "deadline-past" || de.status === "deadline-approaching") {
-                                        dataDeadlines = dataDeadlines.concat(React.createElement(
-                                            "p",
-                                            { className: "indent" },
-                                            pscid,
-                                            ": ",
-                                            de.html
-                                        ));
-                                    }
-                                }
-                                break;
-                            }
-                        }
-                    } catch (err) {
-                        _didIteratorError2 = true;
-                        _iteratorError2 = err;
-                    } finally {
-                        try {
-                            if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                                _iterator2.return();
-                            }
-                        } finally {
-                            if (_didIteratorError2) {
-                                throw _iteratorError2;
-                            }
-                        }
-                    }
-                }
-            } catch (err) {
-                _didIteratorError = true;
-                _iteratorError = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion && _iterator.return) {
-                        _iterator.return();
-                    }
-                } finally {
-                    if (_didIteratorError) {
-                        throw _iteratorError;
-                    }
-                }
-            }
-
-            if (visitDeadlines.length <= 1) {
-                visitDeadlines = visitDeadlines.concat(React.createElement(
-                    "p",
-                    { className: "complete indent" },
-                    "No upcoming visit deadlines"
-                ));
-            }
-            if (dataDeadlines.length <= 1) {
-                dataDeadlines = dataDeadlines.concat(React.createElement(
-                    "p",
-                    { className: "complete indent" },
-                    "No upcoming data entry deadlines"
-                ));
-            }
-
-            content = content.concat(visitDeadlines, dataDeadlines);
-            this.setState({
-                sideBarContent: content
+            var sidebarContent = React.createElement(SideBarVisitContent, {
+                visit: visit,
+                currentSite: this.state.currentSite,
+                currentCohort: this.state.currentCohort,
+                rows: this.state.rows,
+                prettyStatus: this.prettyStatus
             });
+            this.setState({ sideBarContent: sidebarContent });
+            // // TODO: Put below code into SidebarVisitContent
+            // let content = [];
+            // content[0] = <h3 className="center">{visit} Visit</h3>;
+            //
+            // let subheader; // Displays which cohort and visit is in focus
+            // if (this.state.currentSite !== "all" && this.state.currentCohort !== "all") {
+            //     subheader = "Visits for " + this.state.currentCohort + " at " + this.state.currentSite;
+            // } else if (this.state.currentSite !== "all") {
+            //     subheader = "Visits at " + this.state.currentSite;
+            // } else if (this.state.currentCohort !== "all") {
+            //     subheader = "Visits for " + this.state.currentCohort;
+            // }
+            //
+            // if (subheader) {
+            //     content = content.concat(<h4 className="center">{subheader}</h4>)
+            // }
+            //
+            // let visitDeadlines = [<h4>Upcoming Visit Deadlines</h4>];
+            // let dataDeadlines = [<h4>Upcoming Data Entry Deadlines</h4>];
+            // // Loop through rows
+            // for (let row of this.state.rows) {
+            //     if (row.psc !== this.state.currentSite && this.state.currentSite !== "all") {
+            //         continue;
+            //     }
+            //     let pscid = row.pscid;
+            //     // Look for visit with corresponding visit label
+            //     for(let v of row.visits) {
+            //         if (v.visitLabel === visit) {
+            //             if(v.cohort === this.state.currentCohort || this.state.currentCohort === "all") {
+            //                 let vr = this.prettyStatus(v.visitRegStatus, v.visitRegDueDate);
+            //                 if (vr.status === "deadline-past" || vr.status === "deadline-approaching") {
+            //                     visitDeadlines = visitDeadlines.concat(
+            //                         <p className="indent">{pscid}: {vr.html}</p>
+            //                     );
+            //                 }
+            //                 let de = this.prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
+            //                 if (de.status === "deadline-past" || de.status === "deadline-approaching") {
+            //                     dataDeadlines = dataDeadlines.concat(
+            //                         <p className="indent">{pscid}: {de.html}</p>
+            //                     );
+            //                 }
+            //             }
+            //             break;
+            //         }
+            //     }
+            // }
+            // if (visitDeadlines.length <= 1) {
+            //     visitDeadlines = visitDeadlines.concat(
+            //         <p className="complete indent">No upcoming visit deadlines</p>
+            //     );
+            // }
+            // if (dataDeadlines.length <= 1) {
+            //     dataDeadlines = dataDeadlines.concat(
+            //         <p className="complete indent">No upcoming data entry deadlines</p>
+            //     );
+            // }
+
+            //content = content.concat(visitDeadlines, dataDeadlines);
+            // this.setState({
+            //     sideBarContent: content
+            // });
             // only show if event is set, i.e., when the PSCID is clicked
             // not when filter by cohort is done
             if (event) {

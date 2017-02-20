@@ -16,8 +16,12 @@ th, td, tr {
     margin: 0;
 }
 
-.indent {
+.left-indent {
     margin-left: 20px;
+}
+
+.right-indent {
+    margin-right: 20px;
 }
 
 .right-align {
@@ -42,14 +46,6 @@ th, td, tr {
     border: 1px solid #ccc;
 }
 
-/*.SideBar span {
-    padding: 8px 8px 8px 32px;
-    text-decoration: none;
-    font-size: 20px;
-    color: #818181;
-    display: block;
-    transition: 0.3s
-}*/
 
 .SideBar td {
     padding: 5px;
@@ -78,6 +74,7 @@ th, td, tr {
 .VLHeader, .PSCIDCell {
     color: black;
     cursor: pointer;
+    font-weight: bold;
 }
 
 .VLHeader:hover, .PSCIDCell:hover {

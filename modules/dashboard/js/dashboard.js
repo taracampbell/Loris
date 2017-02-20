@@ -161,6 +161,7 @@ var cohorts = ["MCI", "SCI", "AD"];
 
 var MS_TO_DAYS = 1 / (1000 * 60 * 60 * 24);
 var SIDEBAR_WIDTH = "350px";
+var HIGHLIGHT_COLOR = "#eafeea";
 
 function SiteFilter(props) {
     var options = props.sites.map(function (site) {
@@ -319,12 +320,12 @@ var SideBarCandContent = function (_React$Component2) {
                             { style: { fontSize: "18px" } },
                             v.visitLabel,
                             ":",
+                            vr.html,
                             React.createElement(
                                 "span",
                                 { className: "complete right-align" },
                                 "\u2713"
-                            ),
-                            vr.html
+                            )
                         ));
                     } else {
                         visitContent = visitContent.concat(React.createElement(
@@ -338,13 +339,13 @@ var SideBarCandContent = function (_React$Component2) {
                             ),
                             React.createElement(
                                 "p",
-                                { className: "indent" },
+                                { className: "left-indent" },
                                 "Visit Registration: ",
                                 vr.html
                             ),
                             React.createElement(
                                 "p",
-                                { className: "indent" },
+                                { className: "left-indent" },
                                 "Data Registration: ",
                                 de.html
                             )
@@ -448,7 +449,7 @@ var SideBarVisitContent = function (_React$Component3) {
                                     if (vr.status === "deadline-past" || vr.status === "deadline-approaching") {
                                         visitDeadlines = visitDeadlines.concat(React.createElement(
                                             "p",
-                                            { className: "indent" },
+                                            { className: "left-indent" },
                                             pscid,
                                             ": ",
                                             vr.html
@@ -458,7 +459,7 @@ var SideBarVisitContent = function (_React$Component3) {
                                     if (de.status === "deadline-past" || de.status === "deadline-approaching") {
                                         dataDeadlines = dataDeadlines.concat(React.createElement(
                                             "p",
-                                            { className: "indent" },
+                                            { className: "left-indent" },
                                             pscid,
                                             ": ",
                                             de.html
@@ -572,7 +573,7 @@ var VisitCell = function (_React$Component5) {
         value: function render() {
             var style = {};
             if (this.props.visit.visitLabel === this.props.currentVisit) {
-                style = { backgroundColor: "#f5f5f5" };
+                style = { backgroundColor: HIGHLIGHT_COLOR };
             }
             if (this.props.visit.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
                 var visitClass = "circle " + this.props.visit.dataEntryStatus + " " + this.props.visit.visitRegStatus;
@@ -671,7 +672,7 @@ var StudyTrackerRow = function (_React$Component7) {
     _createClass(StudyTrackerRow, [{
         key: "highlightRow",
         value: function highlightRow() {
-            $("#" + this.props.pscid).css("background-color", "#f5f5f5");
+            $("#" + this.props.pscid).css("background-color", HIGHLIGHT_COLOR);
         }
     }, {
         key: "unhighlightRow",
@@ -694,6 +695,7 @@ var StudyTrackerRow = function (_React$Component7) {
     }, {
         key: "render",
         value: function render() {
+            var style = {};
             var visits = this.props.visits.map(function (v) {
                 return React.createElement(VisitCell, {
                     key: v.sessionID,
@@ -703,13 +705,17 @@ var StudyTrackerRow = function (_React$Component7) {
                     prettyStatus: this.props.prettyStatus
                 });
             }.bind(this));
+            if (this.props.pscid === this.props.currentPSCID) {
+                style = { backgroundColor: HIGHLIGHT_COLOR };
+            }
             return React.createElement(
                 "tr",
                 {
                     className: "StudyTrackerRow",
                     id: this.props.pscid,
                     onMouseEnter: this.highlightRow,
-                    onMouseLeave: this.unhighlightRow
+                    onMouseLeave: this.unhighlightRow,
+                    style: style
                 },
                 React.createElement(PSCIDCell, {
                     pscid: this.props.pscid,
@@ -749,7 +755,7 @@ var StudyTrackerHeader = function (_React$Component8) {
         key: "highlightColumns",
         value: function highlightColumns(event) {
             var visitClass = "." + $(event.target).text();
-            $(visitClass).css("background-color", "#f5f5f5");
+            $(visitClass).css("background-color", HIGHLIGHT_COLOR);
         }
     }, {
         key: "unhighlightColumns",
@@ -847,7 +853,7 @@ var StudyTracker = function (_React$Component9) {
             if (~status.indexOf("complete")) {
                 html = React.createElement(
                     "span",
-                    { className: "complete right-align" },
+                    { className: "complete right-align right-indent" },
                     "Complete"
                 );
                 toReturn = {
@@ -859,7 +865,7 @@ var StudyTracker = function (_React$Component9) {
                 daysLeft += daysLeft == 1 ? " day" : " days";
                 html = React.createElement(
                     "span",
-                    { className: "deadline-approaching right-align" },
+                    { className: "deadline-approaching right-align right-indent" },
                     "Due in ",
                     daysLeft
                 );
@@ -872,7 +878,7 @@ var StudyTracker = function (_React$Component9) {
                 daysPast += daysPast == 1 ? " day" : " days";
                 html = React.createElement(
                     "span",
-                    { className: "deadline-past right-align" },
+                    { className: "deadline-past right-align right-indent" },
                     daysPast,
                     " late"
                 );
@@ -883,7 +889,7 @@ var StudyTracker = function (_React$Component9) {
             } else if (~status.indexOf("cancelled")) {
                 html = React.createElement(
                     "span",
-                    { className: "cancelled right-align" },
+                    { className: "cancelled right-align right-indent" },
                     "Visit cancelled"
                 );
                 toReturn = {
@@ -893,7 +899,7 @@ var StudyTracker = function (_React$Component9) {
             } else if (~status.indexOf("no-deadline")) {
                 html = React.createElement(
                     "span",
-                    { className: "no-deadline right-align" },
+                    { className: "no-deadline right-align right-indent" },
                     "No deadline specified"
                 );
                 toReturn = {

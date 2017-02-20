@@ -183,6 +183,7 @@ const cohorts = [
 
 const MS_TO_DAYS = 1/(1000 * 60 * 60 * 24);
 const SIDEBAR_WIDTH = "350px";
+const HIGHLIGHT_COLOR = "#eafeea";
 
 function SiteFilter(props) {
     let options = props.sites.map((site) =>
@@ -276,16 +277,16 @@ class SideBarCandContent extends React.Component {
                         visitContent = visitContent.concat(
                             <p style={{fontSize: "18px"}}>
                                 {v.visitLabel}:
-                                <span className="complete right-align">&#10003;</span>
                                 {vr.html}
+                                <span className="complete right-align">&#10003;</span>
                             </p>
                         );
                     } else {
                         visitContent = visitContent.concat(
                             <div>
                                 <h4>{v.visitLabel}:</h4>
-                                <p className="indent">Visit Registration: {vr.html}</p>
-                                <p className="indent">Data Registration: {de.html}</p>
+                                <p className="left-indent">Visit Registration: {vr.html}</p>
+                                <p className="left-indent">Data Registration: {de.html}</p>
                             </div>
                         );
                     }
@@ -338,13 +339,13 @@ class SideBarVisitContent extends React.Component {
                         let vr = this.props.prettyStatus(v.visitRegStatus, v.visitRegDueDate);
                         if (vr.status === "deadline-past" || vr.status === "deadline-approaching") {
                             visitDeadlines = visitDeadlines.concat(
-                                <p className="indent">{pscid}: {vr.html}</p>
+                                <p className="left-indent">{pscid}: {vr.html}</p>
                             );
                         }
                         let de = this.props.prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
                         if (de.status === "deadline-past" || de.status === "deadline-approaching") {
                             dataDeadlines = dataDeadlines.concat(
-                                <p className="indent">{pscid}: {de.html}</p>
+                                <p className="left-indent">{pscid}: {de.html}</p>
                             );
                         }
                     }
@@ -394,7 +395,7 @@ class VisitCell extends React.Component {
     render () {
         let style = {};
         if (this.props.visit.visitLabel === this.props.currentVisit) {
-            style = {backgroundColor: "#f5f5f5"};
+            style = {backgroundColor: HIGHLIGHT_COLOR};
         }
         if (this.props.visit.cohort === this.props.currentCohort
             || this.props.currentCohort === "all") {
@@ -450,7 +451,7 @@ class StudyTrackerRow extends React.Component {
     }
 
     highlightRow() {
-        $("#"+this.props.pscid).css("background-color", "#f5f5f5");
+        $("#"+this.props.pscid).css("background-color", HIGHLIGHT_COLOR);
     }
 
     unhighlightRow() {
@@ -470,6 +471,7 @@ class StudyTrackerRow extends React.Component {
     }
 
     render() {
+        let style = {};
         let visits = this.props.visits.map(function(v) {
                 return <VisitCell
                     key={v.sessionID}
@@ -480,12 +482,16 @@ class StudyTrackerRow extends React.Component {
                 />
             }.bind(this)
         );
+        if (this.props.pscid === this.props.currentPSCID) {
+            style = {backgroundColor: HIGHLIGHT_COLOR}
+        }
         return(
             <tr
                 className="StudyTrackerRow"
                 id={this.props.pscid}
                 onMouseEnter={this.highlightRow}
                 onMouseLeave={this.unhighlightRow}
+                style={style}
             >
                 <PSCIDCell
                     pscid={this.props.pscid}
@@ -513,7 +519,7 @@ class StudyTrackerHeader extends React.Component {
     // must be equal to the css class name which is perhaps bad design
      highlightColumns(event) {
         let visitClass = "." + $(event.target).text();
-        $(visitClass).css("background-color", "#f5f5f5");
+        $(visitClass).css("background-color", HIGHLIGHT_COLOR);
     }
      unhighlightColumns(event) {
         if (this.props.currentVisit !== $(event.target).text()) {
@@ -587,7 +593,7 @@ class StudyTracker extends React.Component {
     prettyStatus(status, dueDate) {
         let html, toReturn;
         if (~status.indexOf("complete")) {
-            html = <span className="complete right-align">Complete</span>;
+            html = <span className="complete right-align right-indent">Complete</span>;
             toReturn = {
                 "status":"complete",
                 "html":html
@@ -595,7 +601,7 @@ class StudyTracker extends React.Component {
         } else if (~status.indexOf("deadline-approaching")) {
             let daysLeft = Math.floor((dueDate - new Date()) * MS_TO_DAYS);
             daysLeft += daysLeft == 1 ? " day" : " days";
-            html = <span className="deadline-approaching right-align">Due in {daysLeft}</span>;
+            html = <span className="deadline-approaching right-align right-indent">Due in {daysLeft}</span>;
             toReturn = {
                 "status":"deadline-approaching",
                 "html":html
@@ -603,20 +609,20 @@ class StudyTracker extends React.Component {
         } else if (~status.indexOf("deadline-past")) {
             let daysPast = Math.floor((new Date() - dueDate) * MS_TO_DAYS);
             daysPast += daysPast == 1 ? " day" : " days";
-            html = <span className="deadline-past right-align">{daysPast} late</span>;
+            html = <span className="deadline-past right-align right-indent">{daysPast} late</span>;
             toReturn = {
                 "status":"deadline-past",
                 "html":html
             };
         } else if (~status.indexOf("cancelled")) {
-            html = <span className="cancelled right-align">Visit cancelled</span>;
+            html = <span className="cancelled right-align right-indent">Visit cancelled</span>;
             toReturn = {
                 "status":"cancelled",
                 "html":html
             };
 
         } else if (~status.indexOf("no-deadline")) {
-            html = <span className="no-deadline right-align">No deadline specified</span>;
+            html = <span className="no-deadline right-align right-indent">No deadline specified</span>;
             toReturn = {
                 "status":"no-deadline",
                 "html":html
@@ -652,7 +658,7 @@ class StudyTracker extends React.Component {
         this.setState({
             sideBarContent: sideBarContent
         });
-        
+
         if (event) {
             StudyTracker.showSideBar();
         }

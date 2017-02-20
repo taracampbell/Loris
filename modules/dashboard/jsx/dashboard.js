@@ -489,6 +489,7 @@ class StudyTrackerRow extends React.Component {
             <tr
                 className="StudyTrackerRow"
                 id={this.props.pscid}
+                onClick={this.keepHighlightedShowCandFocus}
                 onMouseEnter={this.highlightRow}
                 onMouseLeave={this.unhighlightRow}
                 style={style}
@@ -632,13 +633,12 @@ class StudyTracker extends React.Component {
         return toReturn;
     }
 
-
     // Sets the content of the SideBar and then shows SideBar
     // for Candidate Focus
     showCandFocus(event) {
         let pscid;
         if(event) {
-           pscid = $(event.target).text();
+           pscid = $(event.target).closest(".StudyTrackerRow").attr("id");
            this.setState({
                currentPSCID: pscid,
                currentVisit: null,
@@ -703,9 +703,8 @@ class StudyTracker extends React.Component {
         $(".SideBar").css("width", "0px");
     }
 
-    /* Function which is called when cohort filter is changed
-        event is onChange when the select changes
-     */
+    // Function which is called when cohort filter is changed
+    // event is onChange when the select changes
     filterCohorts(event) {
         let callback = function(){};
         if (this.state.currentSideBarFocus === "visit") {

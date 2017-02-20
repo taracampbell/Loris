@@ -713,6 +713,7 @@ var StudyTrackerRow = function (_React$Component7) {
                 {
                     className: "StudyTrackerRow",
                     id: this.props.pscid,
+                    onClick: this.keepHighlightedShowCandFocus,
                     onMouseEnter: this.highlightRow,
                     onMouseLeave: this.unhighlightRow,
                     style: style
@@ -919,7 +920,7 @@ var StudyTracker = function (_React$Component9) {
         value: function showCandFocus(event) {
             var pscid = void 0;
             if (event) {
-                pscid = $(event.target).text();
+                pscid = $(event.target).closest(".StudyTrackerRow").attr("id");
                 this.setState({
                     currentPSCID: pscid,
                     currentVisit: null,
@@ -980,9 +981,8 @@ var StudyTracker = function (_React$Component9) {
         key: "filterCohorts",
 
 
-        /* Function which is called when cohort filter is changed
-            event is onChange when the select changes
-         */
+        // Function which is called when cohort filter is changed
+        // event is onChange when the select changes
         value: function filterCohorts(event) {
             var callback = function callback() {};
             if (this.state.currentSideBarFocus === "visit") {

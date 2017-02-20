@@ -355,7 +355,7 @@ class SideBarVisitContent extends React.Component {
         }
         if (visitDeadlines.length <= 1) {
             visitDeadlines = visitDeadlines.concat(
-                <p className="complete indent">No upcoming visit deadlines</p>
+                <p className="complete left-indent">No upcoming visit deadlines</p>
             );
         }
         if (dataDeadlines.length <= 1) {

@@ -502,7 +502,7 @@ var SideBarVisitContent = function (_React$Component3) {
             if (visitDeadlines.length <= 1) {
                 visitDeadlines = visitDeadlines.concat(React.createElement(
                     "p",
-                    { className: "complete indent" },
+                    { className: "complete left-indent" },
                     "No upcoming visit deadlines"
                 ));
             }

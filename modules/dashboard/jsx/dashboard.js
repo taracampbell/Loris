@@ -182,6 +182,8 @@ const cohorts = [
 ];
 
 const MS_TO_DAYS = 1/(1000 * 60 * 60 * 24);
+const SIDEBAR_WIDTH = "350px";
+const HIGHLIGHT_COLOR = "#eafeea";
 
 function SiteFilter(props) {
     let options = props.sites.map((site) =>
@@ -247,6 +249,131 @@ class Filters extends React.Component {
     }
 }
 
+class SideBarCandContent extends React.Component {
+    render () {
+        let content = [];
+
+        content[0] = <h3 className="center">Participant {this.props.pscid}</h3>;
+        if (this.props.currentCohort !== "all") {
+            content = content.concat(<h4 className="center">{this.props.currentCohort} Visits</h4>);
+        }
+        let visits;
+
+        for(let i = 0; i < this.props.rows.length; i++) {
+            let r = this.props.rows[i];
+            if (r.pscid === this.props.pscid) {
+                visits = r.visits;
+                break;
+            }
+        }
+
+        let visitContent = [];
+        visits.forEach(
+            function(v) {
+                if (v.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
+                    let vr = this.props.prettyStatus(v.visitRegStatus, v.visitRegDueDate);
+                    let de = this.props.prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
+                    if (vr.status === "complete" && de.status === "complete") {
+                        visitContent = visitContent.concat(
+                            <p style={{fontSize: "18px"}}>
+                                {v.visitLabel}:
+                                {vr.html}
+                                <span className="complete right-align">&#10003;</span>
+                            </p>
+                        );
+                    } else {
+                        visitContent = visitContent.concat(
+                            <div>
+                                <h4>{v.visitLabel}:</h4>
+                                <p className="left-indent">Visit Registration: {vr.html}</p>
+                                <p className="left-indent">Data Registration: {de.html}</p>
+                            </div>
+                        );
+                    }
+                }
+            }.bind(this)
+        );
+        if (visitContent.length === 0) {
+            visitContent = <p className="center">No applicable visits for this participant for cohort {this.props.currentCohort}</p>
+        }
+        content = content.concat(visitContent);
+
+        return (
+            <div className="SideBarCandContent">
+                {content}
+            </div>
+        );
+    }
+}
+
+class SideBarVisitContent extends React.Component {
+    render () {
+        let content = [];
+        content = content.concat(<h3 className="center">{this.props.visit} Visit</h3>);
+
+        let subheader; // Displays which cohort and visit is in focus
+        if (this.props.currentSite !== "all" && this.props.currentCohort !== "all") {
+            subheader = "Visits for " + this.props.currentCohort + " at " + this.props.currentSite;
+        } else if (this.props.currentSite !== "all") {
+            subheader = "Visits at " + this.props.currentSite;
+        } else if (this.props.currentCohort !== "all") {
+            subheader = "Visits for " + this.props.currentCohort;
+        }
+
+        if (subheader) {
+            content = content.concat(<h4 className="center">{subheader}</h4>)
+        }
+
+        let visitDeadlines = [<h4>Upcoming Visit Deadlines</h4>];
+        let dataDeadlines = [<h4>Upcoming Data Entry Deadlines</h4>];
+        // Loop through rows
+        for (let row of this.props.rows) {
+            if (row.psc !== this.props.currentSite && this.props.currentSite !== "all") {
+                continue;
+            }
+            let pscid = row.pscid;
+            // Look for visit with corresponding visit label
+            for(let v of row.visits) {
+                if (v.visitLabel === this.props.visit) {
+                    if(v.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
+                        let vr = this.props.prettyStatus(v.visitRegStatus, v.visitRegDueDate);
+                        if (vr.status === "deadline-past" || vr.status === "deadline-approaching") {
+                            visitDeadlines = visitDeadlines.concat(
+                                <p className="left-indent">{pscid}: {vr.html}</p>
+                            );
+                        }
+                        let de = this.props.prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
+                        if (de.status === "deadline-past" || de.status === "deadline-approaching") {
+                            dataDeadlines = dataDeadlines.concat(
+                                <p className="left-indent">{pscid}: {de.html}</p>
+                            );
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+        if (visitDeadlines.length <= 1) {
+            visitDeadlines = visitDeadlines.concat(
+                <p className="complete indent">No upcoming visit deadlines</p>
+            );
+        }
+        if (dataDeadlines.length <= 1) {
+            dataDeadlines = dataDeadlines.concat(
+                <p className="complete indent">No upcoming data entry deadlines</p>
+            );
+        }
+
+        content = content.concat(visitDeadlines, dataDeadlines);
+
+        return (
+            <div className="SideBarVisitContent">
+                {content}
+            </div>
+        );
+    }
+}
+
 class SideBar extends React.Component {
     render() {
         return (
@@ -268,7 +395,7 @@ class VisitCell extends React.Component {
     render () {
         let style = {};
         if (this.props.visit.visitLabel === this.props.currentVisit) {
-            style = {backgroundColor: "#f5f5f5"};
+            style = {backgroundColor: HIGHLIGHT_COLOR};
         }
         if (this.props.visit.cohort === this.props.currentCohort
             || this.props.currentCohort === "all") {
@@ -324,7 +451,7 @@ class StudyTrackerRow extends React.Component {
     }
 
     highlightRow() {
-        $("#"+this.props.pscid).css("background-color", "#f5f5f5");
+        $("#"+this.props.pscid).css("background-color", HIGHLIGHT_COLOR);
     }
 
     unhighlightRow() {
@@ -344,6 +471,7 @@ class StudyTrackerRow extends React.Component {
     }
 
     render() {
+        let style = {};
         let visits = this.props.visits.map(function(v) {
                 return <VisitCell
                     key={v.sessionID}
@@ -354,12 +482,17 @@ class StudyTrackerRow extends React.Component {
                 />
             }.bind(this)
         );
+        if (this.props.pscid === this.props.currentPSCID) {
+            style = {backgroundColor: HIGHLIGHT_COLOR}
+        }
         return(
             <tr
                 className="StudyTrackerRow"
                 id={this.props.pscid}
+                onClick={this.keepHighlightedShowCandFocus}
                 onMouseEnter={this.highlightRow}
                 onMouseLeave={this.unhighlightRow}
+                style={style}
             >
                 <PSCIDCell
                     pscid={this.props.pscid}
@@ -387,7 +520,7 @@ class StudyTrackerHeader extends React.Component {
     // must be equal to the css class name which is perhaps bad design
      highlightColumns(event) {
         let visitClass = "." + $(event.target).text();
-        $(visitClass).css("background-color", "#f5f5f5");
+        $(visitClass).css("background-color", HIGHLIGHT_COLOR);
     }
      unhighlightColumns(event) {
         if (this.props.currentVisit !== $(event.target).text()) {
@@ -431,7 +564,6 @@ class StudyTrackerHeader extends React.Component {
   }
 }
 
-
 class StudyTracker extends React.Component {
     constructor() {
         super();
@@ -462,7 +594,7 @@ class StudyTracker extends React.Component {
     prettyStatus(status, dueDate) {
         let html, toReturn;
         if (~status.indexOf("complete")) {
-            html = <span className="complete right-align">Complete</span>;
+            html = <span className="complete right-align right-indent">Complete</span>;
             toReturn = {
                 "status":"complete",
                 "html":html
@@ -470,7 +602,7 @@ class StudyTracker extends React.Component {
         } else if (~status.indexOf("deadline-approaching")) {
             let daysLeft = Math.floor((dueDate - new Date()) * MS_TO_DAYS);
             daysLeft += daysLeft == 1 ? " day" : " days";
-            html = <span className="deadline-approaching right-align">Due in {daysLeft}</span>;
+            html = <span className="deadline-approaching right-align right-indent">Due in {daysLeft}</span>;
             toReturn = {
                 "status":"deadline-approaching",
                 "html":html
@@ -478,20 +610,20 @@ class StudyTracker extends React.Component {
         } else if (~status.indexOf("deadline-past")) {
             let daysPast = Math.floor((new Date() - dueDate) * MS_TO_DAYS);
             daysPast += daysPast == 1 ? " day" : " days";
-            html = <span className="deadline-past right-align">{daysPast} late</span>;
+            html = <span className="deadline-past right-align right-indent">{daysPast} late</span>;
             toReturn = {
                 "status":"deadline-past",
                 "html":html
             };
         } else if (~status.indexOf("cancelled")) {
-            html = <span className="cancelled right-align">Visit cancelled</span>;
+            html = <span className="cancelled right-align right-indent">Visit cancelled</span>;
             toReturn = {
                 "status":"cancelled",
                 "html":html
             };
 
         } else if (~status.indexOf("no-deadline")) {
-            html = <span className="no-deadline right-align">No deadline specified</span>;
+            html = <span className="no-deadline right-align right-indent">No deadline specified</span>;
             toReturn = {
                 "status":"no-deadline",
                 "html":html
@@ -501,13 +633,12 @@ class StudyTracker extends React.Component {
         return toReturn;
     }
 
-
     // Sets the content of the SideBar and then shows SideBar
     // for Candidate Focus
     showCandFocus(event) {
         let pscid;
         if(event) {
-           pscid = $(event.target).text();
+           pscid = $(event.target).closest(".StudyTrackerRow").attr("id");
            this.setState({
                currentPSCID: pscid,
                currentVisit: null,
@@ -516,56 +647,18 @@ class StudyTracker extends React.Component {
         } else {
             pscid = this.state.currentPSCID;
         }
-        let content = [];
 
-        content[0] = <h3 className="center">Participant {pscid}</h3>;
-        if (this.state.currentCohort !== "all") {
-            content = content.concat(<h4 className="center">{this.state.currentCohort} Visits</h4>);
-        }
-        let visits;
-
-        for(let i = 0; i < this.state.rows.length; i++) {
-            let r = this.state.rows[i];
-            if (r.pscid === pscid) {
-                visits = r.visits;
-                break;
-            }
-        }
-
-        let visitContent = [];
-        visits.forEach(
-            function(v) {
-                if (v.cohort === this.state.currentCohort || this.state.currentCohort === "all") {
-                    let vr = this.prettyStatus(v.visitRegStatus, v.visitRegDueDate);
-                    let de = this.prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
-                    if (vr.status === "complete" && de.status === "complete") {
-                        visitContent = visitContent.concat(
-                            <p style={{fontSize: "18px"}}>
-                                {v.visitLabel}:
-                                <span className="complete right-align">&#10003;</span>
-                                {vr.html}
-                            </p>
-                        );
-                    } else {
-                        visitContent = visitContent.concat(
-                            <div>
-                                <h4>{v.visitLabel}:</h4>
-                                <p className="indent">Visit Registration: {vr.html}</p>
-                                <p className="indent">Data Registration: {de.html}</p>
-                            </div>
-                        );
-                    }
-                }
-            }.bind(this)
-        );
-        if (visitContent.length === 0) {
-            visitContent = <p className="center">No applicable visits for this participant for cohort {this.state.currentCohort}</p>
-        }
-        content = content.concat(visitContent);
+        let sideBarContent = <SideBarCandContent
+                pscid={pscid}
+                currentCohort={this.state.currentCohort}
+                rows={this.state.rows}
+                prettyStatus={this.prettyStatus}
+            />;
 
         this.setState({
-            sideBarContent: content
+            sideBarContent: sideBarContent
         });
+
         if (event) {
             StudyTracker.showSideBar();
         }
@@ -585,84 +678,33 @@ class StudyTracker extends React.Component {
         } else {
             visit = this.state.currentVisit;
         }
-        let content = [];
-        content[0] = <h3 className="center">{visit} Visit</h3>;
 
-        let subheader;
-        if (this.state.currentSite !== "all" && this.state.currentCohort !== "all") {
-            subheader = "Visits for " + this.state.currentCohort + " at " + this.state.currentSite;
-        } else if (this.state.currentSite !== "all") {
-            subheader = "Visits at " + this.state.currentSite;
-        } else if (this.state.currentCohort !== "all") {
-            subheader = "Visits for " + this.state.currentCohort;
-        }
+        let sidebarContent = <SideBarVisitContent
+            visit={visit}
+            currentSite={this.state.currentSite}
+            currentCohort={this.state.currentCohort}
+            rows={this.state.rows}
+            prettyStatus={this.prettyStatus}
+        />;
+        this.setState(
+            {sideBarContent: sidebarContent}
+        );
 
-        if (subheader) {
-            content = content.concat(<h4 className="center">{subheader}</h4>)
-        }
-
-        let visitDeadlines = [<h4>Upcoming Visit Deadlines</h4>];
-        let dataDeadlines = [<h4>Upcoming Data Entry Deadlines</h4>];
-        // Loop through rows
-        for (let row of this.state.rows) {
-            if (row.psc !== this.state.currentSite && this.state.currentSite !== "all") {
-                continue;
-            }
-            let pscid = row.pscid;
-            // Look for visit with corresponding visit label
-            for(let v of row.visits) {
-                if (v.visitLabel === visit) {
-                    if(v.cohort === this.state.currentCohort || this.state.currentCohort === "all") {
-                        let vr = this.prettyStatus(v.visitRegStatus, v.visitRegDueDate);
-                        if (vr.status === "deadline-past" || vr.status === "deadline-approaching") {
-                            visitDeadlines = visitDeadlines.concat(
-                                <p className="indent">{pscid}: {vr.html}</p>
-                            );
-                        }
-                        let de = this.prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
-                        if (de.status === "deadline-past" || de.status === "deadline-approaching") {
-                            dataDeadlines = dataDeadlines.concat(
-                                <p className="indent">{pscid}: {de.html}</p>
-                            );
-                        }
-                    }
-                    break;
-                }
-            }
-        }
-        if (visitDeadlines.length <= 1) {
-            visitDeadlines = visitDeadlines.concat(
-                <p className="complete indent">No upcoming visit deadlines</p>
-            );
-        }
-        if (dataDeadlines.length <= 1) {
-            dataDeadlines = dataDeadlines.concat(
-                <p className="complete indent">No upcoming data entry deadlines</p>
-            );
-        }
-
-        content = content.concat(visitDeadlines, dataDeadlines);
-        this.setState({
-            sideBarContent: content
-        });
-        // only show if event is set, i.e., when the PSCID is clicked
-        // not when filter by cohort is done
         if (event) {
             StudyTracker.showSideBar();
         }
     }
 
     static showSideBar() {
-        $(".SideBar").css("width", "350px");
+        $(".SideBar").css("width", SIDEBAR_WIDTH);
     }
 
     static closeSideBar() {
         $(".SideBar").css("width", "0px");
     }
 
-    /* Function which is called when cohort filter is changed
-        event is onChange when the select changes
-     */
+    // Function which is called when cohort filter is changed
+    // event is onChange when the select changes
     filterCohorts(event) {
         let callback = function(){};
         if (this.state.currentSideBarFocus === "visit") {

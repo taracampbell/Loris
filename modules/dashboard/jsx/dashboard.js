@@ -182,6 +182,7 @@ const cohorts = [
 ];
 
 const MS_TO_DAYS = 1/(1000 * 60 * 60 * 24);
+const SIDEBAR_WIDTH = "350px";
 
 function SiteFilter(props) {
     let options = props.sites.map((site) =>
@@ -588,7 +589,7 @@ class StudyTracker extends React.Component {
         let content = [];
         content[0] = <h3 className="center">{visit} Visit</h3>;
 
-        let subheader;
+        let subheader; // Displays which cohort and visit is in focus
         if (this.state.currentSite !== "all" && this.state.currentCohort !== "all") {
             subheader = "Visits for " + this.state.currentCohort + " at " + this.state.currentSite;
         } else if (this.state.currentSite !== "all") {
@@ -653,7 +654,7 @@ class StudyTracker extends React.Component {
     }
 
     static showSideBar() {
-        $(".SideBar").css("width", "350px");
+        $(".SideBar").css("width", SIDEBAR_WIDTH);
     }
 
     static closeSideBar() {

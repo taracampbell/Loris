@@ -160,6 +160,7 @@ var sites = [{
 var cohorts = ["MCI", "SCI", "AD"];
 
 var MS_TO_DAYS = 1 / (1000 * 60 * 60 * 24);
+var SIDEBAR_WIDTH = "350px";
 
 function SiteFilter(props) {
     var options = props.sites.map(function (site) {
@@ -778,7 +779,7 @@ var StudyTracker = function (_React$Component7) {
                 " Visit"
             );
 
-            var subheader = void 0;
+            var subheader = void 0; // Displays which cohort and visit is in focus
             if (this.state.currentSite !== "all" && this.state.currentCohort !== "all") {
                 subheader = "Visits for " + this.state.currentCohort + " at " + this.state.currentSite;
             } else if (this.state.currentSite !== "all") {
@@ -1027,7 +1028,7 @@ var StudyTracker = function (_React$Component7) {
     }], [{
         key: "showSideBar",
         value: function showSideBar() {
-            $(".SideBar").css("width", "350px");
+            $(".SideBar").css("width", SIDEBAR_WIDTH);
         }
     }, {
         key: "closeSideBar",

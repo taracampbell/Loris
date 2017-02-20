@@ -270,8 +270,111 @@ var Filters = function (_React$Component) {
     return Filters;
 }(React.Component);
 
-var SideBarVisitContent = function (_React$Component2) {
-    _inherits(SideBarVisitContent, _React$Component2);
+var SideBarCandContent = function (_React$Component2) {
+    _inherits(SideBarCandContent, _React$Component2);
+
+    function SideBarCandContent() {
+        _classCallCheck(this, SideBarCandContent);
+
+        return _possibleConstructorReturn(this, (SideBarCandContent.__proto__ || Object.getPrototypeOf(SideBarCandContent)).apply(this, arguments));
+    }
+
+    _createClass(SideBarCandContent, [{
+        key: "render",
+        value: function render() {
+            var content = [];
+
+            content[0] = React.createElement(
+                "h3",
+                { className: "center" },
+                "Participant ",
+                this.props.pscid
+            );
+            if (this.props.currentCohort !== "all") {
+                content = content.concat(React.createElement(
+                    "h4",
+                    { className: "center" },
+                    this.props.currentCohort,
+                    " Visits"
+                ));
+            }
+            var visits = void 0;
+
+            for (var i = 0; i < this.props.rows.length; i++) {
+                var r = this.props.rows[i];
+                if (r.pscid === this.props.pscid) {
+                    visits = r.visits;
+                    break;
+                }
+            }
+
+            var visitContent = [];
+            visits.forEach(function (v) {
+                if (v.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
+                    var vr = this.props.prettyStatus(v.visitRegStatus, v.visitRegDueDate);
+                    var de = this.props.prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
+                    if (vr.status === "complete" && de.status === "complete") {
+                        visitContent = visitContent.concat(React.createElement(
+                            "p",
+                            { style: { fontSize: "18px" } },
+                            v.visitLabel,
+                            ":",
+                            React.createElement(
+                                "span",
+                                { className: "complete right-align" },
+                                "\u2713"
+                            ),
+                            vr.html
+                        ));
+                    } else {
+                        visitContent = visitContent.concat(React.createElement(
+                            "div",
+                            null,
+                            React.createElement(
+                                "h4",
+                                null,
+                                v.visitLabel,
+                                ":"
+                            ),
+                            React.createElement(
+                                "p",
+                                { className: "indent" },
+                                "Visit Registration: ",
+                                vr.html
+                            ),
+                            React.createElement(
+                                "p",
+                                { className: "indent" },
+                                "Data Registration: ",
+                                de.html
+                            )
+                        ));
+                    }
+                }
+            }.bind(this));
+            if (visitContent.length === 0) {
+                visitContent = React.createElement(
+                    "p",
+                    { className: "center" },
+                    "No applicable visits for this participant for cohort ",
+                    this.props.currentCohort
+                );
+            }
+            content = content.concat(visitContent);
+
+            return React.createElement(
+                "div",
+                { className: "SideBarCandContent" },
+                content
+            );
+        }
+    }]);
+
+    return SideBarCandContent;
+}(React.Component);
+
+var SideBarVisitContent = function (_React$Component3) {
+    _inherits(SideBarVisitContent, _React$Component3);
 
     function SideBarVisitContent() {
         _classCallCheck(this, SideBarVisitContent);
@@ -423,8 +526,8 @@ var SideBarVisitContent = function (_React$Component2) {
     return SideBarVisitContent;
 }(React.Component);
 
-var SideBar = function (_React$Component3) {
-    _inherits(SideBar, _React$Component3);
+var SideBar = function (_React$Component4) {
+    _inherits(SideBar, _React$Component4);
 
     function SideBar() {
         _classCallCheck(this, SideBar);
@@ -455,8 +558,8 @@ var SideBar = function (_React$Component3) {
     return SideBar;
 }(React.Component);
 
-var VisitCell = function (_React$Component4) {
-    _inherits(VisitCell, _React$Component4);
+var VisitCell = function (_React$Component5) {
+    _inherits(VisitCell, _React$Component5);
 
     function VisitCell() {
         _classCallCheck(this, VisitCell);
@@ -526,8 +629,8 @@ var VisitCell = function (_React$Component4) {
     return VisitCell;
 }(React.Component);
 
-var PSCIDCell = function (_React$Component5) {
-    _inherits(PSCIDCell, _React$Component5);
+var PSCIDCell = function (_React$Component6) {
+    _inherits(PSCIDCell, _React$Component6);
 
     function PSCIDCell() {
         _classCallCheck(this, PSCIDCell);
@@ -551,18 +654,18 @@ var PSCIDCell = function (_React$Component5) {
     return PSCIDCell;
 }(React.Component);
 
-var StudyTrackerRow = function (_React$Component6) {
-    _inherits(StudyTrackerRow, _React$Component6);
+var StudyTrackerRow = function (_React$Component7) {
+    _inherits(StudyTrackerRow, _React$Component7);
 
     function StudyTrackerRow(props) {
         _classCallCheck(this, StudyTrackerRow);
 
-        var _this6 = _possibleConstructorReturn(this, (StudyTrackerRow.__proto__ || Object.getPrototypeOf(StudyTrackerRow)).call(this, props));
+        var _this7 = _possibleConstructorReturn(this, (StudyTrackerRow.__proto__ || Object.getPrototypeOf(StudyTrackerRow)).call(this, props));
 
-        _this6.highlightRow = _this6.highlightRow.bind(_this6);
-        _this6.unhighlightRow = _this6.unhighlightRow.bind(_this6);
-        _this6.keepHighlightedShowCandFocus = _this6.keepHighlightedShowCandFocus.bind(_this6);
-        return _this6;
+        _this7.highlightRow = _this7.highlightRow.bind(_this7);
+        _this7.unhighlightRow = _this7.unhighlightRow.bind(_this7);
+        _this7.keepHighlightedShowCandFocus = _this7.keepHighlightedShowCandFocus.bind(_this7);
+        return _this7;
     }
 
     _createClass(StudyTrackerRow, [{
@@ -620,21 +723,21 @@ var StudyTrackerRow = function (_React$Component6) {
     return StudyTrackerRow;
 }(React.Component);
 
-var StudyTrackerHeader = function (_React$Component7) {
-    _inherits(StudyTrackerHeader, _React$Component7);
+var StudyTrackerHeader = function (_React$Component8) {
+    _inherits(StudyTrackerHeader, _React$Component8);
 
     function StudyTrackerHeader(props) {
         _classCallCheck(this, StudyTrackerHeader);
 
-        var _this7 = _possibleConstructorReturn(this, (StudyTrackerHeader.__proto__ || Object.getPrototypeOf(StudyTrackerHeader)).call(this, props));
+        var _this8 = _possibleConstructorReturn(this, (StudyTrackerHeader.__proto__ || Object.getPrototypeOf(StudyTrackerHeader)).call(this, props));
 
-        _this7.state = {
+        _this8.state = {
             visitInFocus: null
         };
-        _this7.highlightColumns = _this7.highlightColumns.bind(_this7);
-        _this7.unhighlightColumns = _this7.unhighlightColumns.bind(_this7);
-        _this7.keepHighlightedShowVisitFocus = _this7.keepHighlightedShowVisitFocus.bind(_this7);
-        return _this7;
+        _this8.highlightColumns = _this8.highlightColumns.bind(_this8);
+        _this8.unhighlightColumns = _this8.unhighlightColumns.bind(_this8);
+        _this8.keepHighlightedShowVisitFocus = _this8.keepHighlightedShowVisitFocus.bind(_this8);
+        return _this8;
     }
 
     // When mouse enters header cell, highlight all cells for that visit
@@ -701,15 +804,15 @@ var StudyTrackerHeader = function (_React$Component7) {
     return StudyTrackerHeader;
 }(React.Component);
 
-var StudyTracker = function (_React$Component8) {
-    _inherits(StudyTracker, _React$Component8);
+var StudyTracker = function (_React$Component9) {
+    _inherits(StudyTracker, _React$Component9);
 
     function StudyTracker() {
         _classCallCheck(this, StudyTracker);
 
-        var _this8 = _possibleConstructorReturn(this, (StudyTracker.__proto__ || Object.getPrototypeOf(StudyTracker)).call(this));
+        var _this9 = _possibleConstructorReturn(this, (StudyTracker.__proto__ || Object.getPrototypeOf(StudyTracker)).call(this));
 
-        _this8.state = {
+        _this9.state = {
             rows: dummyData,
             visitLabels: visitLabels,
             currentSite: "all",
@@ -723,14 +826,14 @@ var StudyTracker = function (_React$Component8) {
             currentVisit: null,
             currentSideBarFocus: null
         };
-        _this8.prettyStatus = _this8.prettyStatus.bind(_this8);
-        _this8.showCandFocus = _this8.showCandFocus.bind(_this8);
-        _this8.showVisitFocus = _this8.showVisitFocus.bind(_this8);
-        _this8.filterSites = _this8.filterSites.bind(_this8);
-        _this8.filterTeams = _this8.filterTeams.bind(_this8);
-        _this8.filterCohorts = _this8.filterCohorts.bind(_this8);
-        _this8.rowHasCurrentCohortVisit = _this8.rowHasCurrentCohortVisit.bind(_this8);
-        return _this8;
+        _this9.prettyStatus = _this9.prettyStatus.bind(_this9);
+        _this9.showCandFocus = _this9.showCandFocus.bind(_this9);
+        _this9.showVisitFocus = _this9.showVisitFocus.bind(_this9);
+        _this9.filterSites = _this9.filterSites.bind(_this9);
+        _this9.filterTeams = _this9.filterTeams.bind(_this9);
+        _this9.filterCohorts = _this9.filterCohorts.bind(_this9);
+        _this9.rowHasCurrentCohortVisit = _this9.rowHasCurrentCohortVisit.bind(_this9);
+        return _this9;
     }
 
     // Returns an object which contains a clean status and styled html to display
@@ -819,89 +922,18 @@ var StudyTracker = function (_React$Component8) {
             } else {
                 pscid = this.state.currentPSCID;
             }
-            var content = [];
 
-            content[0] = React.createElement(
-                "h3",
-                { className: "center" },
-                "Participant ",
-                pscid
-            );
-            if (this.state.currentCohort !== "all") {
-                content = content.concat(React.createElement(
-                    "h4",
-                    { className: "center" },
-                    this.state.currentCohort,
-                    " Visits"
-                ));
-            }
-            var visits = void 0;
-
-            for (var i = 0; i < this.state.rows.length; i++) {
-                var r = this.state.rows[i];
-                if (r.pscid === pscid) {
-                    visits = r.visits;
-                    break;
-                }
-            }
-
-            var visitContent = [];
-            visits.forEach(function (v) {
-                if (v.cohort === this.state.currentCohort || this.state.currentCohort === "all") {
-                    var vr = this.prettyStatus(v.visitRegStatus, v.visitRegDueDate);
-                    var de = this.prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
-                    if (vr.status === "complete" && de.status === "complete") {
-                        visitContent = visitContent.concat(React.createElement(
-                            "p",
-                            { style: { fontSize: "18px" } },
-                            v.visitLabel,
-                            ":",
-                            React.createElement(
-                                "span",
-                                { className: "complete right-align" },
-                                "\u2713"
-                            ),
-                            vr.html
-                        ));
-                    } else {
-                        visitContent = visitContent.concat(React.createElement(
-                            "div",
-                            null,
-                            React.createElement(
-                                "h4",
-                                null,
-                                v.visitLabel,
-                                ":"
-                            ),
-                            React.createElement(
-                                "p",
-                                { className: "indent" },
-                                "Visit Registration: ",
-                                vr.html
-                            ),
-                            React.createElement(
-                                "p",
-                                { className: "indent" },
-                                "Data Registration: ",
-                                de.html
-                            )
-                        ));
-                    }
-                }
-            }.bind(this));
-            if (visitContent.length === 0) {
-                visitContent = React.createElement(
-                    "p",
-                    { className: "center" },
-                    "No applicable visits for this participant for cohort ",
-                    this.state.currentCohort
-                );
-            }
-            content = content.concat(visitContent);
+            var sideBarContent = React.createElement(SideBarCandContent, {
+                pscid: pscid,
+                currentCohort: this.state.currentCohort,
+                rows: this.state.rows,
+                prettyStatus: this.prettyStatus
+            });
 
             this.setState({
-                sideBarContent: content
+                sideBarContent: sideBarContent
             });
+
             if (event) {
                 StudyTracker.showSideBar();
             }
@@ -933,69 +965,7 @@ var StudyTracker = function (_React$Component8) {
                 prettyStatus: this.prettyStatus
             });
             this.setState({ sideBarContent: sidebarContent });
-            // // TODO: Put below code into SidebarVisitContent
-            // let content = [];
-            // content[0] = <h3 className="center">{visit} Visit</h3>;
-            //
-            // let subheader; // Displays which cohort and visit is in focus
-            // if (this.state.currentSite !== "all" && this.state.currentCohort !== "all") {
-            //     subheader = "Visits for " + this.state.currentCohort + " at " + this.state.currentSite;
-            // } else if (this.state.currentSite !== "all") {
-            //     subheader = "Visits at " + this.state.currentSite;
-            // } else if (this.state.currentCohort !== "all") {
-            //     subheader = "Visits for " + this.state.currentCohort;
-            // }
-            //
-            // if (subheader) {
-            //     content = content.concat(<h4 className="center">{subheader}</h4>)
-            // }
-            //
-            // let visitDeadlines = [<h4>Upcoming Visit Deadlines</h4>];
-            // let dataDeadlines = [<h4>Upcoming Data Entry Deadlines</h4>];
-            // // Loop through rows
-            // for (let row of this.state.rows) {
-            //     if (row.psc !== this.state.currentSite && this.state.currentSite !== "all") {
-            //         continue;
-            //     }
-            //     let pscid = row.pscid;
-            //     // Look for visit with corresponding visit label
-            //     for(let v of row.visits) {
-            //         if (v.visitLabel === visit) {
-            //             if(v.cohort === this.state.currentCohort || this.state.currentCohort === "all") {
-            //                 let vr = this.prettyStatus(v.visitRegStatus, v.visitRegDueDate);
-            //                 if (vr.status === "deadline-past" || vr.status === "deadline-approaching") {
-            //                     visitDeadlines = visitDeadlines.concat(
-            //                         <p className="indent">{pscid}: {vr.html}</p>
-            //                     );
-            //                 }
-            //                 let de = this.prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
-            //                 if (de.status === "deadline-past" || de.status === "deadline-approaching") {
-            //                     dataDeadlines = dataDeadlines.concat(
-            //                         <p className="indent">{pscid}: {de.html}</p>
-            //                     );
-            //                 }
-            //             }
-            //             break;
-            //         }
-            //     }
-            // }
-            // if (visitDeadlines.length <= 1) {
-            //     visitDeadlines = visitDeadlines.concat(
-            //         <p className="complete indent">No upcoming visit deadlines</p>
-            //     );
-            // }
-            // if (dataDeadlines.length <= 1) {
-            //     dataDeadlines = dataDeadlines.concat(
-            //         <p className="complete indent">No upcoming data entry deadlines</p>
-            //     );
-            // }
 
-            //content = content.concat(visitDeadlines, dataDeadlines);
-            // this.setState({
-            //     sideBarContent: content
-            // });
-            // only show if event is set, i.e., when the PSCID is clicked
-            // not when filter by cohort is done
             if (event) {
                 StudyTracker.showSideBar();
             }

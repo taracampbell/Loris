@@ -840,6 +840,13 @@ var StudyTracker = function (_React$Component9) {
         _this9.filterTeams = _this9.filterTeams.bind(_this9);
         _this9.filterCohorts = _this9.filterCohorts.bind(_this9);
         _this9.rowHasCurrentCohortVisit = _this9.rowHasCurrentCohortVisit.bind(_this9);
+
+        var url = loris.BaseURL + "/dashboard/ajax/study_tracker.php";
+        $.get(url, function (data, status) {
+            if (status === "success") {
+                console.log(JSON.stringify(JSON.parse(data), ',', 2));
+            }
+        });
         return _this9;
     }
 

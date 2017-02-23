@@ -589,10 +589,10 @@ class StudyTracker extends React.Component {
         this.filterCohorts = this.filterCohorts.bind(this);
         this.rowHasCurrentCohortVisit = this.rowHasCurrentCohortVisit.bind(this);
 
-        let url = loris.BaseURL + "/dashboard/ajax/study_tracker.php";
-        $.get(url, function(data, status) {
+        let url = loris.BaseURL + "/dashboard/ajax/getData.php";
+        $.get(url, {data: "tableData"}, function(data, status) {
            if (status === "success") {
-               console.log(JSON.stringify(JSON.parse(data), ',', 2));
+               console.log(data);
            }
         });
     }

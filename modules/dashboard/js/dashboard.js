@@ -324,7 +324,7 @@ var SideBarCandContent = function (_React$Component2) {
                             React.createElement(
                                 "span",
                                 { className: "complete right-align" },
-                                "✓"
+                                "\u2713"
                             )
                         ));
                     } else {
@@ -549,7 +549,7 @@ var SideBar = function (_React$Component4) {
                         className: "closebtn",
                         onClick: this.props.closeSideBar
                     },
-                    "×"
+                    "\xD7"
                 ),
                 this.props.sideBarContent
             );
@@ -841,10 +841,10 @@ var StudyTracker = function (_React$Component9) {
         _this9.filterCohorts = _this9.filterCohorts.bind(_this9);
         _this9.rowHasCurrentCohortVisit = _this9.rowHasCurrentCohortVisit.bind(_this9);
 
-        var url = loris.BaseURL + "/dashboard/ajax/study_tracker.php";
-        $.get(url, function (data, status) {
+        var url = loris.BaseURL + "/dashboard/ajax/getData.php";
+        $.get(url, { data: "tableData" }, function (data, status) {
             if (status === "success") {
-                console.log(JSON.stringify(JSON.parse(data), ',', 2));
+                console.log(data);
             }
         });
         return _this9;

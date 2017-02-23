@@ -157,8 +157,6 @@ var sites = [{
     'fullname': 'Parkwood Institution'
 }];
 
-var cohorts = ["MCI", "SCI", "AD"];
-
 var MS_TO_DAYS = 1 / (1000 * 60 * 60 * 24);
 var SIDEBAR_WIDTH = "350px";
 var HIGHLIGHT_COLOR = "#E9EBF3";
@@ -827,7 +825,7 @@ var StudyTracker = function (_React$Component9) {
             teams: [],
             currentTeam: "COMPASS-ND",
             currentCohort: "all",
-            cohorts: cohorts,
+            cohorts: [],
             sideBarContent: null,
             currentPSCID: null,
             currentVisit: null,
@@ -842,11 +840,33 @@ var StudyTracker = function (_React$Component9) {
         _this9.rowHasCurrentCohortVisit = _this9.rowHasCurrentCohortVisit.bind(_this9);
 
         var url = loris.BaseURL + "/dashboard/ajax/getData.php";
-        $.get(url, { data: "tableData" }, function (data, status) {
+        $.get(url, { data: "all" }, function (data, status) {
             if (status === "success") {
                 console.log(data);
             }
         });
+
+        $.get(url, { data: "cohorts" }, function (data, status) {
+            if (status === "success") {
+                var cohorts = [];
+                for (var d in data) {
+                    cohorts.push(data[d]);
+                }
+                this.setState({ cohorts: cohorts });
+            }
+        }.bind(_this9));
+
+        $.get(url, { data: "visitLabels" }, function (data, status) {
+            if (status === "success") {
+                //console.log(data);
+            }
+        }.bind(_this9));
+
+        $.get(url, { data: "sites" }, function (data, status) {
+            if (status === "success") {
+                //console.log(data);
+            }
+        }.bind(_this9));
         return _this9;
     }
 
@@ -1062,6 +1082,7 @@ var StudyTracker = function (_React$Component9) {
                     });
                 }
             }.bind(this));
+            //console.log("Cohorts: " + cohorts);
             return React.createElement(
                 "div",
                 { className: "StudyTracker" },

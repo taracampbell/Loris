@@ -175,12 +175,6 @@ var sites = [
     }
 ];
 
-const cohorts = [
-    "MCI",
-    "SCI",
-    "AD"
-];
-
 const MS_TO_DAYS = 1/(1000 * 60 * 60 * 24);
 const SIDEBAR_WIDTH = "350px";
 const HIGHLIGHT_COLOR = "#E9EBF3";
@@ -575,7 +569,7 @@ class StudyTracker extends React.Component {
              teams: [],
              currentTeam: "COMPASS-ND",
              currentCohort: "all",
-             cohorts: cohorts,
+             cohorts: [],
              sideBarContent: null,
              currentPSCID: null,
              currentVisit: null,
@@ -590,11 +584,33 @@ class StudyTracker extends React.Component {
         this.rowHasCurrentCohortVisit = this.rowHasCurrentCohortVisit.bind(this);
 
         let url = loris.BaseURL + "/dashboard/ajax/getData.php";
-        $.get(url, {data: "tableData"}, function(data, status) {
+        $.get(url, {data: "all"}, function(data, status) {
            if (status === "success") {
                console.log(data);
            }
         });
+
+        $.get(url, {data: "cohorts"}, function(data, status) {
+            if (status === "success") {
+                let cohorts = [];
+                for (var d in data) {
+                    cohorts.push(data[d]);
+                }
+                this.setState({cohorts: cohorts});
+            }
+        }.bind(this));
+
+        $.get(url, {data: "visitLabels"}, function(data, status) {
+            if (status === "success") {
+                //console.log(data);
+            }
+        }.bind(this));
+
+        $.get(url, {data: "sites"}, function(data, status) {
+            if (status === "success") {
+                //console.log(data);
+            }
+        }.bind(this));
     }
 
     // Returns an object which contains a clean status and styled html to display
@@ -779,6 +795,7 @@ class StudyTracker extends React.Component {
                 }
             }.bind(this)
         );
+        //console.log("Cohorts: " + cohorts);
         return (
             <div className="StudyTracker">
                 <span style={{fontSize:24}}>Study Progression</span>

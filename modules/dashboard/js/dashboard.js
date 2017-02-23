@@ -161,7 +161,7 @@ var cohorts = ["MCI", "SCI", "AD"];
 
 var MS_TO_DAYS = 1 / (1000 * 60 * 60 * 24);
 var SIDEBAR_WIDTH = "350px";
-var HIGHLIGHT_COLOR = "#eafeea";
+var HIGHLIGHT_COLOR = "#E9EBF3";
 
 function SiteFilter(props) {
     var options = props.sites.map(function (site) {
@@ -324,7 +324,7 @@ var SideBarCandContent = function (_React$Component2) {
                             React.createElement(
                                 "span",
                                 { className: "complete right-align" },
-                                "\u2713"
+                                "✓"
                             )
                         ));
                     } else {
@@ -549,7 +549,7 @@ var SideBar = function (_React$Component4) {
                         className: "closebtn",
                         onClick: this.props.closeSideBar
                     },
-                    "\xD7"
+                    "×"
                 ),
                 this.props.sideBarContent
             );

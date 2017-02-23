@@ -183,7 +183,7 @@ const cohorts = [
 
 const MS_TO_DAYS = 1/(1000 * 60 * 60 * 24);
 const SIDEBAR_WIDTH = "350px";
-const HIGHLIGHT_COLOR = "#eafeea";
+const HIGHLIGHT_COLOR = "#E9EBF3";
 
 function SiteFilter(props) {
     let options = props.sites.map((site) =>

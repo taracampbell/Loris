@@ -55,7 +55,7 @@ function getTableData() {
     $DB = Database::singleton();
 
     $candidates = $DB->pselect(
-        "SELECT c.PSCID, psc.Name
+        "SELECT c.CandID, c.PSCID, psc.Name
          FROM candidate c
          LEFT JOIN psc USING (CenterID)
          WHERE c.Active='Y' AND c.Entity_type='human'"
@@ -66,12 +66,69 @@ function getTableData() {
     foreach ($candidates as $candidate) {
         $pscid  = $candidate['PSCID'];
         $psc    = $candidate['Name'];
-        $visits = array();
-
+        $visits = getVisitData($candidate['CandID'], $pscid);
         array_push($tableData, array('pscid' => $pscid, 'psc' => $psc, 'visits' => $visits));
     }
 
     return $tableData;
+}
+
+function getVisitData($candID, $pscid) {
+    $toReturn = array();
+
+    $DB = Database::singleton();
+
+    $visits = $DB->pselect(
+        "SELECT * FROM session WHERE CandID=:cid",
+        array("cid" => $candID)
+    );
+
+    foreach ($visits as $v) {
+        $visit = array(
+            'sessionID' => $v['ID'],
+            'visitRegStatus' => '',
+            'dataEntryStatus' => '',
+            'visitRegDueDate' => '',
+            'dataEntryDueDate' => '',
+            'instrCompleted' => 0,
+            'totalInstrs' => 0,
+            'visitLabel' => $v['Visit_label'],
+            'cohort' => ''
+        );
+
+        $visit['cohort'] = $DB->pselect(
+            "SELECT title FROM subproject WHERE SubprojectID = :sid",
+            array("sid" => $v['SubprojectID'])
+        );
+
+        $instruments = $DB->pselect(
+            "SELECT test_name FROM test_battery ".
+            "WHERE Visit_label = :vl AND SubprojectID = :sid",
+            array(
+                "vl" => $v['Visit_label'],
+                "sid" => $v['SubprojectID']
+            )
+        );
+
+        $visit['totalInstrs'] = count($instruments);
+
+        foreach ($instruments as $i) {
+            $complete = $DB->pselect(
+                "SELECT Data_entry_completion_status FROM {$i['test_name']} ".
+                "WHERE CommentID LIKE {$candID}.{$pscid}%",
+                array()
+            );
+            if ($complete === "Complete") {
+                $v['instrCompleted']++;
+            }
+        }
+
+        // TODO: get visit registration & data entry status and due dates
+
+        $toReturn[] = $visit;
+    }
+
+    return $toReturn;
 }
 
 ?>

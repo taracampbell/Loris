@@ -158,22 +158,6 @@ var dummyData = [
     }
 ];
 
-var visitLabels = [
-    "Screening",
-    "Clinical",
-    "Neuropsych"
-];
-
-var sites = [
-    {
-        'psc':'JGH',
-        'fullname':'Jewish General Hospital'
-    },
-    {
-        'psc':'PKD',
-        'fullname':'Parkwood Institution'
-    }
-];
 
 const MS_TO_DAYS = 1/(1000 * 60 * 60 * 24);
 const SIDEBAR_WIDTH = "350px";

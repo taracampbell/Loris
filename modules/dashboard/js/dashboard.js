@@ -147,16 +147,6 @@ var dummyData = [{
     }]
 }];
 
-var visitLabels = ["Screening", "Clinical", "Neuropsych"];
-
-var sites = [{
-    'psc': 'JGH',
-    'fullname': 'Jewish General Hospital'
-}, {
-    'psc': 'PKD',
-    'fullname': 'Parkwood Institution'
-}];
-
 var MS_TO_DAYS = 1 / (1000 * 60 * 60 * 24);
 var SIDEBAR_WIDTH = "350px";
 var HIGHLIGHT_COLOR = "#E9EBF3";
@@ -844,22 +834,22 @@ var StudyTracker = function (_React$Component9) {
         $.get(url, { data: "all" }, function (data, status) {
             if (status === "success") {
                 var cohorts = [],
-                    _visitLabels = [];
-                var _sites = new Map();
+                    visitLabels = [];
+                var sites = new Map();
 
                 for (var c in data.cohorts) {
                     cohorts.push(data.cohorts[c]);
                 }
                 this.setState({ cohorts: cohorts });
                 for (var s in data.sites) {
-                    _sites.set(data.sites[s].Alias, data.sites[s].Name);
+                    sites.set(data.sites[s].Alias, data.sites[s].Name);
                 }
                 //console.log(sites);
-                this.setState({ sites: _sites });
+                this.setState({ sites: sites });
                 for (var v in data.visitLabels) {
-                    _visitLabels.push(data.visitLabels[v]);
+                    visitLabels.push(data.visitLabels[v]);
                 }
-                this.setState({ visitLabels: _visitLabels });
+                this.setState({ visitLabels: visitLabels });
             }
         }.bind(_this9));
 

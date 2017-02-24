@@ -162,12 +162,13 @@ var SIDEBAR_WIDTH = "350px";
 var HIGHLIGHT_COLOR = "#E9EBF3";
 
 function SiteFilter(props) {
-    var options = props.sites.map(function (site) {
-        return React.createElement(
+    var options = [];
+    props.sites.forEach(function (name, alias) {
+        options.push(React.createElement(
             "option",
-            { key: site.psc, value: site.psc },
-            site.fullname
-        );
+            { key: alias, value: alias },
+            name
+        ));
     });
     return React.createElement(
         "td",
@@ -819,9 +820,9 @@ var StudyTracker = function (_React$Component9) {
 
         _this9.state = {
             rows: dummyData,
-            visitLabels: visitLabels,
+            visitLabels: [],
             currentSite: "all",
-            sites: sites,
+            sites: new Map(),
             teams: [],
             currentTeam: "COMPASS-ND",
             currentCohort: "all",
@@ -842,9 +843,25 @@ var StudyTracker = function (_React$Component9) {
         var url = loris.BaseURL + "/dashboard/ajax/getData.php";
         $.get(url, { data: "all" }, function (data, status) {
             if (status === "success") {
-                console.log(data);
+                var cohorts = [],
+                    _visitLabels = [];
+                var _sites = new Map();
+
+                for (var c in data.cohorts) {
+                    cohorts.push(data.cohorts[c]);
+                }
+                this.setState({ cohorts: cohorts });
+                for (var s in data.sites) {
+                    _sites.set(data.sites[s].Alias, data.sites[s].Name);
+                }
+                //console.log(sites);
+                this.setState({ sites: _sites });
+                for (var v in data.visitLabels) {
+                    _visitLabels.push(data.visitLabels[v]);
+                }
+                this.setState({ visitLabels: _visitLabels });
             }
-        });
+        }.bind(_this9));
 
         $.get(url, { data: "cohorts" }, function (data, status) {
             if (status === "success") {

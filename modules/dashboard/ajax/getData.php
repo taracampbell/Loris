@@ -36,7 +36,13 @@ function getCohorts() {
 }
 
 function getSites() {
-    $sites = Utility::getSiteList();
+    //$sites = Utility::getSiteList();
+    $DB = Database::singleton();
+    $sites = $DB->pselect(
+        "SELECT DISTINCT p.Name, p.Alias FROM psc p ".
+        "INNER JOIN candidate c ON c.CenterID = p.CenterID"
+    );
+
     return $sites;
 }
 

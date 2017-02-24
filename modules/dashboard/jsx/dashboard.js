@@ -180,8 +180,10 @@ const SIDEBAR_WIDTH = "350px";
 const HIGHLIGHT_COLOR = "#E9EBF3";
 
 function SiteFilter(props) {
-    let options = props.sites.map((site) =>
-        <option key={site.psc} value={site.psc}>{site.fullname}</option>
+    let options = [];
+    props.sites.forEach(function (name, alias) {
+           options.push(<option key={alias} value={alias}>{name}</option>);
+        }
     );
     return (
         <td>
@@ -563,9 +565,9 @@ class StudyTracker extends React.Component {
         super();
         this.state = {
              rows: dummyData,
-             visitLabels: visitLabels,
+             visitLabels: [],
              currentSite: "all",
-             sites: sites,
+             sites: new Map(),
              teams: [],
              currentTeam: "COMPASS-ND",
              currentCohort: "all",
@@ -586,14 +588,29 @@ class StudyTracker extends React.Component {
         let url = loris.BaseURL + "/dashboard/ajax/getData.php";
         $.get(url, {data: "all"}, function(data, status) {
            if (status === "success") {
-               console.log(data);
+               let cohorts = [], visitLabels = [];
+               let sites = new Map();
+
+               for (let c in data.cohorts) {
+                   cohorts.push(data.cohorts[c]);
+               }
+               this.setState({cohorts: cohorts});
+               for (let s in data.sites) {
+                   sites.set(data.sites[s].Alias, data.sites[s].Name);
+               }
+               //console.log(sites);
+               this.setState({sites: sites});
+               for (let v in data.visitLabels) {
+                   visitLabels.push(data.visitLabels[v]);
+               }
+               this.setState({visitLabels: visitLabels});
            }
-        });
+        }.bind(this));
 
         $.get(url, {data: "cohorts"}, function(data, status) {
             if (status === "success") {
                 let cohorts = [];
-                for (var d in data) {
+                for (let d in data) {
                     cohorts.push(data[d]);
                 }
                 this.setState({cohorts: cohorts});

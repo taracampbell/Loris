@@ -1,7 +1,7 @@
 <?php
-
 if (isset($_GET['data'])) {
     $data = $_GET['data'];
+    $db = Database::singleton();
     if ($data == "cohorts") {
         header('Content-Type: application/json');
         echo json_encode(getCohorts());
@@ -14,6 +14,15 @@ if (isset($_GET['data'])) {
     } else if ($data == "visitLabels") {
         header('Content-Type: application/json');
         echo json_encode(getVisitLabels());
+    } else if ($data == 'all') {
+        header('Content-Type: application/json');
+        $result = array(
+            "cohorts" => getCohorts(),
+            "sites" => getSites(),
+            "tableData" => getTableData(),
+            "visitLabels" => getVisitLabels()
+        );
+        echo json_encode($result);
     } else {
         header("HTTP/1.1 404 Not Found");
     }
@@ -27,7 +36,13 @@ function getCohorts() {
 }
 
 function getSites() {
-    $sites = Utility::getSiteList();
+    //$sites = Utility::getSiteList();
+    $DB = Database::singleton();
+    $sites = $DB->pselect(
+        "SELECT DISTINCT p.Name, p.Alias FROM psc p ".
+        "INNER JOIN candidate c ON c.CenterID = p.CenterID"
+    );
+
     return $sites;
 }
 

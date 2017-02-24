@@ -157,19 +157,18 @@ var sites = [{
     'fullname': 'Parkwood Institution'
 }];
 
-var cohorts = ["MCI", "SCI", "AD"];
-
 var MS_TO_DAYS = 1 / (1000 * 60 * 60 * 24);
 var SIDEBAR_WIDTH = "350px";
 var HIGHLIGHT_COLOR = "#E9EBF3";
 
 function SiteFilter(props) {
-    var options = props.sites.map(function (site) {
-        return React.createElement(
+    var options = [];
+    props.sites.forEach(function (name, alias) {
+        options.push(React.createElement(
             "option",
-            { key: site.psc, value: site.psc },
-            site.fullname
-        );
+            { key: alias, value: alias },
+            name
+        ));
     });
     return React.createElement(
         "td",
@@ -324,7 +323,7 @@ var SideBarCandContent = function (_React$Component2) {
                             React.createElement(
                                 "span",
                                 { className: "complete right-align" },
-                                "✓"
+                                "\u2713"
                             )
                         ));
                     } else {
@@ -502,7 +501,7 @@ var SideBarVisitContent = function (_React$Component3) {
             if (visitDeadlines.length <= 1) {
                 visitDeadlines = visitDeadlines.concat(React.createElement(
                     "p",
-                    { className: "complete indent" },
+                    { className: "complete left-indent" },
                     "No upcoming visit deadlines"
                 ));
             }
@@ -549,7 +548,7 @@ var SideBar = function (_React$Component4) {
                         className: "closebtn",
                         onClick: this.props.closeSideBar
                     },
-                    "×"
+                    "\xD7"
                 ),
                 this.props.sideBarContent
             );
@@ -821,13 +820,13 @@ var StudyTracker = function (_React$Component9) {
 
         _this9.state = {
             rows: dummyData,
-            visitLabels: visitLabels,
+            visitLabels: [],
             currentSite: "all",
-            sites: sites,
+            sites: new Map(),
             teams: [],
             currentTeam: "COMPASS-ND",
             currentCohort: "all",
-            cohorts: cohorts,
+            cohorts: [],
             sideBarContent: null,
             currentPSCID: null,
             currentVisit: null,
@@ -840,6 +839,51 @@ var StudyTracker = function (_React$Component9) {
         _this9.filterTeams = _this9.filterTeams.bind(_this9);
         _this9.filterCohorts = _this9.filterCohorts.bind(_this9);
         _this9.rowHasCurrentCohortVisit = _this9.rowHasCurrentCohortVisit.bind(_this9);
+
+        var url = loris.BaseURL + "/dashboard/ajax/getData.php";
+        $.get(url, { data: "all" }, function (data, status) {
+            if (status === "success") {
+                var cohorts = [],
+                    _visitLabels = [];
+                var _sites = new Map();
+
+                for (var c in data.cohorts) {
+                    cohorts.push(data.cohorts[c]);
+                }
+                this.setState({ cohorts: cohorts });
+                for (var s in data.sites) {
+                    _sites.set(data.sites[s].Alias, data.sites[s].Name);
+                }
+                //console.log(sites);
+                this.setState({ sites: _sites });
+                for (var v in data.visitLabels) {
+                    _visitLabels.push(data.visitLabels[v]);
+                }
+                this.setState({ visitLabels: _visitLabels });
+            }
+        }.bind(_this9));
+
+        $.get(url, { data: "cohorts" }, function (data, status) {
+            if (status === "success") {
+                var cohorts = [];
+                for (var d in data) {
+                    cohorts.push(data[d]);
+                }
+                this.setState({ cohorts: cohorts });
+            }
+        }.bind(_this9));
+
+        $.get(url, { data: "visitLabels" }, function (data, status) {
+            if (status === "success") {
+                //console.log(data);
+            }
+        }.bind(_this9));
+
+        $.get(url, { data: "sites" }, function (data, status) {
+            if (status === "success") {
+                //console.log(data);
+            }
+        }.bind(_this9));
         return _this9;
     }
 
@@ -1055,6 +1099,7 @@ var StudyTracker = function (_React$Component9) {
                     });
                 }
             }.bind(this));
+            //console.log("Cohorts: " + cohorts);
             return React.createElement(
                 "div",
                 { className: "StudyTracker" },

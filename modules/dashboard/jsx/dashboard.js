@@ -175,19 +175,15 @@ var sites = [
     }
 ];
 
-const cohorts = [
-    "MCI",
-    "SCI",
-    "AD"
-];
-
 const MS_TO_DAYS = 1/(1000 * 60 * 60 * 24);
 const SIDEBAR_WIDTH = "350px";
 const HIGHLIGHT_COLOR = "#E9EBF3";
 
 function SiteFilter(props) {
-    let options = props.sites.map((site) =>
-        <option key={site.psc} value={site.psc}>{site.fullname}</option>
+    let options = [];
+    props.sites.forEach(function (name, alias) {
+           options.push(<option key={alias} value={alias}>{name}</option>);
+        }
     );
     return (
         <td>
@@ -355,7 +351,7 @@ class SideBarVisitContent extends React.Component {
         }
         if (visitDeadlines.length <= 1) {
             visitDeadlines = visitDeadlines.concat(
-                <p className="complete indent">No upcoming visit deadlines</p>
+                <p className="complete left-indent">No upcoming visit deadlines</p>
             );
         }
         if (dataDeadlines.length <= 1) {
@@ -569,13 +565,13 @@ class StudyTracker extends React.Component {
         super();
         this.state = {
              rows: dummyData,
-             visitLabels: visitLabels,
+             visitLabels: [],
              currentSite: "all",
-             sites: sites,
+             sites: new Map(),
              teams: [],
              currentTeam: "COMPASS-ND",
              currentCohort: "all",
-             cohorts: cohorts,
+             cohorts: [],
              sideBarContent: null,
              currentPSCID: null,
              currentVisit: null,
@@ -588,6 +584,50 @@ class StudyTracker extends React.Component {
         this.filterTeams = this.filterTeams.bind(this);
         this.filterCohorts = this.filterCohorts.bind(this);
         this.rowHasCurrentCohortVisit = this.rowHasCurrentCohortVisit.bind(this);
+
+        let url = loris.BaseURL + "/dashboard/ajax/getData.php";
+        $.get(url, {data: "all"}, function(data, status) {
+           if (status === "success") {
+               let cohorts = [], visitLabels = [];
+               let sites = new Map();
+
+               for (let c in data.cohorts) {
+                   cohorts.push(data.cohorts[c]);
+               }
+               this.setState({cohorts: cohorts});
+               for (let s in data.sites) {
+                   sites.set(data.sites[s].Alias, data.sites[s].Name);
+               }
+               //console.log(sites);
+               this.setState({sites: sites});
+               for (let v in data.visitLabels) {
+                   visitLabels.push(data.visitLabels[v]);
+               }
+               this.setState({visitLabels: visitLabels});
+           }
+        }.bind(this));
+
+        $.get(url, {data: "cohorts"}, function(data, status) {
+            if (status === "success") {
+                let cohorts = [];
+                for (let d in data) {
+                    cohorts.push(data[d]);
+                }
+                this.setState({cohorts: cohorts});
+            }
+        }.bind(this));
+
+        $.get(url, {data: "visitLabels"}, function(data, status) {
+            if (status === "success") {
+                //console.log(data);
+            }
+        }.bind(this));
+
+        $.get(url, {data: "sites"}, function(data, status) {
+            if (status === "success") {
+                //console.log(data);
+            }
+        }.bind(this));
     }
 
     // Returns an object which contains a clean status and styled html to display
@@ -772,6 +812,7 @@ class StudyTracker extends React.Component {
                 }
             }.bind(this)
         );
+        //console.log("Cohorts: " + cohorts);
         return (
             <div className="StudyTracker">
                 <span style={{fontSize:24}}>Study Progression</span>

@@ -1,7 +1,12 @@
 <?php
+$DB = Database::singleton();
+
+const DATA_ENTRY_DAYS = 14;
+const VISIT_REG_DAYS  = 90;
+
 if (isset($_GET['data'])) {
     $data = $_GET['data'];
-    $db = Database::singleton();
+
     if ($data == "cohorts") {
         header('Content-Type: application/json');
         echo json_encode(getCohorts());
@@ -30,10 +35,6 @@ if (isset($_GET['data'])) {
 
 exit();
 
-$DB = Database::singleton();
-const DATA_ENTRY_DAYS = 14;
-const VISIT_REG_DAYS = 90;
-
 function getCohorts() {
     $cohorts = Utility::getSubprojectList();
 
@@ -41,7 +42,7 @@ function getCohorts() {
 }
 
 function getSites() {
-    $DB = Database::singleton();
+    global $DB;
     $sites = $DB->pselect(
         "SELECT DISTINCT p.Name, p.Alias
          FROM psc p
@@ -60,11 +61,10 @@ function getVisitLabels() {
 
 function getTableData() {
     global $DB;
-
     $visitLabels = Utility::getVisitList();
 
     $candidates = $DB->pselect(
-        "SELECT c.PSCID, c.CandID, psc.Name
+        "SELECT c.PSCID, c.CandID, psc.Name, psc.Alias
          FROM candidate c
          LEFT JOIN psc USING (CenterID)
          WHERE c.Active='Y' AND c.Entity_type='human'",
@@ -76,7 +76,7 @@ function getTableData() {
     foreach ($candidates as $candidate) {
         $pscid  = $candidate['PSCID'];
         $candID = $candidate['CandID'];
-        $psc    = $candidate['Name'];
+        $psc    = $candidate['Alias'];
         $visits = array();
 
         foreach ($visitLabels as $visitLabel) {
@@ -87,7 +87,7 @@ function getTableData() {
                 array('CID' => $candID, 'VL' => $visitLabel)
             );
 
-            $sessionID        = null;
+            $sessionID        = -1;
             $subproject       = null;
             $visitDate        = null;
             $visitRegStatus   = determineVisitRegStatus($sessionID, $candID);
@@ -116,7 +116,7 @@ function getTableData() {
             $visit['instrCompleted']   = $instrCompleted;
             $visit['totalInstrs']      = getTotalInstruments($visitLabel, $subproject);
             $visit['visitLabel']       = $visitLabel;
-            $visit['cohort']           = $subproject;
+            $visit['cohort']           = getCohortName($subproject);
 
             array_push($visits, $visit);
         }
@@ -158,6 +158,7 @@ function determineVisitRegDueDate($visitLabel, $candID) {
 }
 
 function determineDataEntryDueDate($visitDate) {
+
     return dateAdd($visitDate, DATA_ENTRY_DAYS);
 }
 
@@ -223,6 +224,17 @@ function getTotalInstrumentsCompleted($sessionID) {
     );
 
     return $totalInstruments;
+}
+
+function getCohortName($subproject) {
+    global $DB;
+
+    return $DB->pselectOne(
+        "SELECT title 
+         FROM subproject 
+         WHERE SubprojectID=:sid",
+        array("sid" => $subproject)
+    );
 }
 
 ?>

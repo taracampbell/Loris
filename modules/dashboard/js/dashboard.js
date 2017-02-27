@@ -8,155 +8,6 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var dummyData = [{
-    "pscid": "JGH0000",
-    "psc": "JGH",
-    "visits": [{
-        "sessionID": "1",
-        "visitRegStatus": "complete-visit",
-        "dataEntryStatus": "complete-data-entry",
-        "visitRegDueDate": randomDate(),
-        "dataEntryDueDate": randomDate(),
-        "instrCompleted": 1,
-        "totalInstrs": 22,
-        "visitLabel": "Screening",
-        "cohort": "MCI"
-    }, {
-        "sessionID": "2",
-        "visitRegStatus": "no-deadline-visit",
-        "dataEntryStatus": "deadline-approaching-data-entry",
-        "visitRegDueDate": randomDate(),
-        "dataEntryDueDate": randomDate(),
-        "instrCompleted": 2,
-        "totalInstrs": 22,
-        "visitLabel": "Clinical",
-        "cohort": "AD"
-    }, {
-        "sessionID": "3",
-        "visitRegStatus": "deadline-approaching-visit",
-        "dataEntryStatus": "complete-data-entry",
-        "visitRegDueDate": randomDate(),
-        "dataEntryDueDate": randomDate(),
-        "instrCompleted": 3,
-        "totalInstrs": 22,
-        "visitLabel": "Neuropsych",
-        "cohort": "AD"
-    }]
-}, {
-    "pscid": "PKD0001",
-    "psc": "PKD",
-    "visits": [{
-        "sessionID": "4",
-        "visitRegStatus": "complete-visit",
-        "dataEntryStatus": "cancelled-data",
-        "visitRegDueDate": randomDate(),
-        "dataEntryDueDate": randomDate(),
-        "instrCompleted": 1,
-        "totalInstrs": 22,
-        "visitLabel": "Screening",
-        "cohort": "AD"
-    }, {
-        "sessionID": "5",
-        "visitRegStatus": "deadline-past-visit",
-        "dataEntryStatus": "deadline-approaching-data-entry",
-        "visitRegDueDate": randomDate(),
-        "dataEntryDueDate": randomDate(),
-        "instrCompleted": 2,
-        "totalInstrs": 22,
-        "visitLabel": "Clinical",
-        "cohort": "SCI"
-    }, {
-        "sessionID": "6",
-        "visitRegStatus": "deadline-approaching-visit",
-        "dataEntryStatus": "deadline-past-data-entry",
-        "visitRegDueDate": randomDate(),
-        "dataEntryDueDate": randomDate(),
-        "instrCompleted": 3,
-        "totalInstrs": 22,
-        "visitLabel": "Neuropsych",
-        "cohort": "MCI"
-    }]
-}, {
-    "pscid": "JGH0010",
-    "psc": "JGH",
-    "visits": [{
-        "sessionID": "7",
-        "visitRegStatus": "complete-visit",
-        "dataEntryStatus": "deadline-approaching-data-entry",
-        "visitRegDueDate": randomDate(),
-        "dataEntryDueDate": randomDate(),
-        "instrCompleted": 1,
-        "totalInstrs": 22,
-        "visitLabel": "Screening",
-        "cohort": "SCI"
-    }, {
-        "sessionID": "8",
-        "visitRegStatus": "deadline-past-visit",
-        "dataEntryStatus": "deadline-approaching-data-entry",
-        "visitRegDueDate": randomDate(),
-        "dataEntryDueDate": randomDate(),
-        "instrCompleted": 2,
-        "totalInstrs": 22,
-        "visitLabel": "Clinical",
-        "cohort": "SCI"
-
-    }, {
-        "sessionID": "9",
-        "visitRegStatus": "deadline-past-visit",
-        "dataEntryStatus": "deadline-approaching-data-entry",
-        "visitRegDueDate": randomDate(),
-        "dataEntryDueDate": randomDate(),
-        "instrCompleted": 3,
-        "totalInstrs": 22,
-        "visitLabel": "Neuropsych",
-        "cohort": "SCI"
-    }]
-}, {
-    "pscid": "PKD0011",
-    "psc": "PKD",
-    "visits": [{
-        "sessionID": "10",
-        "visitRegStatus": "complete-visit",
-        "dataEntryStatus": "deadline-approaching-data-entry",
-        "visitRegDueDate": randomDate(),
-        "dataEntryDueDate": randomDate(),
-        "instrCompleted": 1,
-        "totalInstrs": 22,
-        "visitLabel": "Screening",
-        "cohort": "AD"
-    }, {
-        "sessionID": "11",
-        "dataEntryStatus": "deadline-approaching-data-entry",
-        "visitRegStatus": "deadline-approaching-visit",
-        "visitRegDueDate": randomDate(),
-        "dataEntryDueDate": randomDate(),
-        "instrCompleted": 2,
-        "totalInstrs": 22,
-        "visitLabel": "Clinical",
-        "cohort": "AD"
-    }, {
-        "sessionID": "12",
-        "visitRegStatus": "deadline-approaching-visit",
-        "dataEntryStatus": "deadline-approaching-data-entry",
-        "visitRegDueDate": randomDate(),
-        "dataEntryDueDate": randomDate(),
-        "instrCompleted": 3,
-        "totalInstrs": 22,
-        "visitLabel": "Neuropsych",
-        "cohort": "AD"
-    }]
-}];
-
-var visitLabels = ["Screening", "Clinical", "Neuropsych"];
-
-var sites = [{
-    'psc': 'JGH',
-    'fullname': 'Jewish General Hospital'
-}, {
-    'psc': 'PKD',
-    'fullname': 'Parkwood Institution'
-}];
-
 var MS_TO_DAYS = 1 / (1000 * 60 * 60 * 24);
 var SIDEBAR_WIDTH = "350px";
 var HIGHLIGHT_COLOR = "#E9EBF3";
@@ -323,7 +174,7 @@ var SideBarCandContent = function (_React$Component2) {
                             React.createElement(
                                 "span",
                                 { className: "complete right-align" },
-                                "✓"
+                                "\u2713"
                             )
                         ));
                     } else {
@@ -345,7 +196,7 @@ var SideBarCandContent = function (_React$Component2) {
                             React.createElement(
                                 "p",
                                 { className: "left-indent" },
-                                "Data Registration: ",
+                                "Data Entry: ",
                                 de.html
                             )
                         ));
@@ -548,7 +399,7 @@ var SideBar = function (_React$Component4) {
                         className: "closebtn",
                         onClick: this.props.closeSideBar
                     },
-                    "×"
+                    "\xD7"
                 ),
                 this.props.sideBarContent
             );
@@ -695,9 +546,9 @@ var StudyTrackerRow = function (_React$Component7) {
         key: "render",
         value: function render() {
             var style = {};
-            var visits = this.props.visits.map(function (v) {
+            var visits = this.props.visits.map(function (v, index) {
                 return React.createElement(VisitCell, {
-                    key: v.sessionID,
+                    key: index,
                     visit: v,
                     currentCohort: this.props.currentCohort,
                     currentVisit: this.props.currentVisit,
@@ -819,7 +670,7 @@ var StudyTracker = function (_React$Component9) {
         var _this9 = _possibleConstructorReturn(this, (StudyTracker.__proto__ || Object.getPrototypeOf(StudyTracker)).call(this));
 
         _this9.state = {
-            rows: dummyData,
+            rows: [],
             visitLabels: [],
             currentSite: "all",
             sites: new Map(),
@@ -843,47 +694,32 @@ var StudyTracker = function (_React$Component9) {
         var url = loris.BaseURL + "/dashboard/ajax/getData.php";
         $.get(url, { data: "all" }, function (data, status) {
             if (status === "success") {
+                console.log(data.tableData);
                 var cohorts = [],
-                    _visitLabels = [];
-                var _sites = new Map();
+                    visitLabels = [],
+                    rows = [];
+                var sites = new Map();
+
+                for (var r in data.tableData) {
+                    rows.push(data.tableData[r]);
+                }
+                this.setState({ rows: rows });
 
                 for (var c in data.cohorts) {
                     cohorts.push(data.cohorts[c]);
                 }
                 this.setState({ cohorts: cohorts });
                 for (var s in data.sites) {
-                    _sites.set(data.sites[s].Alias, data.sites[s].Name);
+                    sites.set(data.sites[s].Alias, data.sites[s].Name);
                 }
-                //console.log(sites);
-                this.setState({ sites: _sites });
+                this.setState({ sites: sites });
                 for (var v in data.visitLabels) {
-                    _visitLabels.push(data.visitLabels[v]);
+                    visitLabels.push(data.visitLabels[v]);
                 }
-                this.setState({ visitLabels: _visitLabels });
+                this.setState({ visitLabels: visitLabels });
             }
         }.bind(_this9));
 
-        $.get(url, { data: "cohorts" }, function (data, status) {
-            if (status === "success") {
-                var cohorts = [];
-                for (var d in data) {
-                    cohorts.push(data[d]);
-                }
-                this.setState({ cohorts: cohorts });
-            }
-        }.bind(_this9));
-
-        $.get(url, { data: "visitLabels" }, function (data, status) {
-            if (status === "success") {
-                //console.log(data);
-            }
-        }.bind(_this9));
-
-        $.get(url, { data: "sites" }, function (data, status) {
-            if (status === "success") {
-                //console.log(data);
-            }
-        }.bind(_this9));
         return _this9;
     }
 
@@ -895,6 +731,14 @@ var StudyTracker = function (_React$Component9) {
         value: function prettyStatus(status, dueDate) {
             var html = void 0,
                 toReturn = void 0;
+
+            toReturn = {
+                "status": "",
+                "html": ""
+            };
+
+            if (!status) return toReturn;
+
             if (~status.indexOf("complete")) {
                 html = React.createElement(
                     "span",
@@ -906,7 +750,8 @@ var StudyTracker = function (_React$Component9) {
                     "html": html
                 };
             } else if (~status.indexOf("deadline-approaching")) {
-                var daysLeft = Math.floor((dueDate - new Date()) * MS_TO_DAYS);
+                var daysLeft = Math.floor((new Date(dueDate) - new Date()) * MS_TO_DAYS) + "";
+
                 daysLeft += daysLeft == 1 ? " day" : " days";
                 html = React.createElement(
                     "span",
@@ -919,7 +764,7 @@ var StudyTracker = function (_React$Component9) {
                     "html": html
                 };
             } else if (~status.indexOf("deadline-past")) {
-                var daysPast = Math.floor((new Date() - dueDate) * MS_TO_DAYS);
+                var daysPast = Math.floor((new Date() - new Date(dueDate)) * MS_TO_DAYS);
                 daysPast += daysPast == 1 ? " day" : " days";
                 html = React.createElement(
                     "span",
@@ -1099,7 +944,6 @@ var StudyTracker = function (_React$Component9) {
                     });
                 }
             }.bind(this));
-            //console.log("Cohorts: " + cohorts);
             return React.createElement(
                 "div",
                 { className: "StudyTracker" },
@@ -1151,11 +995,6 @@ var StudyTracker = function (_React$Component9) {
 
     return StudyTracker;
 }(React.Component);
-
-function randomDate() {
-    var now = new Date();
-    return new Date(now.getFullYear(), now.getMonth() + Math.floor(Math.random() * 6) + 1, now.getDate() + 1, 0, 0, 0, 0);
-}
 
 window.onload = function () {
     var dashboard = React.createElement(StudyTracker, null);

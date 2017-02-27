@@ -1,180 +1,3 @@
-var dummyData = [
-    {
-        "pscid": "JGH0000",
-        "psc": "JGH",
-        "visits": [
-            {
-                "sessionID": "1",
-                "visitRegStatus": "complete-visit",
-                "dataEntryStatus": "complete-data-entry",
-                "visitRegDueDate": randomDate(),
-                "dataEntryDueDate": randomDate(),
-                "instrCompleted": 1,
-                "totalInstrs": 22,
-                "visitLabel": "Screening",
-                "cohort": "MCI"
-            },
-            {
-                "sessionID": "2",
-                "visitRegStatus": "no-deadline-visit",
-                "dataEntryStatus": "deadline-approaching-data-entry",
-                "visitRegDueDate": randomDate(),
-                "dataEntryDueDate": randomDate(),
-                "instrCompleted": 2,
-                "totalInstrs": 22,
-                "visitLabel": "Clinical",
-                "cohort": "AD"
-            },
-            {
-                "sessionID": "3",
-                "visitRegStatus": "deadline-approaching-visit",
-                "dataEntryStatus": "complete-data-entry",
-                "visitRegDueDate": randomDate(),
-                "dataEntryDueDate": randomDate(),
-                "instrCompleted": 3,
-                "totalInstrs": 22,
-                "visitLabel": "Neuropsych",
-                "cohort": "AD"
-            }
-        ]
-    },
-    {
-        "pscid": "PKD0001",
-        "psc": "PKD",
-        "visits": [
-            {
-                "sessionID": "4",
-                "visitRegStatus": "complete-visit",
-                "dataEntryStatus": "cancelled-data",
-                "visitRegDueDate": randomDate(),
-                "dataEntryDueDate": randomDate(),
-                "instrCompleted": 1,
-                "totalInstrs": 22,
-                "visitLabel": "Screening",
-                "cohort": "AD"
-            },
-            {
-                "sessionID": "5",
-                "visitRegStatus": "deadline-past-visit",
-                "dataEntryStatus": "deadline-approaching-data-entry",
-                "visitRegDueDate": randomDate(),
-                "dataEntryDueDate": randomDate(),
-                "instrCompleted": 2,
-                "totalInstrs": 22,
-                "visitLabel": "Clinical",
-                "cohort": "SCI"
-            },
-            {
-                "sessionID": "6",
-                "visitRegStatus": "deadline-approaching-visit",
-                "dataEntryStatus": "deadline-past-data-entry",
-                "visitRegDueDate": randomDate(),
-                "dataEntryDueDate": randomDate(),
-                "instrCompleted": 3,
-                "totalInstrs": 22,
-                "visitLabel": "Neuropsych",
-                "cohort": "MCI"
-            }
-        ]
-    },
-    {
-        "pscid": "JGH0010",
-        "psc": "JGH",
-        "visits": [
-            {
-                "sessionID": "7",
-                "visitRegStatus": "complete-visit",
-                "dataEntryStatus": "deadline-approaching-data-entry",
-                "visitRegDueDate": randomDate(),
-                "dataEntryDueDate": randomDate(),
-                "instrCompleted": 1,
-                "totalInstrs": 22,
-                "visitLabel": "Screening",
-                "cohort": "SCI"
-            },
-            {
-                "sessionID": "8",
-                "visitRegStatus": "deadline-past-visit",
-                "dataEntryStatus": "deadline-approaching-data-entry",
-                "visitRegDueDate": randomDate(),
-                "dataEntryDueDate": randomDate(),
-                "instrCompleted": 2,
-                "totalInstrs": 22,
-                "visitLabel": "Clinical",
-                "cohort": "SCI"
-
-            },
-            {
-                "sessionID": "9",
-                "visitRegStatus": "deadline-past-visit",
-                "dataEntryStatus": "deadline-approaching-data-entry",
-                "visitRegDueDate": randomDate(),
-                "dataEntryDueDate": randomDate(),
-                "instrCompleted": 3,
-                "totalInstrs": 22,
-                "visitLabel": "Neuropsych",
-                "cohort": "SCI"
-            }
-        ]
-    },
-    {
-        "pscid": "PKD0011",
-        "psc": "PKD",
-        "visits": [
-            {
-                "sessionID": "10",
-                "visitRegStatus": "complete-visit",
-                "dataEntryStatus": "deadline-approaching-data-entry",
-                "visitRegDueDate": randomDate(),
-                "dataEntryDueDate": randomDate(),
-                "instrCompleted": 1,
-                "totalInstrs": 22,
-                "visitLabel": "Screening",
-                "cohort": "AD"
-            },
-            {
-                "sessionID": "11",
-                "dataEntryStatus": "deadline-approaching-data-entry",
-                "visitRegStatus": "deadline-approaching-visit",
-                "visitRegDueDate": randomDate(),
-                "dataEntryDueDate": randomDate(),
-                "instrCompleted": 2,
-                "totalInstrs": 22,
-                "visitLabel": "Clinical",
-                "cohort": "AD"
-            },
-            {
-                "sessionID": "12",
-                "visitRegStatus": "deadline-approaching-visit",
-                "dataEntryStatus": "deadline-approaching-data-entry",
-                "visitRegDueDate": randomDate(),
-                "dataEntryDueDate": randomDate(),
-                "instrCompleted": 3,
-                "totalInstrs": 22,
-                "visitLabel": "Neuropsych",
-                "cohort": "AD"
-            }
-        ]
-    }
-];
-
-var visitLabels = [
-    "Screening",
-    "Clinical",
-    "Neuropsych"
-];
-
-var sites = [
-    {
-        'psc':'JGH',
-        'fullname':'Jewish General Hospital'
-    },
-    {
-        'psc':'PKD',
-        'fullname':'Parkwood Institution'
-    }
-];
-
 const MS_TO_DAYS = 1/(1000 * 60 * 60 * 24);
 const SIDEBAR_WIDTH = "350px";
 const HIGHLIGHT_COLOR = "#E9EBF3";
@@ -282,7 +105,7 @@ class SideBarCandContent extends React.Component {
                             <div>
                                 <h4>{v.visitLabel}:</h4>
                                 <p className="left-indent">Visit Registration: {vr.html}</p>
-                                <p className="left-indent">Data Registration: {de.html}</p>
+                                <p className="left-indent">Data Entry: {de.html}</p>
                             </div>
                         );
                     }
@@ -468,9 +291,9 @@ class StudyTrackerRow extends React.Component {
 
     render() {
         let style = {};
-        let visits = this.props.visits.map(function(v) {
+        let visits = this.props.visits.map(function(v, index) {
                 return <VisitCell
-                    key={v.sessionID}
+                    key={index}
                     visit={v}
                     currentCohort={this.props.currentCohort}
                     currentVisit={this.props.currentVisit}
@@ -564,7 +387,7 @@ class StudyTracker extends React.Component {
     constructor() {
         super();
         this.state = {
-             rows: dummyData,
+             rows: [],
              visitLabels: [],
              currentSite: "all",
              sites: new Map(),
@@ -588,8 +411,14 @@ class StudyTracker extends React.Component {
         let url = loris.BaseURL + "/dashboard/ajax/getData.php";
         $.get(url, {data: "all"}, function(data, status) {
            if (status === "success") {
-               let cohorts = [], visitLabels = [];
+               console.log(data.tableData);
+               let cohorts = [], visitLabels = [], rows = [];
                let sites = new Map();
+
+               for (let r in data.tableData) {
+                   rows.push(data.tableData[r]);
+               }
+               this.setState({rows: rows});
 
                for (let c in data.cohorts) {
                    cohorts.push(data.cohorts[c]);
@@ -598,7 +427,6 @@ class StudyTracker extends React.Component {
                for (let s in data.sites) {
                    sites.set(data.sites[s].Alias, data.sites[s].Name);
                }
-               //console.log(sites);
                this.setState({sites: sites});
                for (let v in data.visitLabels) {
                    visitLabels.push(data.visitLabels[v]);
@@ -607,32 +435,20 @@ class StudyTracker extends React.Component {
            }
         }.bind(this));
 
-        $.get(url, {data: "cohorts"}, function(data, status) {
-            if (status === "success") {
-                let cohorts = [];
-                for (let d in data) {
-                    cohorts.push(data[d]);
-                }
-                this.setState({cohorts: cohorts});
-            }
-        }.bind(this));
-
-        $.get(url, {data: "visitLabels"}, function(data, status) {
-            if (status === "success") {
-                //console.log(data);
-            }
-        }.bind(this));
-
-        $.get(url, {data: "sites"}, function(data, status) {
-            if (status === "success") {
-                //console.log(data);
-            }
-        }.bind(this));
     }
 
     // Returns an object which contains a clean status and styled html to display
     prettyStatus(status, dueDate) {
         let html, toReturn;
+
+
+        toReturn = {
+            "status": "",
+            "html": ""
+        };
+
+        if (!status) return toReturn;
+
         if (~status.indexOf("complete")) {
             html = <span className="complete right-align right-indent">Complete</span>;
             toReturn = {
@@ -640,7 +456,8 @@ class StudyTracker extends React.Component {
                 "html":html
             };
         } else if (~status.indexOf("deadline-approaching")) {
-            let daysLeft = Math.floor((dueDate - new Date()) * MS_TO_DAYS);
+            let daysLeft = Math.floor((new Date(dueDate) - new Date()) * MS_TO_DAYS) + "";
+
             daysLeft += daysLeft == 1 ? " day" : " days";
             html = <span className="deadline-approaching right-align right-indent">Due in {daysLeft}</span>;
             toReturn = {
@@ -648,7 +465,7 @@ class StudyTracker extends React.Component {
                 "html":html
             };
         } else if (~status.indexOf("deadline-past")) {
-            let daysPast = Math.floor((new Date() - dueDate) * MS_TO_DAYS);
+            let daysPast = Math.floor((new Date() - new Date(dueDate)) * MS_TO_DAYS);
             daysPast += daysPast == 1 ? " day" : " days";
             html = <span className="deadline-past right-align right-indent">{daysPast} late</span>;
             toReturn = {
@@ -812,7 +629,6 @@ class StudyTracker extends React.Component {
                 }
             }.bind(this)
         );
-        //console.log("Cohorts: " + cohorts);
         return (
             <div className="StudyTracker">
                 <span style={{fontSize:24}}>Study Progression</span>
@@ -842,17 +658,6 @@ class StudyTracker extends React.Component {
             </div>
         );
     }
-}
-
-
-function randomDate() {
-    let now = new Date();
-    return new Date(
-        now.getFullYear(),
-        now.getMonth() + Math.floor(Math.random() * 6) + 1,
-        now.getDate() + 1,
-        0,0,0,0
-    );
 }
 
 window.onload = function() {

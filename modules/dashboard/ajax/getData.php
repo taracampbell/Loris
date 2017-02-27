@@ -80,7 +80,7 @@ function getTableData() {
         $visits = array();
 
         foreach ($visitLabels as $visitLabel) {
-            $session = $DB->pselect(
+            $session = $DB->pselectRow(
                 "SELECT ID, SubprojectID, Date_visit
                  FROM session
                  WHERE CandID=:CID AND Visit_label=:VL",
@@ -199,11 +199,14 @@ function determineDataEntryStatus($sessionID, $visitDate) {
 function getTotalInstruments($visitLabel, $subproject) {
     global $DB;
 
-    $totalInstruments = $DB->pselect(
-        "SELECT COUNT(ID)
+    $totalInstruments = $DB->pselectOne(
+        "SELECT COUNT(*)
          FROM test_battery
          WHERE SubprojectID=:CID AND Visit_label=:V",
-        array('CID' => $candID)
+        array(
+            'CID' => $subproject,
+            'V'   => $visitLabel
+        )
     );
 
     return $totalInstruments;
@@ -212,7 +215,7 @@ function getTotalInstruments($visitLabel, $subproject) {
 function getTotalInstrumentsCompleted($sessionID) {
     global $DB;
 
-    $totalInstruments = $DB->pselect(
+    $totalInstruments = $DB->pselectOne(
         "SELECT COUNT(ID)
          FROM flag
          WHERE SessionID=:SID AND Data_entry='Complete'",

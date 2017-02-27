@@ -132,8 +132,8 @@ function dateAdd($date, $days) {
 }
 
 function datePast($date) {
-    $date = new Date($date);
-    $now  = new Date();
+    $date = new DateTime($date);
+    $now  = new DateTime();
 
     if ($date < $now) {
         return true;

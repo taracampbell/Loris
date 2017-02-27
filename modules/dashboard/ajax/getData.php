@@ -58,6 +58,8 @@ function getVisitLabels() {
 }
 
 function getTableData() {
+    global $DB;
+
     $visitLabels = Utility::getVisitList();
 
     $candidates = $DB->pselect(
@@ -87,7 +89,7 @@ function getTableData() {
             $sessionID        = null;
             $subproject       = null;
             $visitDate        = null;
-            $visitRegStatus   = determineVisitRegStatus($sessionID);
+            $visitRegStatus   = determineVisitRegStatus($sessionID, $candID);
             $dataEntryStatus  = null;
             $dataEntryDueDate = null;
             $instrCompleted   = 0;
@@ -129,9 +131,14 @@ function dateAdd($date, $days) {
 
 }
 
-// TODO
 function datePast($date) {
+    $date = new Date($date);
+    $now  = new Date();
 
+    if ($date < $now) {
+        return true;
+    }
+    return false;
 }
 
 function determineVisitRegDueDate($visitLabel, $candID) {
@@ -154,16 +161,16 @@ function determineDataEntryDueDate($visitDate) {
     return dateAdd($visitDate, DATA_ENTRY_DAYS);
 }
 
-// TODO
-function determineVisitRegStatus($sessionID) {
-    if (!is_null($sessionID)) {
-        return 
+function determineVisitRegStatus($visitLabel, $candID) {
+    if ($visitLabel == 'Initial_Assessment_Screening') {
+        return 'no-deadline-visit';
     }
-    'complete-visit'
-    'deadline-approaching-visit'
-    'deadline-past-visit'
-    'no-deadline-visit'
-    'cancelled-visit'
+
+    if (!datePast(determineVisitRegDueDate($visitLabel, $candID))) {
+        return 'deadline-approaching-visit';
+    } else {
+        return 'deadline-past-visit';
+    }
 }
 
 function determineDataEntryStatus($sessionID, $visitDate) {

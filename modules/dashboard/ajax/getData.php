@@ -30,6 +30,8 @@ if (isset($_GET['data'])) {
 
 exit();
 
+$DB = Database::singleton();
+
 function getCohorts() {
     $cohorts = Utility::getSubprojectList();
     return $cohorts;

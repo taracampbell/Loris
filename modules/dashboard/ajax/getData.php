@@ -41,11 +41,12 @@ function getCohorts() {
 }
 
 function getSites() {
-    //$sites = Utility::getSiteList();
     $DB = Database::singleton();
     $sites = $DB->pselect(
-        "SELECT DISTINCT p.Name, p.Alias FROM psc p ".
-        "INNER JOIN candidate c ON c.CenterID = p.CenterID"
+        "SELECT DISTINCT p.Name, p.Alias
+         FROM psc p
+         INNER JOIN candidate c ON c.CenterID = p.CenterID",
+        array()
     );
 
     return $sites;
@@ -97,7 +98,7 @@ function getTableData() {
             if (!empty($session)) {
                 $sessionID        = $session['ID'];
                 $subproject       = $session['SubprojectID'];
-                $visitDate        = $session['Date_visit']
+                $visitDate        = $session['Date_visit'];
                 $visitRegStatus   = 'complete-visit';
                 $dataEntryStatus  = determineDataEntryStatus($sessionID, $visitDate);
                 $dataEntryDueDate = determineDataEntryDueDate($visitDate);
@@ -126,9 +127,8 @@ function getTableData() {
     return $tableData;
 }
 
-// TODO
 function dateAdd($date, $days) {
-
+    return date('Y-m-d', strtotime($date . ' + ' . $days . ' days'));
 }
 
 function datePast($date) {
@@ -185,7 +185,7 @@ function determineDataEntryStatus($sessionID, $visitDate) {
 
     if ($session['Current_stage'] == 'Recycling Bin') {
         return 'cancelled-data';
-    } else if ($session['Submitted'] = 'Y') {
+    } else if ($session['Submitted'] =='Y') {
         return 'complete-data-entry';
     }
 

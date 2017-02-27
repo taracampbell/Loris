@@ -359,7 +359,7 @@ var SideBarVisitContent = function (_React$Component3) {
             if (dataDeadlines.length <= 1) {
                 dataDeadlines = dataDeadlines.concat(React.createElement(
                     "p",
-                    { className: "complete indent" },
+                    { className: "complete left-indent" },
                     "No upcoming data entry deadlines"
                 ));
             }
@@ -428,8 +428,36 @@ var VisitCell = function (_React$Component5) {
             if (this.props.visit.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
                 var visitClass = "circle " + this.props.visit.dataEntryStatus + " " + this.props.visit.visitRegStatus;
 
+                var tooltipContent = [];
                 var vr = this.props.prettyStatus(this.props.visit.visitRegStatus, this.props.visit.visitRegDueDate);
-                var de = this.props.prettyStatus(this.props.visit.dataEntryStatus, this.props.visit.dataEntryDueDate);
+                tooltipContent.push(React.createElement(
+                    "p",
+                    null,
+                    "Visit Registration: ",
+                    vr.html
+                ));
+
+                if (this.props.visit.dataEntryStatus) {
+                    var de = this.props.prettyStatus(this.props.visit.dataEntryStatus, this.props.visit.dataEntryDueDate);
+                    tooltipContent.push(React.createElement(
+                        "p",
+                        null,
+                        "Data Entry: ",
+                        de.html
+                    ));
+                    tooltipContent.push(React.createElement(
+                        "p",
+                        { className: "center" },
+                        React.createElement(
+                            "i",
+                            null,
+                            this.props.visit.instrCompleted,
+                            "/",
+                            this.props.visit.totalInstrs,
+                            " instruments entered"
+                        )
+                    ));
+                }
 
                 return React.createElement(
                     "td",
@@ -443,30 +471,7 @@ var VisitCell = function (_React$Component5) {
                             React.createElement(
                                 "div",
                                 { className: "ReactTooltipContent" },
-                                React.createElement(
-                                    "p",
-                                    null,
-                                    "Visit Registration: ",
-                                    vr.html
-                                ),
-                                React.createElement(
-                                    "p",
-                                    null,
-                                    "Data Entry: ",
-                                    de.html
-                                ),
-                                React.createElement(
-                                    "p",
-                                    { className: "center" },
-                                    React.createElement(
-                                        "i",
-                                        null,
-                                        this.props.visit.instrCompleted,
-                                        "/",
-                                        this.props.visit.totalInstrs,
-                                        " instruments entered"
-                                    )
-                                )
+                                tooltipContent
                             )
                         )
                     )
@@ -750,7 +755,7 @@ var StudyTracker = function (_React$Component9) {
                     "html": html
                 };
             } else if (~status.indexOf("deadline-approaching")) {
-                var daysLeft = Math.floor((new Date(dueDate) - new Date()) * MS_TO_DAYS) + "";
+                var daysLeft = Math.ceil((new Date(dueDate) - new Date()) * MS_TO_DAYS) + "";
 
                 daysLeft += daysLeft == 1 ? " day" : " days";
                 html = React.createElement(
@@ -764,7 +769,7 @@ var StudyTracker = function (_React$Component9) {
                     "html": html
                 };
             } else if (~status.indexOf("deadline-past")) {
-                var daysPast = Math.floor((new Date() - new Date(dueDate)) * MS_TO_DAYS);
+                var daysPast = Math.ceil((new Date() - new Date(dueDate)) * MS_TO_DAYS);
                 daysPast += daysPast == 1 ? " day" : " days";
                 html = React.createElement(
                     "span",

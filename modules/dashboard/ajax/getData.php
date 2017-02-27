@@ -67,18 +67,19 @@ function getTableData() {
         "SELECT c.PSCID, c.CandID, psc.Name, psc.Alias
          FROM candidate c
          LEFT JOIN psc USING (CenterID)
-         WHERE c.Active='Y' AND c.Entity_type='human'",
+         WHERE c.Active='Y' AND c.Entity_type='human' AND c.CenterID <> 1",
         array()
     );
 
     $tableData = array();
-
+    $sessIDPlaceHold = -1;
     foreach ($candidates as $candidate) {
         $pscid  = $candidate['PSCID'];
         $candID = $candidate['CandID'];
         $psc    = $candidate['Alias'];
         $visits = array();
 
+        $screeningDone = false;
         foreach ($visitLabels as $visitLabel) {
             $session = $DB->pselectRow(
                 "SELECT ID, SubprojectID, Date_visit
@@ -87,10 +88,10 @@ function getTableData() {
                 array('CID' => $candID, 'VL' => $visitLabel)
             );
 
-            $sessionID        = -1;
+            $sessionID        = null;
             $subproject       = null;
             $visitDate        = null;
-            $visitRegStatus   = determineVisitRegStatus($sessionID, $candID);
+            $visitRegStatus   = determineVisitRegStatus($visitLabel, $candID);
             $dataEntryStatus  = null;
             $dataEntryDueDate = null;
             $instrCompleted   = 0;
@@ -103,7 +104,12 @@ function getTableData() {
                 $dataEntryStatus  = determineDataEntryStatus($sessionID, $visitDate);
                 $dataEntryDueDate = determineDataEntryDueDate($visitDate);
                 $instrCompleted   = getTotalInstrumentsCompleted($sessionID);
+                if ($visitLabel === "Initial_Assessment_Screening") {
+                    $screeningDone = true;
+                }
 
+            } else {
+                $sessionID = $sessIDPlaceHold--;
             }
 
             $visit = array();
@@ -120,7 +126,13 @@ function getTableData() {
 
             array_push($visits, $visit);
         }
+        if (!$screeningDone) {
+            foreach ($visits as $k => $v) {
+                $v['visitRegStatus'] = "no-deadline-visit";
+                $visits[$k] = $v;
+            }
 
+        }
         array_push($tableData, array('pscid' => $pscid, 'psc' => $psc, 'visits' => $visits));
     }
 

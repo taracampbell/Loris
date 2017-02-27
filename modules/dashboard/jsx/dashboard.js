@@ -179,7 +179,7 @@ class SideBarVisitContent extends React.Component {
         }
         if (dataDeadlines.length <= 1) {
             dataDeadlines = dataDeadlines.concat(
-                <p className="complete indent">No upcoming data entry deadlines</p>
+                <p className="complete left-indent">No upcoming data entry deadlines</p>
             );
         }
 
@@ -222,21 +222,28 @@ class VisitCell extends React.Component {
                 + this.props.visit.dataEntryStatus + " "
                 + this.props.visit.visitRegStatus;
 
+            let tooltipContent = [];
             let vr = this.props.prettyStatus(this.props.visit.visitRegStatus, this.props.visit.visitRegDueDate);
-            let de = this.props.prettyStatus(this.props.visit.dataEntryStatus, this.props.visit.dataEntryDueDate);
+            tooltipContent.push(<p>Visit Registration: {vr.html}</p>);
+
+            if (this.props.visit.dataEntryStatus) {
+                let de = this.props.prettyStatus(this.props.visit.dataEntryStatus, this.props.visit.dataEntryDueDate);
+                tooltipContent.push(<p>Data Entry: {de.html}</p>);
+                tooltipContent.push(
+                    <p className="center">
+                        <i>
+                            {this.props.visit.instrCompleted}/{this.props.visit.totalInstrs} instruments entered
+                        </i>
+                    </p>
+                );
+            }
 
             return (
                 <td className={this.props.visit.visitLabel} style={style}>
                     <div data-tip data-for={this.props.visit.sessionID} className={visitClass}>
                         <ReactTooltip id={this.props.visit.sessionID} place="top" type="dark" effect="solid">
                             <div className="ReactTooltipContent">
-                                <p>Visit Registration: {vr.html}</p>
-                                <p>Data Entry: {de.html}</p>
-                                <p className="center">
-                                    <i>
-                                        {this.props.visit.instrCompleted}/{this.props.visit.totalInstrs} instruments entered
-                                    </i>
-                                </p>
+                                {tooltipContent}
                             </div>
                         </ReactTooltip>
                     </div>
@@ -456,7 +463,7 @@ class StudyTracker extends React.Component {
                 "html":html
             };
         } else if (~status.indexOf("deadline-approaching")) {
-            let daysLeft = Math.floor((new Date(dueDate) - new Date()) * MS_TO_DAYS) + "";
+            let daysLeft = Math.ceil((new Date(dueDate) - new Date()) * MS_TO_DAYS) + "";
 
             daysLeft += daysLeft == 1 ? " day" : " days";
             html = <span className="deadline-approaching right-align right-indent">Due in {daysLeft}</span>;
@@ -465,7 +472,7 @@ class StudyTracker extends React.Component {
                 "html":html
             };
         } else if (~status.indexOf("deadline-past")) {
-            let daysPast = Math.floor((new Date() - new Date(dueDate)) * MS_TO_DAYS);
+            let daysPast = Math.ceil((new Date() - new Date(dueDate)) * MS_TO_DAYS);
             daysPast += daysPast == 1 ? " day" : " days";
             html = <span className="deadline-past right-align right-indent">{daysPast} late</span>;
             toReturn = {

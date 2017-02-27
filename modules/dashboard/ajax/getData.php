@@ -17,9 +17,9 @@ if (isset($_GET['data'])) {
     } else if ($data == 'all') {
         header('Content-Type: application/json');
         $result = array(
-            "cohorts" => getCohorts(),
-            "sites" => getSites(),
-            "tableData" => getTableData(),
+            "cohorts"     => getCohorts(),
+            "sites"       => getSites(),
+            "tableData"   => getTableData(),
             "visitLabels" => getVisitLabels()
         );
         echo json_encode($result);
@@ -31,9 +31,12 @@ if (isset($_GET['data'])) {
 exit();
 
 $DB = Database::singleton();
+const DATA_ENTRY_DAYS = 14;
+const VISIT_REG_DAYS = 90;
 
 function getCohorts() {
     $cohorts = Utility::getSubprojectList();
+
     return $cohorts;
 }
 
@@ -50,15 +53,19 @@ function getSites() {
 
 function getVisitLabels() {
     $visits = Utility::getVisitList();
+
     return $visits;
 }
 
 function getTableData() {
+    $visitLabels = Utility::getVisitList();
+
     $candidates = $DB->pselect(
         "SELECT c.PSCID, c.CandID, psc.Name
          FROM candidate c
          LEFT JOIN psc USING (CenterID)
-         WHERE c.Active='Y' AND c.Entity_type='human'"
+         WHERE c.Active='Y' AND c.Entity_type='human'",
+        array()
     );
 
     $tableData = array();
@@ -69,28 +76,44 @@ function getTableData() {
         $psc    = $candidate['Name'];
         $visits = array();
 
-        $sessionInfo = $DB->pselect(
-            "SELECT ID, Visit_label, SubprojectID, Submitted, Date_visit
-             FROM session
-             WHERE CandID=:CID",
-            array('CID' => $candID)
-        );
+        foreach ($visitLabels as $visitLabel) {
+            $session = $DB->pselect(
+                "SELECT ID, SubprojectID, Date_visit
+                 FROM session
+                 WHERE CandID=:CID AND Visit_label=:VL",
+                array('CID' => $candID, 'VL' => $visitLabel)
+            );
 
-        foreach ($sessionInfo as $session) {
-            $sessionID  = $session['ID'];
-            $subproject = $session['SubprojectID'];
-            $visitLabel = $session['Visit_label']
+            $sessionID        = null;
+            $subproject       = null;
+            $visitDate        = null;
+            $visitRegStatus   = determineVisitRegStatus($sessionID);
+            $dataEntryStatus  = null;
+            $dataEntryDueDate = null;
+            $instrCompleted   = 0;
+
+            if (!empty($session)) {
+                $sessionID        = $session['ID'];
+                $subproject       = $session['SubprojectID'];
+                $visitDate        = $session['Date_visit']
+                $visitRegStatus   = 'complete-visit';
+                $dataEntryStatus  = determineDataEntryStatus($sessionID, $visitDate);
+                $dataEntryDueDate = determineDataEntryDueDate($visitDate);
+                $instrCompleted   = getTotalInstrumentsCompleted($sessionID);
+
+            }
 
             $visit = array();
-            $visit['sessionID'] = $sessionID;
-            $visit['visitRegStatus'] = 'no-deadline-visit';
-            $visit['dataEntryStatus'] = 'no-deadline-visit';
-            $visit['visitRegDueDate'] = null;
-            $visit['dataEntryDueDate'] = null;
-            $visit['instrCompleted'] = getTotalInstrumentsCompleted($sessionID);
-            $visit['totalInstrs'] = getTotalInstruments($visitLabel, $subproject);
-            $visit['visitLabel'] = $visitLabel;
-            $visit['cohort'] = $subproject;
+
+            $visit['sessionID']        = $sessionID;
+            $visit['visitRegStatus']   = $visitRegStatus;
+            $visit['dataEntryStatus']  = $dataEntryStatus;
+            $visit['visitRegDueDate']  = determineVisitRegDueDate($visitLabel, $candID);
+            $visit['dataEntryDueDate'] = $dataEntryDueDate;
+            $visit['instrCompleted']   = $instrCompleted;
+            $visit['totalInstrs']      = getTotalInstruments($visitLabel, $subproject);
+            $visit['visitLabel']       = $visitLabel;
+            $visit['cohort']           = $subproject;
 
             array_push($visits, $visit);
         }
@@ -99,6 +122,71 @@ function getTableData() {
     }
 
     return $tableData;
+}
+
+// TODO
+function dateAdd($date, $days) {
+
+}
+
+// TODO
+function datePast($date) {
+
+}
+
+function determineVisitRegDueDate($visitLabel, $candID) {
+    global $DB;
+
+    if ($visitLabel == 'Initial_Assessment_Screening') {
+        return null;
+    } else {
+        $initialDate = $DB->pselectOne(
+            "SELECT Date_visit
+             FROM session
+             WHERE CandID=:CID AND Visit_label='Initial_Assessment_Screening'",
+            array('CID' => $candID)
+        );
+        return dateAdd($initialDate, VISIT_REG_DAYS);
+    }
+}
+
+function determineDataEntryDueDate($visitDate) {
+    return dateAdd($visitDate, DATA_ENTRY_DAYS);
+}
+
+// TODO
+function determineVisitRegStatus($sessionID) {
+    if (!is_null($sessionID)) {
+        return 
+    }
+    'complete-visit'
+    'deadline-approaching-visit'
+    'deadline-past-visit'
+    'no-deadline-visit'
+    'cancelled-visit'
+}
+
+function determineDataEntryStatus($sessionID, $visitDate) {
+    global $DB;
+
+    $session = $DB->pselect(
+        "SELECT Submitted, Current_stage
+         FROM session
+         WHERE ID=:SID",
+        array('SID' => $sessionID)
+    );
+
+    if ($session['Current_stage'] == 'Recycling Bin') {
+        return 'cancelled-data';
+    } else if ($session['Submitted'] = 'Y') {
+        return 'complete-data-entry';
+    }
+
+    if (!datePast(determineDataEntryDueDate($visitDate))) {
+        return 'deadline-approaching-data-entry';
+    } else {
+        return 'deadline-past-data-entry';
+    }
 }
 
 function getTotalInstruments($visitLabel, $subproject) {

@@ -68,7 +68,6 @@ function getVisitLabels() {
 function getTableData() {
     global $DB;
     $visitLabels = getVisitLabels();
-
     $candidates = $DB->pselect(
         "SELECT c.PSCID, c.CandID, psc.Name, psc.Alias
          FROM candidate c
@@ -76,7 +75,6 @@ function getTableData() {
          WHERE c.Active='Y' AND c.Entity_type='human' AND c.CenterID <> 1",
         array()
     );
-
     $tableData = array();
     $sessIDPlaceHold = -1;
     foreach ($candidates as $candidate) {
@@ -84,7 +82,6 @@ function getTableData() {
         $candID = $candidate['CandID'];
         $psc    = $candidate['Alias'];
         $visits = array();
-
         $screeningDone = false;
         foreach ($visitLabels as $visitLabel) {
             $session = $DB->pselectRow(
@@ -93,7 +90,6 @@ function getTableData() {
                  WHERE CandID=:CID AND Visit_label=:VL",
                 array('CID' => $candID, 'VL' => $visitLabel)
             );
-
             $sessionID        = null;
             $subproject       = null;
             $visitDate        = null;
@@ -101,7 +97,6 @@ function getTableData() {
             $dataEntryStatus  = null;
             $dataEntryDueDate = null;
             $instrCompleted   = 0;
-
             if (!empty($session)) {
                 $sessionID        = $session['ID'];
                 $subproject       = $session['SubprojectID'];
@@ -113,13 +108,10 @@ function getTableData() {
                 if ($visitLabel === "Initial_Assessment_Screening") {
                     $screeningDone = true;
                 }
-
             } else {
                 $sessionID = $sessIDPlaceHold--;
             }
-
             $visit = array();
-
             $visit['sessionID']        = $sessionID;
             $visit['visitRegStatus']   = $visitRegStatus;
             $visit['dataEntryStatus']  = $dataEntryStatus;
@@ -129,7 +121,6 @@ function getTableData() {
             $visit['totalInstrs']      = getTotalInstruments($visitLabel, $subproject);
             $visit['visitLabel']       = $visitLabel;
             $visit['cohort']           = getCohortName($subproject);
-
             array_push($visits, $visit);
         }
         if (!$screeningDone) {
@@ -137,11 +128,9 @@ function getTableData() {
                 $v['visitRegStatus'] = "no-deadline-visit";
                 $visits[$k] = $v;
             }
-
         }
         array_push($tableData, array('pscid' => $pscid, 'psc' => $psc, 'visits' => $visits));
     }
-
     return $tableData;
 }
 

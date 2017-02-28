@@ -11,6 +11,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var MS_TO_DAYS = 1 / (1000 * 60 * 60 * 24);
 var SIDEBAR_WIDTH = "20%";
 var HIGHLIGHT_COLOR = "#E9EBF3";
+var GET_DATA_URL = loris.BaseURL + "/dashboard/ajax/getData.php";
 
 function SiteFilter(props) {
     var options = [];
@@ -537,7 +538,11 @@ var StudyTrackerRow = function (_React$Component7) {
                 $("." + v.visitLabel).css("background-color", "");
             });
             this.highlightRow();
-            this.props.showCandFocus(event);
+            if ($(event.target).text() === this.props.pscid) {
+                this.props.showCandInstFocus(event);
+            } else {
+                this.props.showCandFocus(event);
+            }
         }
     }, {
         key: "render",
@@ -681,6 +686,7 @@ var StudyTracker = function (_React$Component9) {
             currentSideBarFocus: null
         };
         _this9.prettyStatus = _this9.prettyStatus.bind(_this9);
+        _this9.showCandInstFocus = _this9.showCandInstFocus.bind(_this9);
         _this9.showCandFocus = _this9.showCandFocus.bind(_this9);
         _this9.showVisitFocus = _this9.showVisitFocus.bind(_this9);
         _this9.showSideBar = _this9.showSideBar.bind(_this9);
@@ -690,10 +696,8 @@ var StudyTracker = function (_React$Component9) {
         _this9.filterCohorts = _this9.filterCohorts.bind(_this9);
         _this9.rowHasCurrentCohortVisit = _this9.rowHasCurrentCohortVisit.bind(_this9);
 
-        var url = loris.BaseURL + "/dashboard/ajax/getData.php";
-        $.get(url, { data: "all" }, function (data, status) {
+        $.get(GET_DATA_URL, { data: "all" }, function (data, status) {
             if (status === "success") {
-                console.log(data.tableData);
                 var cohorts = [],
                     visitLabels = [],
                     rows = [];
@@ -799,6 +803,27 @@ var StudyTracker = function (_React$Component9) {
 
             return toReturn;
         }
+    }, {
+        key: "showCandInstFocus",
+        value: function showCandInstFocus(event) {
+            var pscid = void 0;
+            if (event) {
+                pscid = $(event.target).text();
+                this.setState({
+                    currentPSCID: pscid,
+                    currentVisit: null,
+                    currentSideBarFocus: "candidate_instruments"
+                });
+            } else {
+                pscid = this.state.currentPSCID;
+            }
+
+            $.get(GET_DATA_URL, { data: "instruments", pscid: pscid }, function (data, status) {
+                if (status === "success") {
+                    console.log(data);
+                }
+            }.bind(this));
+        }
 
         // Sets the content of the SideBar and then shows SideBar
         // for Candidate Focus
@@ -900,6 +925,8 @@ var StudyTracker = function (_React$Component9) {
                 callback = this.showVisitFocus;
             } else if (this.state.currentSideBarFocus === "candidate") {
                 callback = this.showCandFocus;
+            } else if (this.state.currentSideBarFocus === "candidate_instruments") {
+                callback = this.showCandInstFocus;
             }
             this.setState({ currentCohort: event.target.value }, callback);
         }
@@ -925,6 +952,8 @@ var StudyTracker = function (_React$Component9) {
                 callback = this.showVisitFocus;
             } else if (this.state.currentSideBarFocus === "candidate") {
                 callback = this.showCandFocus;
+            } else if (this.state.currentSideBarFocus === "candidate_instruments") {
+                callback = this.showCandInstFocus;
             }
             this.setState({ currentSite: event.target.value }, callback);
         }
@@ -962,6 +991,7 @@ var StudyTracker = function (_React$Component9) {
                         currentVisit: this.state.currentVisit,
                         currentPSCID: this.state.currentPSCID,
                         showCandFocus: this.showCandFocus,
+                        showCandInstFocus: this.showCandInstFocus,
                         prettyStatus: this.prettyStatus
                     });
                 }

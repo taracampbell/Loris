@@ -1,6 +1,7 @@
 const MS_TO_DAYS = 1/(1000 * 60 * 60 * 24);
 const SIDEBAR_WIDTH = "20%";
 const HIGHLIGHT_COLOR = "#E9EBF3";
+const GET_DATA_URL = loris.BaseURL + "/dashboard/ajax/getData.php";
 
 function SiteFilter(props) {
     let options = [];
@@ -252,6 +253,7 @@ class VisitCell extends React.Component {
 }
 
 class PSCIDCell extends React.Component {
+
     render() {
         return (
             <td
@@ -289,7 +291,11 @@ class StudyTrackerRow extends React.Component {
             $("."+v.visitLabel).css("background-color","");
         });
         this.highlightRow();
-        this.props.showCandFocus(event);
+        if ($(event.target).text() === this.props.pscid) {
+            this.props.showCandInstFocus(event);
+        } else {
+            this.props.showCandFocus(event);
+        }
     }
 
     render() {
@@ -404,6 +410,7 @@ class StudyTracker extends React.Component {
              currentSideBarFocus: null
         };
         this.prettyStatus = this.prettyStatus.bind(this);
+        this.showCandInstFocus = this.showCandInstFocus.bind(this);
         this.showCandFocus = this.showCandFocus.bind(this);
         this.showVisitFocus = this.showVisitFocus.bind(this);
         this.showSideBar = this.showSideBar.bind(this);
@@ -413,10 +420,8 @@ class StudyTracker extends React.Component {
         this.filterCohorts = this.filterCohorts.bind(this);
         this.rowHasCurrentCohortVisit = this.rowHasCurrentCohortVisit.bind(this);
 
-        let url = loris.BaseURL + "/dashboard/ajax/getData.php";
-        $.get(url, {data: "all"}, function(data, status) {
+        $.get(GET_DATA_URL, {data: "all"}, function(data, status) {
            if (status === "success") {
-               console.log(data.tableData);
                let cohorts = [], visitLabels = [], rows = [];
                let sites = new Map();
 
@@ -493,6 +498,27 @@ class StudyTracker extends React.Component {
         }
 
         return toReturn;
+    }
+
+    showCandInstFocus(event) {
+        let pscid;
+        if (event) {
+            pscid = $(event.target).text();
+            this.setState({
+                currentPSCID: pscid,
+                currentVisit: null,
+                currentSideBarFocus: "candidate_instruments"
+            });
+        } else {
+            pscid = this.state.currentPSCID;
+        }
+
+        $.get(GET_DATA_URL, {data: "instruments", pscid: pscid}, function(data, status) {
+            if (status === "success") {
+                console.log(data);
+            }
+        }.bind(this));
+
     }
 
     // Sets the content of the SideBar and then shows SideBar
@@ -586,6 +612,8 @@ class StudyTracker extends React.Component {
             callback = this.showVisitFocus;
         } else if (this.state.currentSideBarFocus === "candidate") {
             callback = this.showCandFocus;
+        } else if (this.state.currentSideBarFocus === "candidate_instruments") {
+            callback = this.showCandInstFocus;
         }
         this.setState({currentCohort: event.target.value}, callback);
     }
@@ -605,6 +633,8 @@ class StudyTracker extends React.Component {
             callback = this.showVisitFocus;
         } else if (this.state.currentSideBarFocus === "candidate") {
             callback = this.showCandFocus;
+        } else if (this.state.currentSideBarFocus === "candidate_instruments") {
+            callback = this.showCandInstFocus;
         }
         this.setState({currentSite: event.target.value}, callback);
     }
@@ -641,6 +671,7 @@ class StudyTracker extends React.Component {
                             currentVisit={this.state.currentVisit}
                             currentPSCID={this.state.currentPSCID}
                             showCandFocus={this.showCandFocus}
+                            showCandInstFocus={this.showCandInstFocus}
                             prettyStatus={this.prettyStatus}
                         />
                     )

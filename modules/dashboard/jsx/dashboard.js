@@ -1,166 +1,5 @@
-var dummyData = [
-    {
-        "pscid": "JGH0000",
-        "psc": "JGH",
-        "visits": [
-            {
-                "sessionID": "1",
-                "visitRegStatus": "complete-visit",
-                "dataEntryStatus": "complete-data-entry",
-                "visitRegDueDate": randomDate(),
-                "dataEntryDueDate": randomDate(),
-                "instrCompleted": 1,
-                "totalInstrs": 22,
-                "visitLabel": "Screening",
-                "cohort": "MCI"
-            },
-            {
-                "sessionID": "2",
-                "visitRegStatus": "no-deadline-visit",
-                "dataEntryStatus": "deadline-approaching-data-entry",
-                "visitRegDueDate": randomDate(),
-                "dataEntryDueDate": randomDate(),
-                "instrCompleted": 2,
-                "totalInstrs": 22,
-                "visitLabel": "Clinical",
-                "cohort": "AD"
-            },
-            {
-                "sessionID": "3",
-                "visitRegStatus": "deadline-approaching-visit",
-                "dataEntryStatus": "complete-data-entry",
-                "visitRegDueDate": randomDate(),
-                "dataEntryDueDate": randomDate(),
-                "instrCompleted": 3,
-                "totalInstrs": 22,
-                "visitLabel": "Neuropsych",
-                "cohort": "AD"
-            }
-        ]
-    },
-    {
-        "pscid": "PKD0001",
-        "psc": "PKD",
-        "visits": [
-            {
-                "sessionID": "4",
-                "visitRegStatus": "complete-visit",
-                "dataEntryStatus": "cancelled-data",
-                "visitRegDueDate": randomDate(),
-                "dataEntryDueDate": randomDate(),
-                "instrCompleted": 1,
-                "totalInstrs": 22,
-                "visitLabel": "Screening",
-                "cohort": "AD"
-            },
-            {
-                "sessionID": "5",
-                "visitRegStatus": "deadline-past-visit",
-                "dataEntryStatus": "deadline-approaching-data-entry",
-                "visitRegDueDate": randomDate(),
-                "dataEntryDueDate": randomDate(),
-                "instrCompleted": 2,
-                "totalInstrs": 22,
-                "visitLabel": "Clinical",
-                "cohort": "SCI"
-            },
-            {
-                "sessionID": "6",
-                "visitRegStatus": "deadline-approaching-visit",
-                "dataEntryStatus": "deadline-past-data-entry",
-                "visitRegDueDate": randomDate(),
-                "dataEntryDueDate": randomDate(),
-                "instrCompleted": 3,
-                "totalInstrs": 22,
-                "visitLabel": "Neuropsych",
-                "cohort": "MCI"
-            }
-        ]
-    },
-    {
-        "pscid": "JGH0010",
-        "psc": "JGH",
-        "visits": [
-            {
-                "sessionID": "7",
-                "visitRegStatus": "complete-visit",
-                "dataEntryStatus": "deadline-approaching-data-entry",
-                "visitRegDueDate": randomDate(),
-                "dataEntryDueDate": randomDate(),
-                "instrCompleted": 1,
-                "totalInstrs": 22,
-                "visitLabel": "Screening",
-                "cohort": "SCI"
-            },
-            {
-                "sessionID": "8",
-                "visitRegStatus": "deadline-past-visit",
-                "dataEntryStatus": "deadline-approaching-data-entry",
-                "visitRegDueDate": randomDate(),
-                "dataEntryDueDate": randomDate(),
-                "instrCompleted": 2,
-                "totalInstrs": 22,
-                "visitLabel": "Clinical",
-                "cohort": "SCI"
-
-            },
-            {
-                "sessionID": "9",
-                "visitRegStatus": "deadline-past-visit",
-                "dataEntryStatus": "deadline-approaching-data-entry",
-                "visitRegDueDate": randomDate(),
-                "dataEntryDueDate": randomDate(),
-                "instrCompleted": 3,
-                "totalInstrs": 22,
-                "visitLabel": "Neuropsych",
-                "cohort": "SCI"
-            }
-        ]
-    },
-    {
-        "pscid": "PKD0011",
-        "psc": "PKD",
-        "visits": [
-            {
-                "sessionID": "10",
-                "visitRegStatus": "complete-visit",
-                "dataEntryStatus": "deadline-approaching-data-entry",
-                "visitRegDueDate": randomDate(),
-                "dataEntryDueDate": randomDate(),
-                "instrCompleted": 1,
-                "totalInstrs": 22,
-                "visitLabel": "Screening",
-                "cohort": "AD"
-            },
-            {
-                "sessionID": "11",
-                "dataEntryStatus": "deadline-approaching-data-entry",
-                "visitRegStatus": "deadline-approaching-visit",
-                "visitRegDueDate": randomDate(),
-                "dataEntryDueDate": randomDate(),
-                "instrCompleted": 2,
-                "totalInstrs": 22,
-                "visitLabel": "Clinical",
-                "cohort": "AD"
-            },
-            {
-                "sessionID": "12",
-                "visitRegStatus": "deadline-approaching-visit",
-                "dataEntryStatus": "deadline-approaching-data-entry",
-                "visitRegDueDate": randomDate(),
-                "dataEntryDueDate": randomDate(),
-                "instrCompleted": 3,
-                "totalInstrs": 22,
-                "visitLabel": "Neuropsych",
-                "cohort": "AD"
-            }
-        ]
-    }
-];
-
-
 const MS_TO_DAYS = 1/(1000 * 60 * 60 * 24);
-const SIDEBAR_WIDTH = "350px";
+const SIDEBAR_WIDTH = "20%";
 const HIGHLIGHT_COLOR = "#E9EBF3";
 
 function SiteFilter(props) {
@@ -170,22 +9,18 @@ function SiteFilter(props) {
         }
     );
     return (
-        <td>
-            <select className="form-control input-sm" onChange={props.filterSites}>
-                <option value="all">Show All Sites</option>
-                {options}
-            </select>
-        </td>
+        <select className="form-control input-sm" onChange={props.filterSites}>
+            <option value="all">Show All Sites</option>
+            {options}
+        </select>
     );
 }
 
 function TeamFilter(props) {
     return (
-        <td>
-            <select className="form-control input-sm" onChange={props.filterTeams}>
-                <option value="COMPASS-ND">COMPASS-ND</option>
-            </select>
-        </td>
+        <select className="form-control input-sm" onChange={props.filterTeams}>
+            <option value="COMPASS-ND">COMPASS-ND</option>
+        </select>
     );
 }
 
@@ -194,12 +29,10 @@ function CohortFilter(props) {
         <option key={cohort} value={cohort}>{cohort}</option>
     );
     return (
-        <td>
-            <select className="form-control input-sm" onChange={props.filterCohorts}>
-                <option value="all">Show All Cohorts</option>
-                {options}
-            </select>
-        </td>
+        <select className="form-control input-sm" onChange={props.filterCohorts}>
+            <option value="all">Show All Cohorts</option>
+            {options}
+        </select>
     );
 }
 
@@ -207,24 +40,26 @@ class Filters extends React.Component {
     // pass sites, teams, and cohort data once available
     render() {
         return(
-            <table className="Filters">
-                <tbody>
-                    <tr>
-                        <SiteFilter
-                            sites={this.props.sites}
-                            filterSites={this.props.filterSites}
-                        />
-                        <TeamFilter
-                            teams={this.props.teams}
-                            filterTeams={this.props.filterTeams}
-                        />
-                        <CohortFilter
-                            cohorts={this.props.cohorts}
-                            filterCohorts={this.props.filterCohorts}
-                        />
-                    </tr>
-                </tbody>
-            </table>
+            <div>
+                <div className="col-md-4">
+                    <SiteFilter
+                        sites={this.props.sites}
+                        filterSites={this.props.filterSites}
+                    />
+                </div>
+                <div className="col-md-4">
+                    <TeamFilter
+                        teams={this.props.teams}
+                        filterTeams={this.props.filterTeams}
+                    />
+                </div>
+                <div className="col-md-4">
+                    <CohortFilter
+                        cohorts={this.props.cohorts}
+                        filterCohorts={this.props.filterCohorts}
+                    />
+                </div>
+            </div>
         );
     }
 }
@@ -266,7 +101,7 @@ class SideBarCandContent extends React.Component {
                             <div>
                                 <h4>{v.visitLabel}:</h4>
                                 <p className="left-indent">Visit Registration: {vr.html}</p>
-                                <p className="left-indent">Data Registration: {de.html}</p>
+                                <p className="left-indent">Data Entry: {de.html}</p>
                             </div>
                         );
                     }
@@ -340,7 +175,7 @@ class SideBarVisitContent extends React.Component {
         }
         if (dataDeadlines.length <= 1) {
             dataDeadlines = dataDeadlines.concat(
-                <p className="complete indent">No upcoming data entry deadlines</p>
+                <p className="complete left-indent">No upcoming data entry deadlines</p>
             );
         }
 
@@ -383,21 +218,28 @@ class VisitCell extends React.Component {
                 + this.props.visit.dataEntryStatus + " "
                 + this.props.visit.visitRegStatus;
 
+            let tooltipContent = [];
             let vr = this.props.prettyStatus(this.props.visit.visitRegStatus, this.props.visit.visitRegDueDate);
-            let de = this.props.prettyStatus(this.props.visit.dataEntryStatus, this.props.visit.dataEntryDueDate);
+            tooltipContent.push(<p>Visit Registration: {vr.html}</p>);
+
+            if (this.props.visit.dataEntryStatus) {
+                let de = this.props.prettyStatus(this.props.visit.dataEntryStatus, this.props.visit.dataEntryDueDate);
+                tooltipContent.push(<p>Data Entry: {de.html}</p>);
+                tooltipContent.push(
+                    <p className="center">
+                        <i>
+                            {this.props.visit.instrCompleted}/{this.props.visit.totalInstrs} instruments entered
+                        </i>
+                    </p>
+                );
+            }
 
             return (
                 <td className={this.props.visit.visitLabel} style={style}>
                     <div data-tip data-for={this.props.visit.sessionID} className={visitClass}>
                         <ReactTooltip id={this.props.visit.sessionID} place="top" type="dark" effect="solid">
                             <div className="ReactTooltipContent">
-                                <p>Visit Registration: {vr.html}</p>
-                                <p>Data Entry: {de.html}</p>
-                                <p className="center">
-                                    <i>
-                                        {this.props.visit.instrCompleted}/{this.props.visit.totalInstrs} instruments entered
-                                    </i>
-                                </p>
+                                {tooltipContent}
                             </div>
                         </ReactTooltip>
                     </div>
@@ -452,9 +294,9 @@ class StudyTrackerRow extends React.Component {
 
     render() {
         let style = {};
-        let visits = this.props.visits.map(function(v) {
+        let visits = this.props.visits.map(function(v, index) {
                 return <VisitCell
-                    key={v.sessionID}
+                    key={index}
                     visit={v}
                     currentCohort={this.props.currentCohort}
                     currentVisit={this.props.currentVisit}
@@ -548,7 +390,7 @@ class StudyTracker extends React.Component {
     constructor() {
         super();
         this.state = {
-             rows: dummyData,
+             rows: [],
              visitLabels: [],
              currentSite: "all",
              sites: new Map(),
@@ -572,8 +414,14 @@ class StudyTracker extends React.Component {
         let url = loris.BaseURL + "/dashboard/ajax/getData.php";
         $.get(url, {data: "all"}, function(data, status) {
            if (status === "success") {
-               let cohorts = [], visitLabels = [];
+               console.log(data.tableData);
+               let cohorts = [], visitLabels = [], rows = [];
                let sites = new Map();
+
+               for (let r in data.tableData) {
+                   rows.push(data.tableData[r]);
+               }
+               this.setState({rows: rows});
 
                for (let c in data.cohorts) {
                    cohorts.push(data.cohorts[c]);
@@ -582,7 +430,6 @@ class StudyTracker extends React.Component {
                for (let s in data.sites) {
                    sites.set(data.sites[s].Alias, data.sites[s].Name);
                }
-               //console.log(sites);
                this.setState({sites: sites});
                for (let v in data.visitLabels) {
                    visitLabels.push(data.visitLabels[v]);
@@ -591,32 +438,20 @@ class StudyTracker extends React.Component {
            }
         }.bind(this));
 
-        $.get(url, {data: "cohorts"}, function(data, status) {
-            if (status === "success") {
-                let cohorts = [];
-                for (let d in data) {
-                    cohorts.push(data[d]);
-                }
-                this.setState({cohorts: cohorts});
-            }
-        }.bind(this));
-
-        $.get(url, {data: "visitLabels"}, function(data, status) {
-            if (status === "success") {
-                //console.log(data);
-            }
-        }.bind(this));
-
-        $.get(url, {data: "sites"}, function(data, status) {
-            if (status === "success") {
-                //console.log(data);
-            }
-        }.bind(this));
     }
 
     // Returns an object which contains a clean status and styled html to display
     prettyStatus(status, dueDate) {
         let html, toReturn;
+
+
+        toReturn = {
+            "status": "",
+            "html": ""
+        };
+
+        if (!status) return toReturn;
+
         if (~status.indexOf("complete")) {
             html = <span className="complete right-align right-indent">Complete</span>;
             toReturn = {
@@ -624,7 +459,8 @@ class StudyTracker extends React.Component {
                 "html":html
             };
         } else if (~status.indexOf("deadline-approaching")) {
-            let daysLeft = Math.floor((dueDate - new Date()) * MS_TO_DAYS);
+            let daysLeft = Math.ceil((new Date(dueDate) - new Date()) * MS_TO_DAYS) + "";
+
             daysLeft += daysLeft == 1 ? " day" : " days";
             html = <span className="deadline-approaching right-align right-indent">Due in {daysLeft}</span>;
             toReturn = {
@@ -632,7 +468,7 @@ class StudyTracker extends React.Component {
                 "html":html
             };
         } else if (~status.indexOf("deadline-past")) {
-            let daysPast = Math.floor((new Date() - dueDate) * MS_TO_DAYS);
+            let daysPast = Math.ceil((new Date() - new Date(dueDate)) * MS_TO_DAYS);
             daysPast += daysPast == 1 ? " day" : " days";
             html = <span className="deadline-past right-align right-indent">{daysPast} late</span>;
             toReturn = {
@@ -721,6 +557,9 @@ class StudyTracker extends React.Component {
 
     static showSideBar() {
         $(".SideBar").css("width", SIDEBAR_WIDTH);
+        $(".table").css("width", "82%");
+        $(".row").css("width", "82%");
+
     }
 
     static closeSideBar() {
@@ -796,19 +635,24 @@ class StudyTracker extends React.Component {
                 }
             }.bind(this)
         );
-        //console.log("Cohorts: " + cohorts);
         return (
             <div className="StudyTracker">
-                <span style={{fontSize:24}}>Study Progression</span>
-                <Filters
-                    sites={this.state.sites}
-                    filterSites={this.filterSites}
-                    teams={this.state.teams}
-                    filterTeams={this.filterTeams}
-                    cohorts={this.state.cohorts}
-                    filterCohorts={this.filterCohorts}
-                />
-                <table>
+                <div className="row">
+                    <div className="col-md-6">
+                        <h3 className="dashboard-header">Study Progression</h3>
+                    </div>
+                    <div className="col-md-6">
+                        <Filters
+                            sites={this.state.sites}
+                            filterSites={this.filterSites}
+                            teams={this.state.teams}
+                            filterTeams={this.filterTeams}
+                            cohorts={this.state.cohorts}
+                            filterCohorts={this.filterCohorts}
+                        />
+                    </div>
+                </div>
+                <table className='table study-tracker-table'>
                     <StudyTrackerHeader
                         visitLabels={this.state.visitLabels}
                         currentVisit={this.state.currentVisit}
@@ -826,17 +670,6 @@ class StudyTracker extends React.Component {
             </div>
         );
     }
-}
-
-
-function randomDate() {
-    let now = new Date();
-    return new Date(
-        now.getFullYear(),
-        now.getMonth() + Math.floor(Math.random() * 6) + 1,
-        now.getDate() + 1,
-        0,0,0,0
-    );
 }
 
 window.onload = function() {

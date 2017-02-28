@@ -4,14 +4,6 @@ body {
     font-family: sans-serif;
 }
 
-table {
-    border-collapse: collapse;
-}
-
-th, td, tr {
-    padding: 15px 60px;
-}
-
 .ReactTooltipContent p {
     margin: 0;
 }
@@ -77,13 +69,12 @@ th, td, tr {
     font-weight: bold;
 }
 
-.VLHeader:hover, .PSCIDCell:hover {
-    text-decoration: underline;
+.VLHeader {
+    text-align: center;
 }
 
-.StudyTrackerRow, .StudyTrackerHeader{
-    border-bottom: 1px solid #ccc;
-    border-top: 1px solid #ccc;
+.VLHeader:hover, .PSCIDCell:hover {
+    text-decoration: underline;
 }
 
 .StudyTrackerRow {

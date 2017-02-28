@@ -647,7 +647,7 @@ class StudyTracker extends React.Component {
                     cohorts={this.state.cohorts}
                     filterCohorts={this.filterCohorts}
                 />
-                <table>
+                <table className='table'>
                     <StudyTrackerHeader
                         visitLabels={this.state.visitLabels}
                         currentVisit={this.state.currentVisit}

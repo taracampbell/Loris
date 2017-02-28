@@ -406,6 +406,8 @@ class StudyTracker extends React.Component {
         this.prettyStatus = this.prettyStatus.bind(this);
         this.showCandFocus = this.showCandFocus.bind(this);
         this.showVisitFocus = this.showVisitFocus.bind(this);
+        this.showSideBar = this.showSideBar.bind(this);
+        this.closeSideBar = this.closeSideBar.bind(this);
         this.filterSites = this.filterSites.bind(this);
         this.filterTeams = this.filterTeams.bind(this);
         this.filterCohorts = this.filterCohorts.bind(this);
@@ -520,7 +522,7 @@ class StudyTracker extends React.Component {
         });
 
         if (event) {
-            StudyTracker.showSideBar();
+            this.showSideBar();
         }
     }
 
@@ -551,19 +553,29 @@ class StudyTracker extends React.Component {
         );
 
         if (event) {
-            StudyTracker.showSideBar();
+            this.showSideBar();
         }
     }
 
-    static showSideBar() {
+    showSideBar() {
         $(".SideBar").css("width", SIDEBAR_WIDTH);
-        $(".table").css("width", "82%");
-        $(".row").css("width", "82%");
-
+        $(".table, .row").css("width", "82%"); // not great, need to figure out how to set this w/o magic numbers
     }
 
-    static closeSideBar() {
+    closeSideBar() {
         $(".SideBar").css("width", "0px");
+        $(".table, .row").css("width", "100%");
+
+        this.setState({
+            sideBarContent: null,
+            currentPSCID: null,
+            currentVisit: null,
+            currentSideBarFocus: null
+        });
+
+        // VL Headers are being kind of stubborn
+        // here is a hacky workaround
+        $(".VLHeader").css("background-color",'');
     }
 
     // Function which is called when cohort filter is changed
@@ -663,7 +675,7 @@ class StudyTracker extends React.Component {
                     </tbody>
                 </table>
                 <SideBar
-                    closeSideBar={StudyTracker.closeSideBar}
+                    closeSideBar={this.closeSideBar}
                     sideBarContent={this.state.sideBarContent}
                     currentCohort={this.state.currentCohort}
                 />

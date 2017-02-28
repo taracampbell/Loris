@@ -10,6 +10,7 @@ body {
 
 .study-tracker-table {
     margin-top: 20px;
+    transition: 0.3s;
 }
 
 .ReactTooltipContent p {

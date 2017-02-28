@@ -4,6 +4,14 @@ body {
     font-family: sans-serif;
 }
 
+.dashboard-header {
+    margin: 0;
+}
+
+.study-tracker-table {
+    margin-top: 20px;
+}
+
 .ReactTooltipContent p {
     margin: 0;
 }

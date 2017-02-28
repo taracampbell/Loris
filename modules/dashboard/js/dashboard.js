@@ -22,33 +22,25 @@ function SiteFilter(props) {
         ));
     });
     return React.createElement(
-        "td",
-        null,
+        "select",
+        { className: "form-control input-sm", onChange: props.filterSites },
         React.createElement(
-            "select",
-            { className: "form-control input-sm", onChange: props.filterSites },
-            React.createElement(
-                "option",
-                { value: "all" },
-                "Show All Sites"
-            ),
-            options
-        )
+            "option",
+            { value: "all" },
+            "Show All Sites"
+        ),
+        options
     );
 }
 
 function TeamFilter(props) {
     return React.createElement(
-        "td",
-        null,
+        "select",
+        { className: "form-control input-sm", onChange: props.filterTeams },
         React.createElement(
-            "select",
-            { className: "form-control input-sm", onChange: props.filterTeams },
-            React.createElement(
-                "option",
-                { value: "COMPASS-ND" },
-                "COMPASS-ND"
-            )
+            "option",
+            { value: "COMPASS-ND" },
+            "COMPASS-ND"
         )
     );
 }
@@ -62,18 +54,14 @@ function CohortFilter(props) {
         );
     });
     return React.createElement(
-        "td",
-        null,
+        "select",
+        { className: "form-control input-sm", onChange: props.filterCohorts },
         React.createElement(
-            "select",
-            { className: "form-control input-sm", onChange: props.filterCohorts },
-            React.createElement(
-                "option",
-                { value: "all" },
-                "Show All Cohorts"
-            ),
-            options
-        )
+            "option",
+            { value: "all" },
+            "Show All Cohorts"
+        ),
+        options
     );
 }
 
@@ -92,27 +80,31 @@ var Filters = function (_React$Component) {
         // pass sites, teams, and cohort data once available
         value: function render() {
             return React.createElement(
-                "table",
-                { className: "Filters" },
+                "div",
+                null,
                 React.createElement(
-                    "tbody",
-                    null,
-                    React.createElement(
-                        "tr",
-                        null,
-                        React.createElement(SiteFilter, {
-                            sites: this.props.sites,
-                            filterSites: this.props.filterSites
-                        }),
-                        React.createElement(TeamFilter, {
-                            teams: this.props.teams,
-                            filterTeams: this.props.filterTeams
-                        }),
-                        React.createElement(CohortFilter, {
-                            cohorts: this.props.cohorts,
-                            filterCohorts: this.props.filterCohorts
-                        })
-                    )
+                    "div",
+                    { className: "col-md-4" },
+                    React.createElement(SiteFilter, {
+                        sites: this.props.sites,
+                        filterSites: this.props.filterSites
+                    })
+                ),
+                React.createElement(
+                    "div",
+                    { className: "col-md-4" },
+                    React.createElement(TeamFilter, {
+                        teams: this.props.teams,
+                        filterTeams: this.props.filterTeams
+                    })
+                ),
+                React.createElement(
+                    "div",
+                    { className: "col-md-4" },
+                    React.createElement(CohortFilter, {
+                        cohorts: this.props.cohorts,
+                        filterCohorts: this.props.filterCohorts
+                    })
                 )
             );
         }
@@ -953,21 +945,33 @@ var StudyTracker = function (_React$Component9) {
                 "div",
                 { className: "StudyTracker" },
                 React.createElement(
-                    "span",
-                    { style: { fontSize: 24 } },
-                    "Study Progression"
+                    "div",
+                    { className: "row" },
+                    React.createElement(
+                        "div",
+                        { className: "col-md-6" },
+                        React.createElement(
+                            "h3",
+                            { className: "dashboard-header" },
+                            "Study Progression"
+                        )
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "col-md-6" },
+                        React.createElement(Filters, {
+                            sites: this.state.sites,
+                            filterSites: this.filterSites,
+                            teams: this.state.teams,
+                            filterTeams: this.filterTeams,
+                            cohorts: this.state.cohorts,
+                            filterCohorts: this.filterCohorts
+                        })
+                    )
                 ),
-                React.createElement(Filters, {
-                    sites: this.state.sites,
-                    filterSites: this.filterSites,
-                    teams: this.state.teams,
-                    filterTeams: this.filterTeams,
-                    cohorts: this.state.cohorts,
-                    filterCohorts: this.filterCohorts
-                }),
                 React.createElement(
                     "table",
-                    { className: "table" },
+                    { className: "table study-tracker-table" },
                     React.createElement(StudyTrackerHeader, {
                         visitLabels: this.state.visitLabels,
                         currentVisit: this.state.currentVisit,

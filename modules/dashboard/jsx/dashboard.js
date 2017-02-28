@@ -9,22 +9,18 @@ function SiteFilter(props) {
         }
     );
     return (
-        <td>
-            <select className="form-control input-sm" onChange={props.filterSites}>
-                <option value="all">Show All Sites</option>
-                {options}
-            </select>
-        </td>
+        <select className="form-control input-sm" onChange={props.filterSites}>
+            <option value="all">Show All Sites</option>
+            {options}
+        </select>
     );
 }
 
 function TeamFilter(props) {
     return (
-        <td>
-            <select className="form-control input-sm" onChange={props.filterTeams}>
-                <option value="COMPASS-ND">COMPASS-ND</option>
-            </select>
-        </td>
+        <select className="form-control input-sm" onChange={props.filterTeams}>
+            <option value="COMPASS-ND">COMPASS-ND</option>
+        </select>
     );
 }
 
@@ -33,12 +29,10 @@ function CohortFilter(props) {
         <option key={cohort} value={cohort}>{cohort}</option>
     );
     return (
-        <td>
-            <select className="form-control input-sm" onChange={props.filterCohorts}>
-                <option value="all">Show All Cohorts</option>
-                {options}
-            </select>
-        </td>
+        <select className="form-control input-sm" onChange={props.filterCohorts}>
+            <option value="all">Show All Cohorts</option>
+            {options}
+        </select>
     );
 }
 
@@ -46,24 +40,26 @@ class Filters extends React.Component {
     // pass sites, teams, and cohort data once available
     render() {
         return(
-            <table className="Filters">
-                <tbody>
-                    <tr>
-                        <SiteFilter
-                            sites={this.props.sites}
-                            filterSites={this.props.filterSites}
-                        />
-                        <TeamFilter
-                            teams={this.props.teams}
-                            filterTeams={this.props.filterTeams}
-                        />
-                        <CohortFilter
-                            cohorts={this.props.cohorts}
-                            filterCohorts={this.props.filterCohorts}
-                        />
-                    </tr>
-                </tbody>
-            </table>
+            <div>
+                <div className="col-md-4">
+                    <SiteFilter
+                        sites={this.props.sites}
+                        filterSites={this.props.filterSites}
+                    />
+                </div>
+                <div className="col-md-4">
+                    <TeamFilter
+                        teams={this.props.teams}
+                        filterTeams={this.props.filterTeams}
+                    />
+                </div>
+                <div className="col-md-4">
+                    <CohortFilter
+                        cohorts={this.props.cohorts}
+                        filterCohorts={this.props.filterCohorts}
+                    />
+                </div>
+            </div>
         );
     }
 }
@@ -638,16 +634,22 @@ class StudyTracker extends React.Component {
         );
         return (
             <div className="StudyTracker">
-                <span style={{fontSize:24}}>Study Progression</span>
-                <Filters
-                    sites={this.state.sites}
-                    filterSites={this.filterSites}
-                    teams={this.state.teams}
-                    filterTeams={this.filterTeams}
-                    cohorts={this.state.cohorts}
-                    filterCohorts={this.filterCohorts}
-                />
-                <table className='table'>
+                <div className="row">
+                    <div className="col-md-6">
+                        <h3 className="dashboard-header">Study Progression</h3>
+                    </div>
+                    <div className="col-md-6">
+                        <Filters
+                            sites={this.state.sites}
+                            filterSites={this.filterSites}
+                            teams={this.state.teams}
+                            filterTeams={this.filterTeams}
+                            cohorts={this.state.cohorts}
+                            filterCohorts={this.filterCohorts}
+                        />
+                    </div>
+                </div>
+                <table className='table study-tracker-table'>
                     <StudyTrackerHeader
                         visitLabels={this.state.visitLabels}
                         currentVisit={this.state.currentVisit}

@@ -54,13 +54,7 @@ function getSites() {
 }
 
 function getVisitLabels() {
-    //$visits = Utility::getVisitList();
-
-    $visits = array(
-        'Initial Assessment - Screening',
-        'Clinical Assessment',
-        'Neuropsychology Assessment'
-    );
+    $visits = Utility::getVisitList();
 
     return $visits;
 }

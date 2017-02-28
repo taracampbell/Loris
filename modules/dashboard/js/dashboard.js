@@ -683,6 +683,8 @@ var StudyTracker = function (_React$Component9) {
         _this9.prettyStatus = _this9.prettyStatus.bind(_this9);
         _this9.showCandFocus = _this9.showCandFocus.bind(_this9);
         _this9.showVisitFocus = _this9.showVisitFocus.bind(_this9);
+        _this9.showSideBar = _this9.showSideBar.bind(_this9);
+        _this9.closeSideBar = _this9.closeSideBar.bind(_this9);
         _this9.filterSites = _this9.filterSites.bind(_this9);
         _this9.filterTeams = _this9.filterTeams.bind(_this9);
         _this9.filterCohorts = _this9.filterCohorts.bind(_this9);
@@ -828,7 +830,7 @@ var StudyTracker = function (_React$Component9) {
             });
 
             if (event) {
-                StudyTracker.showSideBar();
+                this.showSideBar();
             }
         }
 
@@ -860,15 +862,38 @@ var StudyTracker = function (_React$Component9) {
             this.setState({ sideBarContent: sidebarContent });
 
             if (event) {
-                StudyTracker.showSideBar();
+                this.showSideBar();
             }
         }
     }, {
-        key: "filterCohorts",
+        key: "showSideBar",
+        value: function showSideBar() {
+            $(".SideBar").css("width", SIDEBAR_WIDTH);
+            $(".table, .row").css("width", "82%"); // not great, need to figure out how to set this w/o magic numbers
+        }
+    }, {
+        key: "closeSideBar",
+        value: function closeSideBar() {
+            $(".SideBar").css("width", "0px");
+            $(".table, .row").css("width", "100%");
 
+            this.setState({
+                sideBarContent: null,
+                currentPSCID: null,
+                currentVisit: null,
+                currentSideBarFocus: null
+            });
+
+            // VL Headers are being kind of stubborn
+            // here is a hacky workaround
+            $(".VLHeader").css("background-color", '');
+        }
 
         // Function which is called when cohort filter is changed
         // event is onChange when the select changes
+
+    }, {
+        key: "filterCohorts",
         value: function filterCohorts(event) {
             var callback = function callback() {};
             if (this.state.currentSideBarFocus === "visit") {
@@ -984,23 +1009,11 @@ var StudyTracker = function (_React$Component9) {
                     )
                 ),
                 React.createElement(SideBar, {
-                    closeSideBar: StudyTracker.closeSideBar,
+                    closeSideBar: this.closeSideBar,
                     sideBarContent: this.state.sideBarContent,
                     currentCohort: this.state.currentCohort
                 })
             );
-        }
-    }], [{
-        key: "showSideBar",
-        value: function showSideBar() {
-            $(".SideBar").css("width", SIDEBAR_WIDTH);
-            $(".table").css("width", "82%");
-            $(".row").css("width", "82%");
-        }
-    }, {
-        key: "closeSideBar",
-        value: function closeSideBar() {
-            $(".SideBar").css("width", "0px");
         }
     }]);
 

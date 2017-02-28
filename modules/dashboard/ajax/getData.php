@@ -54,14 +54,20 @@ function getSites() {
 }
 
 function getVisitLabels() {
-    $visits = Utility::getVisitList();
+    //$visits = Utility::getVisitList();
+
+    $visits = array(
+        'Initial_Assessment_Screening',
+        'Clinical_Assessment',
+        'Neuropsychology_Assessment'
+    );
 
     return $visits;
 }
 
 function getTableData() {
     global $DB;
-    $visitLabels = Utility::getVisitList();
+    $visitLabels = getVisitLabels();
 
     $candidates = $DB->pselect(
         "SELECT c.PSCID, c.CandID, psc.Name, psc.Alias

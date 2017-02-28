@@ -46,7 +46,8 @@ function getSites() {
     $sites = $DB->pselect(
         "SELECT DISTINCT p.Name, p.Alias
          FROM psc p
-         INNER JOIN candidate c ON c.CenterID = p.CenterID",
+         INNER JOIN candidate c ON c.CenterID = p.CenterID
+         WHERE c.Entity_type='human' AND c.CenterID <> 1 AND c.Active='Y'",
         array()
     );
 

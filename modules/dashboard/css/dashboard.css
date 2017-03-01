@@ -21,6 +21,10 @@ body {
     margin-left: 20px;
 }
 
+.left-indent2 {
+    margin-left: 40px;
+}
+
 .right-indent {
     margin-right: 20px;
 }

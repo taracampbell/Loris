@@ -1,6 +1,7 @@
 const MS_TO_DAYS = 1/(1000 * 60 * 60 * 24);
 const SIDEBAR_WIDTH = "20%";
 const HIGHLIGHT_COLOR = "#E9EBF3";
+const GET_DATA_URL = loris.BaseURL + "/study_tracker/ajax/getData.php";
 
 function SiteFilter(props) {
     let options = [];
@@ -64,6 +65,56 @@ class Filters extends React.Component {
     }
 }
 
+class SideBarCandInstContent extends React.Component {
+    render() {
+        let content = [];
+        let bold = {
+            fontWeight: "bold"
+        };
+        content[0] = <h3 className="center">Participant {this.props.pscid}</h3>;
+        let data = this.props.data;
+        for(let v in data) {
+            //console.log(visit);
+            content.push(<h4 style={bold}>{v}</h4>);
+            console.log(data[v]);
+            if (data[v].length === 0) {
+                content.push(
+                    <p className="left-indent">
+                        Visit has not been registered yet.
+                    </p>
+                );
+            }
+            for(let sg in data[v]) {
+                content.push(<p className="left-indent" style={bold}>{sg}</p>);
+                for(let i in data[v][sg]) {
+                    let inst = data[v][sg][i];
+                    let checkComplete = null;
+                    if (inst.completion === "Complete") {
+                        checkComplete = <span
+                            className="complete left-align"
+                            style={bold}
+                        >
+                            &#10003;
+                        </span>;
+                    }
+                    content.push(
+                        <p className="left-indent2">
+                            {checkComplete}
+                            {inst.testName}
+                        </p>
+                    );
+                }
+            }
+
+        }
+        return (
+            <div>
+                {content}
+            </div>
+        );
+    }
+}
+
 class SideBarCandContent extends React.Component {
     render () {
         let content = [];
@@ -93,7 +144,6 @@ class SideBarCandContent extends React.Component {
                             <p style={{fontSize: "18px"}}>
                                 {v.visitLabel}:
                                 {vr.html}
-                                <span className="complete right-align">&#10003;</span>
                             </p>
                         );
                     } else {
@@ -252,6 +302,7 @@ class VisitCell extends React.Component {
 }
 
 class PSCIDCell extends React.Component {
+
     render() {
         return (
             <td
@@ -289,7 +340,11 @@ class StudyTrackerRow extends React.Component {
             $("."+v.visitLabel).css("background-color","");
         });
         this.highlightRow();
-        this.props.showCandFocus(event);
+        if ($(event.target).text() === this.props.pscid) {
+            this.props.showCandInstFocus(event);
+        } else {
+            this.props.showCandFocus(event);
+        }
     }
 
     render() {
@@ -404,6 +459,7 @@ class StudyTracker extends React.Component {
              currentSideBarFocus: null
         };
         this.prettyStatus = this.prettyStatus.bind(this);
+        this.showCandInstFocus = this.showCandInstFocus.bind(this);
         this.showCandFocus = this.showCandFocus.bind(this);
         this.showVisitFocus = this.showVisitFocus.bind(this);
         this.showSideBar = this.showSideBar.bind(this);
@@ -413,10 +469,8 @@ class StudyTracker extends React.Component {
         this.filterCohorts = this.filterCohorts.bind(this);
         this.rowHasCurrentCohortVisit = this.rowHasCurrentCohortVisit.bind(this);
 
-        let url = loris.BaseURL + "/study_tracker/ajax/getData.php";
-        $.get(url, {data: "all"}, function(data, status) {
+        $.get(GET_DATA_URL, {data: "all"}, function(data, status) {
            if (status === "success") {
-               console.log(data.tableData);
                let cohorts = [], visitLabels = [], rows = [];
                let sites = new Map();
 
@@ -493,6 +547,35 @@ class StudyTracker extends React.Component {
         }
 
         return toReturn;
+    }
+
+    showCandInstFocus(event) {
+        let pscid;
+        if (event) {
+            pscid = $(event.target).text();
+            this.setState({
+                currentPSCID: pscid,
+                currentVisit: null,
+                currentSideBarFocus: "candidate_instruments"
+            });
+        } else {
+            pscid = this.state.currentPSCID;
+        }
+
+        $.get(GET_DATA_URL, {data: "instruments", pscid: pscid}, function(data, status) {
+            if (status === "success") {
+                let sideBarContent = <SideBarCandInstContent
+                    pscid={pscid}
+                    data={data}
+                />;
+
+                this.setState({
+                    sideBarContent: sideBarContent
+                });
+
+                this.showSideBar();
+            }
+        }.bind(this));
     }
 
     // Sets the content of the SideBar and then shows SideBar
@@ -586,6 +669,8 @@ class StudyTracker extends React.Component {
             callback = this.showVisitFocus;
         } else if (this.state.currentSideBarFocus === "candidate") {
             callback = this.showCandFocus;
+        } else if (this.state.currentSideBarFocus === "candidate_instruments") {
+            callback = this.showCandInstFocus;
         }
         this.setState({currentCohort: event.target.value}, callback);
     }
@@ -605,6 +690,8 @@ class StudyTracker extends React.Component {
             callback = this.showVisitFocus;
         } else if (this.state.currentSideBarFocus === "candidate") {
             callback = this.showCandFocus;
+        } else if (this.state.currentSideBarFocus === "candidate_instruments") {
+            callback = this.showCandInstFocus;
         }
         this.setState({currentSite: event.target.value}, callback);
     }
@@ -641,6 +728,7 @@ class StudyTracker extends React.Component {
                             currentVisit={this.state.currentVisit}
                             currentPSCID={this.state.currentPSCID}
                             showCandFocus={this.showCandFocus}
+                            showCandInstFocus={this.showCandInstFocus}
                             prettyStatus={this.prettyStatus}
                         />
                     )

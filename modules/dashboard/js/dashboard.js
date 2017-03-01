@@ -725,7 +725,7 @@ var StudyTrackerHeader = function (_React$Component9) {
                 React.createElement(
                     "tr",
                     null,
-                    React.createElement("th", null),
+                    React.createElement("th", { className: "col-md-1" }),
                     visitLabelHeaders
                 )
             );

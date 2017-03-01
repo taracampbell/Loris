@@ -1,0 +1,167 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+}
+
+.dashboard-header {
+    margin: 0;
+}
+
+.study-tracker-table {
+    margin-top: 20px;
+    transition: 0.3s;
+}
+
+.ReactTooltipContent p {
+    margin: 0;
+}
+
+.left-indent {
+    margin-left: 20px;
+}
+
+.right-indent {
+    margin-right: 20px;
+}
+
+.right-align {
+    float: right;
+}
+
+.center {
+    text-align: center;
+}
+
+.SideBar {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    right: 0;
+    background-color: #fff;
+    overflow-x: hidden;
+    padding-top: 60px;
+    transition: 0.3s;
+    border: 1px solid #ccc;
+}
+
+
+.SideBar td {
+    padding: 5px;
+    text-align: left;
+}
+
+.SideBar .closebtn {
+    text-align: right;
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: inline-block;
+    transition: 0.3s;
+    float: right;
+}
+
+.Filters {
+    display: inline;
+    margin-left: 100px;
+}
+
+.Filters td {
+    padding: 5px;
+}
+
+.VLHeader, .PSCIDCell {
+    color: black;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.VLHeader {
+    text-align: center;
+}
+
+.VLHeader:hover, .PSCIDCell:hover {
+    text-decoration: underline;
+}
+
+.StudyTrackerRow {
+    cursor: pointer;
+}
+
+.StudyTracker {
+    margin: auto;
+}
+
+.complete {
+    color: #4A90E2;
+}
+
+.deadline-approaching {
+    color: #FFCD0D;
+}
+
+.deadline-past {
+    color: #DD286A;
+}
+
+.no-deadline {
+    color: #9B9B9B;
+}
+
+.cancelled {
+    color: #DDDDDD;
+}
+
+.circle {
+    border-radius: 50%;
+    width: 26px;
+    height: 26px;
+    margin: auto;
+}
+
+.complete-data-entry {
+    background-image:
+        radial-gradient(
+            circle, #6CB3E8, #4A90E2
+        );
+}
+
+.deadline-approaching-data-entry {
+    background-image:
+        radial-gradient(
+            circle, #FFD201, #FFCD0D
+        );
+}
+
+.deadline-past-data-entry {
+    background-image:
+        radial-gradient(
+            circle, #FC3BB3, #DD286A
+        );
+}
+
+.complete-visit {
+    border: 4px solid #4A90E2;
+}
+
+.deadline-approaching-visit {
+    border: 4px solid #FFCD0D;
+}
+
+.deadline-past-visit {
+    border: 4px solid #DD286A;
+}
+
+.no-deadline-visit {
+    border: 4px solid #9B9B9B;
+}
+
+.cancelled-visit {
+    border: 4px solid #DDDDDD;
+}
+
+.cancelled-data {
+    background: #DDDDDD;
+}

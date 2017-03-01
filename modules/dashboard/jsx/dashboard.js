@@ -65,6 +65,32 @@ class Filters extends React.Component {
     }
 }
 
+class SideBarCandInstContent extends React.Component {
+    render() {
+        let content = [];
+        content[0] = <h3 className="center">Participant {this.props.pscid}</h3>;
+        let data = this.props.data;
+        for(let v in data) {
+            //console.log(visit);
+            content.push(<p>{v}</p>);
+            for(let sg in data[v]) {
+                content.push(<p className="left-indent">{sg}</p>);
+                for(let i in data[v][sg]) {
+                    let inst = data[v][sg][i];
+                    console.log(inst);
+                    content.push(<p className="center">{inst.testName}</p>);
+                }
+            }
+
+        }
+        return (
+            <div>
+                {content}
+            </div>
+        );
+    }
+}
+
 class SideBarCandContent extends React.Component {
     render () {
         let content = [];
@@ -515,10 +541,18 @@ class StudyTracker extends React.Component {
 
         $.get(GET_DATA_URL, {data: "instruments", pscid: pscid}, function(data, status) {
             if (status === "success") {
-                console.log(data);
+                let sideBarContent = <SideBarCandInstContent
+                    pscid={pscid}
+                    data={data}
+                />;
+
+                this.setState({
+                    sideBarContent: sideBarContent
+                });
+
+                this.showSideBar();
             }
         }.bind(this));
-
     }
 
     // Sets the content of the SideBar and then shows SideBar

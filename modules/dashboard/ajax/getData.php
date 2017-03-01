@@ -286,7 +286,7 @@ function getInstruments($pscid) {
         // Go through all tests for the visit
         foreach ($tests as $t) {
             $sg = $DB->pselectOne(
-              "SELECT Subgroup_name 
+              "SELECT Subgroup_name
                FROM test_subgroups s 
                INNER JOIN test_names t 
                ON s.ID = t.sub_group
@@ -299,7 +299,17 @@ function getInstruments($pscid) {
                 $visit[$sg] = array();
             }
 
-            $visit[$sg][] = array($t['Test_name'], $t['Data_entry']);
+            $fullName = $DB->pselectOne(
+                "SELECT Full_name 
+                 FROM test_names
+                 WHERE Test_name=:t",
+                array("t" => $t["Test_name"])
+            );
+
+            $visit[$sg][] = array(
+                "testName" => $fullName,
+                "completion" => $t['Data_entry']
+            );
         }
 
         $result[$vl] = $visit;

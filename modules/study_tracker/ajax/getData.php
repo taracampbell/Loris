@@ -19,6 +19,15 @@ if (isset($_GET['data'])) {
     } else if ($data == "visitLabels") {
         header('Content-Type: application/json');
         echo json_encode(getVisitLabels());
+
+    } else if ($data == "instruments") {
+        if ($_GET['pscid']) {
+            header('Content-Type: application/json');
+            echo json_encode(getInstruments($_GET['pscid']));
+        } else {
+            header("HTTP/1.1 400 Bad Request");
+        }
+
     } else if ($data == 'all') {
         header('Content-Type: application/json');
         $result = array(
@@ -285,4 +294,69 @@ function getCohortName($subproject) {
     );
 }
 
+// Returns an array of visit labels, each mapping to
+// an array of subgroups, and each of those mapping to
+// an array of instruments
+function getInstruments($pscid) {
+    global $DB;
+
+    $result = array();
+
+    $visitLabels = getVisitLabels();
+    $candID = $DB->pselectOne(
+        "SELECT CandID FROM candidate WHERE PSCID=:pscid",
+        array("pscid" => $pscid)
+    );
+
+    // Go through each visit
+    foreach($visitLabels as $vl) {
+        $visit = array();
+        $sessID = $DB->pselectOne(
+            "SELECT ID 
+             FROM session s 
+             WHERE CandID=:cid AND Visit_label=:vl",
+            array("cid" => $candID, "vl" => $vl)
+        );
+
+        $tests = $DB->pselect(
+            "SELECT Test_name, Data_entry
+             FROM flag
+             WHERE SessionID=:sid AND CommentID NOT LIKE 'DDE_%'",
+            array("sid" => $sessID)
+        );
+
+        // Go through all tests for the visit
+        foreach ($tests as $t) {
+            $sg = $DB->pselectOne(
+              "SELECT Subgroup_name
+               FROM test_subgroups s 
+               INNER JOIN test_names t 
+               ON s.ID = t.sub_group
+               WHERE test_name = :tn",
+                array("tn" => $t['Test_name'])
+            );
+
+            // add subgroup to keys
+            if (!array_key_exists($sg, $visit)) {
+                $visit[$sg] = array();
+            }
+
+            $fullName = $DB->pselectOne(
+                "SELECT Full_name 
+                 FROM test_names
+                 WHERE Test_name=:t",
+                array("t" => $t["Test_name"])
+            );
+
+            $visit[$sg][] = array(
+                "testName" => $fullName,
+                "completion" => $t['Data_entry']
+            );
+        }
+
+        $result[$vl] = $visit;
+    }
+
+    return $result;
+}
 ?>

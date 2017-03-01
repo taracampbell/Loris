@@ -1,171 +1,65 @@
-body {
-    margin: 0;
-    padding: 0;
-    font-family: sans-serif;
+/*
+ * Dashboard CSS
+ */
+
+.alert-chevron {
+    margin-top: 15px;
 }
-
-.dashboard-header {
-    margin: 0;
+.clickable {
+    cursor: pointer;
 }
-
-.study-tracker-table {
-    margin-top: 20px;
-    transition: 0.3s;
+.document-repository-item {
+    word-wrap: break-word;
 }
-
-.ReactTooltipContent p {
-    margin: 0;
+.bvl-feedback-item {
+    word-wrap: break-word;
 }
-
-.left-indent {
-    margin-left: 20px;
+.huge {
+    font-size: 30px;
 }
-
-.left-indent2 {
-    margin-left: 40px;
+.medium {
+    font-size: 20px;
 }
-
-.right-indent {
-    margin-right: 20px;
+.new-flag {
+    color: red;
+    font-size: 80%;
 }
-
-.right-align {
-    float: right;
-}
-
-.center {
-    text-align: center;
-}
-
-.SideBar {
-    height: 100%;
-    width: 0;
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    right: 0;
-    background-color: #fff;
-    overflow-x: hidden;
-    padding-top: 60px;
-    transition: 0.3s;
-    border: 1px solid #ccc;
-}
-
-
-.SideBar td {
-    padding: 5px;
-    text-align: left;
-}
-
-.SideBar .closebtn {
-    text-align: right;
-    text-decoration: none;
-    font-size: 25px;
-    color: #818181;
-    display: inline-block;
-    transition: 0.3s;
-    float: right;
-}
-
-.Filters {
+.panel-title {
     display: inline;
-    margin-left: 100px;
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: 16px;
+    color: inherit
 }
-
-.Filters td {
-    padding: 5px;
+.progress {
+    height: 40px;
+    margin-bottom: 0px;
 }
-
-.VLHeader, .PSCIDCell {
-    color: black;
-    cursor: pointer;
-    font-weight: bold;
+.progress-bar-male {
+    background-color: #1C70B6;
 }
-
-.VLHeader {
-    text-align: center;
+.progress-bar-female {
+    background-color: #2FA4E7;
 }
-
-.VLHeader:hover, .PSCIDCell:hover {
-    text-decoration: underline;
+.project-description {
+    clear: left;
 }
-
-.StudyTrackerRow {
-    cursor: pointer;
+.target {
+    padding-top: 13px;
+    padding-right: 3px;
 }
-
-.StudyTracker {
-    margin: auto;
+.tasks {
+    margin-bottom: 0px;
 }
-
-.complete {
-    color: #4A90E2;
+.task-site {
+    margin-top: 10px;
+    margin-bottom: 0px;
 }
-
-.deadline-approaching {
-    color: #FFCD0D;
+.views {
+    margin-right: 10px;
+    margin-top: -2px;
 }
-
-.deadline-past {
-    color: #DD286A;
-}
-
-.no-deadline {
-    color: #9B9B9B;
-}
-
-.cancelled {
-    color: #DDDDDD;
-}
-
-.circle {
-    border-radius: 50%;
-    width: 26px;
-    height: 26px;
-    margin: auto;
-}
-
-.complete-data-entry {
-    background-image:
-        radial-gradient(
-            circle, #6CB3E8, #4A90E2
-        );
-}
-
-.deadline-approaching-data-entry {
-    background-image:
-        radial-gradient(
-            circle, #FFD201, #FFCD0D
-        );
-}
-
-.deadline-past-data-entry {
-    background-image:
-        radial-gradient(
-            circle, #FC3BB3, #DD286A
-        );
-}
-
-.complete-visit {
-    border: 4px solid #4A90E2;
-}
-
-.deadline-approaching-visit {
-    border: 4px solid #FFCD0D;
-}
-
-.deadline-past-visit {
-    border: 4px solid #DD286A;
-}
-
-.no-deadline-visit {
-    border: 4px solid #9B9B9B;
-}
-
-.cancelled-visit {
-    border: 4px solid #DDDDDD;
-}
-
-.cancelled-data {
-    background: #DDDDDD;
+.welcome {
+    margin-top: 10px;
+    float: left;
 }

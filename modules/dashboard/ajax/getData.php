@@ -46,7 +46,8 @@ function getSites() {
     $sites = $DB->pselect(
         "SELECT DISTINCT p.Name, p.Alias
          FROM psc p
-         INNER JOIN candidate c ON c.CenterID = p.CenterID",
+         INNER JOIN candidate c ON c.CenterID = p.CenterID
+         WHERE c.Entity_type='human'",
         array()
     );
 
@@ -59,7 +60,8 @@ function getVisitLabels() {
     $visits = array(
         'Initial_Assessment_Screening',
         'Clinical_Assessment',
-        'Neuropsychology_Assessment'
+        'Neuropsychology_Assessment',
+        'Initial_MRI'
     );
 
     return $visits;
@@ -67,37 +69,40 @@ function getVisitLabels() {
 
 function getTableData() {
     global $DB;
+
     $visitLabels = getVisitLabels();
-    $candidates = $DB->pselect(
-        "SELECT c.PSCID, c.CandID, psc.Name, psc.Alias
-         FROM candidate c
-         LEFT JOIN psc USING (CenterID)
-         WHERE c.Active='Y' AND c.Entity_type='human' AND c.CenterID <> 1",
-        array()
-    );
+    $candidates  = getCandidates();
+
     $tableData = array();
+
     $sessIDPlaceHold = -1;
+
     foreach ($candidates as $candidate) {
         $pscid  = $candidate['PSCID'];
         $candID = $candidate['CandID'];
         $psc    = $candidate['Alias'];
+        $status = $candidate['participant_status'];
         $visits = array();
-        $screeningDone = false;
+        $screeningDone = screeningDone($candID);
+
         foreach ($visitLabels as $visitLabel) {
             $session = $DB->pselectRow(
-                "SELECT ID, SubprojectID, Date_visit
+                "SELECT ID, SubprojectID, Date_visit, Current_stage
                  FROM session
                  WHERE CandID=:CID AND Visit_label=:VL",
                 array('CID' => $candID, 'VL' => $visitLabel)
             );
+
             $sessionID        = null;
             $subproject       = null;
             $visitDate        = null;
-            $visitRegStatus   = determineVisitRegStatus($visitLabel, $candID);
+            $visitRegStatus   = determineVisitRegStatus($visitLabel, $candID, $screeningDone);
             $dataEntryStatus  = null;
+            $visitRegDueDate  = null;
             $dataEntryDueDate = null;
             $instrCompleted   = 0;
-            if (!empty($session)) {
+
+            if (!empty($session) && $session['Current_stage'] != 'Not Started') {
                 $sessionID        = $session['ID'];
                 $subproject       = $session['SubprojectID'];
                 $visitDate        = $session['Date_visit'];
@@ -105,17 +110,23 @@ function getTableData() {
                 $dataEntryStatus  = determineDataEntryStatus($sessionID, $visitDate);
                 $dataEntryDueDate = determineDataEntryDueDate($visitDate);
                 $instrCompleted   = getTotalInstrumentsCompleted($sessionID);
-                if ($visitLabel === "Initial_Assessment_Screening") {
-                    $screeningDone = true;
-                }
             } else {
                 $sessionID = $sessIDPlaceHold--;
             }
+
+            if ($status > 1) {
+                $visitRegStatus  = 'cancelled-visit';
+                $dataEntryStatus = 'cancelled-data';
+                $dataEntryDueDate = null;
+            } else {
+                $visitRegDueDate = determineVisitRegDueDate($visitLabel, $candID, $screeningDone);
+            }
+
             $visit = array();
             $visit['sessionID']        = $sessionID;
             $visit['visitRegStatus']   = $visitRegStatus;
             $visit['dataEntryStatus']  = $dataEntryStatus;
-            $visit['visitRegDueDate']  = determineVisitRegDueDate($visitLabel, $candID);
+            $visit['visitRegDueDate']  = $visitRegDueDate;
             $visit['dataEntryDueDate'] = $dataEntryDueDate;
             $visit['instrCompleted']   = $instrCompleted;
             $visit['totalInstrs']      = getTotalInstruments($visitLabel, $subproject);
@@ -123,15 +134,45 @@ function getTableData() {
             $visit['cohort']           = getCohortName($subproject);
             array_push($visits, $visit);
         }
-        if (!$screeningDone) {
-            foreach ($visits as $k => $v) {
-                $v['visitRegStatus'] = "no-deadline-visit";
-                $visits[$k] = $v;
-            }
-        }
+
         array_push($tableData, array('pscid' => $pscid, 'psc' => $psc, 'visits' => $visits));
     }
+
     return $tableData;
+}
+
+function screeningDone($candID) {
+    global $DB;
+
+    $screening = $DB->pselectOne(
+        "SELECT ID
+         FROM session
+         WHERE CandID=:CID AND Visit_label='Initial_Assessment_Screening' AND Current_stage <> 'Not Started'",
+        array('CID' => $candID)
+    );
+
+    error_log($screening . '\n');
+
+    if (is_numeric($screening)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function getCandidates() {
+    global $DB;
+
+    $candidates = $DB->pselect(
+        "SELECT c.PSCID, c.CandID, psc.Name, psc.Alias, ps.participant_status
+         FROM candidate c
+         LEFT JOIN psc ON psc.CenterID=c.CenterID
+         LEFT JOIN participant_status ps on ps.CandID=c.CandID
+         WHERE c.Active='Y' AND c.Entity_type='human' AND c.CenterID <> 1",
+        array()
+    );
+
+    return $candidates;
 }
 
 function dateAdd($date, $days) {
@@ -169,8 +210,8 @@ function determineDataEntryDueDate($visitDate) {
     return dateAdd($visitDate, DATA_ENTRY_DAYS);
 }
 
-function determineVisitRegStatus($visitLabel, $candID) {
-    if ($visitLabel == 'Initial_Assessment_Screening') {
+function determineVisitRegStatus($visitLabel, $candID, $screeningDone) {
+    if ($visitLabel == 'Initial_Assessment_Screening' | !$screeningDone) {
         return 'no-deadline-visit';
     }
 

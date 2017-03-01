@@ -19,6 +19,7 @@ if (isset($_GET['data'])) {
     } else if ($data == "visitLabels") {
         header('Content-Type: application/json');
         echo json_encode(getVisitLabels());
+
     } else if ($data == "instruments") {
         if ($_GET['pscid']) {
             header('Content-Type: application/json');
@@ -26,6 +27,7 @@ if (isset($_GET['data'])) {
         } else {
             header("HTTP/1.1 400 Bad Request");
         }
+
     } else if ($data == 'all') {
         header('Content-Type: application/json');
         $result = array(
@@ -357,5 +359,4 @@ function getInstruments($pscid) {
 
     return $result;
 }
-
 ?>

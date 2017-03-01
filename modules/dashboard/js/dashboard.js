@@ -166,7 +166,7 @@ var SideBarCandContent = function (_React$Component2) {
                             React.createElement(
                                 "span",
                                 { className: "complete right-align" },
-                                "\u2713"
+                                "✓"
                             )
                         ));
                     } else {
@@ -391,7 +391,7 @@ var SideBar = function (_React$Component4) {
                         className: "closebtn",
                         onClick: this.props.closeSideBar
                     },
-                    "\xD7"
+                    "×"
                 ),
                 this.props.sideBarContent
             );
@@ -648,7 +648,7 @@ var StudyTrackerHeader = function (_React$Component8) {
                 React.createElement(
                     "tr",
                     null,
-                    React.createElement("th", null),
+                    React.createElement("th", { className: "col-md-1" }),
                     visitLabelHeaders
                 )
             );

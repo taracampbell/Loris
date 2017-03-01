@@ -378,7 +378,7 @@ class StudyTrackerHeader extends React.Component {
     return (
         <thead className="StudyTrackerHeader">
             <tr>
-                <th/>
+                <th className="col-md-1"/>
                 {visitLabelHeaders}
             </tr>
         </thead>

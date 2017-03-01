@@ -68,17 +68,41 @@ class Filters extends React.Component {
 class SideBarCandInstContent extends React.Component {
     render() {
         let content = [];
+        let bold = {
+            fontWeight: "bold"
+        };
         content[0] = <h3 className="center">Participant {this.props.pscid}</h3>;
         let data = this.props.data;
         for(let v in data) {
             //console.log(visit);
-            content.push(<p>{v}</p>);
+            content.push(<h4 style={bold}>{v}</h4>);
+            console.log(data[v]);
+            if (data[v].length === 0) {
+                content.push(
+                    <p className="left-indent">
+                        Visit has not been registered yet.
+                    </p>
+                );
+            }
             for(let sg in data[v]) {
-                content.push(<p className="left-indent">{sg}</p>);
+                content.push(<p className="left-indent" style={bold}>{sg}</p>);
                 for(let i in data[v][sg]) {
                     let inst = data[v][sg][i];
-                    console.log(inst);
-                    content.push(<p className="center">{inst.testName}</p>);
+                    let checkComplete = null;
+                    if (inst.completion === "Complete") {
+                        checkComplete = <span
+                            className="complete left-align"
+                            style={bold}
+                        >
+                            &#10003;
+                        </span>;
+                    }
+                    content.push(
+                        <p className="left-indent2">
+                            {checkComplete}
+                            {inst.testName}
+                        </p>
+                    );
                 }
             }
 
@@ -120,7 +144,6 @@ class SideBarCandContent extends React.Component {
                             <p style={{fontSize: "18px"}}>
                                 {v.visitLabel}:
                                 {vr.html}
-                                <span className="complete right-align">&#10003;</span>
                             </p>
                         );
                     } else {

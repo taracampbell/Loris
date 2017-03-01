@@ -277,9 +277,9 @@ function getInstruments($pscid) {
         );
 
         $tests = $DB->pselect(
-            "SELECT Test_name, CommentID, Data_entry
+            "SELECT Test_name, Data_entry
              FROM flag
-             WHERE SessionID=:sid",
+             WHERE SessionID=:sid AND CommentID NOT LIKE 'DDE_%'",
             array("sid" => $sessID)
         );
 

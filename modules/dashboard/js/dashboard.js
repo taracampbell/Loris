@@ -127,6 +127,9 @@ var SideBarCandInstContent = function (_React$Component2) {
         key: "render",
         value: function render() {
             var content = [];
+            var bold = {
+                fontWeight: "bold"
+            };
             content[0] = React.createElement(
                 "h3",
                 { className: "center" },
@@ -137,22 +140,41 @@ var SideBarCandInstContent = function (_React$Component2) {
             for (var v in data) {
                 //console.log(visit);
                 content.push(React.createElement(
-                    "p",
-                    null,
+                    "h4",
+                    { style: bold },
                     v
                 ));
-                for (var sg in data[v]) {
+                console.log(data[v]);
+                if (data[v].length === 0) {
                     content.push(React.createElement(
                         "p",
                         { className: "left-indent" },
+                        "Visit has not been registered yet."
+                    ));
+                }
+                for (var sg in data[v]) {
+                    content.push(React.createElement(
+                        "p",
+                        { className: "left-indent", style: bold },
                         sg
                     ));
                     for (var i in data[v][sg]) {
                         var inst = data[v][sg][i];
-                        console.log(inst);
+                        var checkComplete = null;
+                        if (inst.completion === "Complete") {
+                            checkComplete = React.createElement(
+                                "span",
+                                {
+                                    className: "complete left-align",
+                                    style: bold
+                                },
+                                "\u2713"
+                            );
+                        }
                         content.push(React.createElement(
                             "p",
-                            { className: "center" },
+                            { className: "left-indent2" },
+                            checkComplete,
                             inst.testName
                         ));
                     }
@@ -218,12 +240,7 @@ var SideBarCandContent = function (_React$Component3) {
                             { style: { fontSize: "18px" } },
                             v.visitLabel,
                             ":",
-                            vr.html,
-                            React.createElement(
-                                "span",
-                                { className: "complete right-align" },
-                                "\u2713"
-                            )
+                            vr.html
                         ));
                     } else {
                         visitContent = visitContent.concat(React.createElement(

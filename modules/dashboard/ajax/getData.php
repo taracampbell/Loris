@@ -105,10 +105,11 @@ function getTableData() {
             $visitDate        = null;
             $visitRegStatus   = determineVisitRegStatus($visitLabel, $candID, $screeningDone);
             $initDataEntryStatus  = null;
-            $ddeStatus = null;
-            $visitRegDueDate  = null;
-            $dataEntryDueDate = null;
-            $instrCompleted   = 0;
+            $ddeStatus         = null;
+            $visitRegDueDate   = null;
+            $dataEntryDueDate  = null;
+            $instrCompleted    = 0;
+            $ddeInstrCompleted = 0;
 
             if (!empty($session) && $session['Current_stage'] != 'Not Started') {
                 $sessionID        = $session['ID'];
@@ -116,14 +117,23 @@ function getTableData() {
                 $visitDate        = $session['Date_visit'];
                 $visitRegStatus   = 'complete-visit';
                 $instrCompleted = getInitTotalInstrumentsCompleted($sessionID);
-                $totalInsts = getTotalInstruments($visitLabel, $subproject);
-                if ($instrCompleted == $totalInsts) {
+                $totalInstrs = getTotalInstruments($visitLabel, $subproject);
+                $dataEntryDueDate = determineDataEntryDueDate($visitDate);
+                $ddeInstrCompleted = getDDETotalInstrumentsCompleted($sessionID);
+
+                if ($instrCompleted == $totalInstrs) {
                     $initDataEntryStatus = "complete-init-data-entry";
                 } else {
                     $initDataEntryStatus = determineInitDataEntryStatus($sessionID, $visitDate);
                 }
 
-                $dataEntryDueDate = determineDataEntryDueDate($visitDate);
+                if ($ddeInstrCompleted == $totalInstrs) {
+                    $ddeStatus = "complete-dde";
+                } else if ($ddeInstrCompleted > 0) {
+                    $ddeStatus = "dde-in-progress";
+                } else {
+                    $ddeStatus = "dde-not-started";
+                }
             } else {
                 $sessionID = $sessIDPlaceHold--;
             }
@@ -139,9 +149,11 @@ function getTableData() {
             $visit['sessionID']            = $sessionID;
             $visit['visitRegStatus']       = $visitRegStatus;
             $visit['initDataEntryStatus']  = $initDataEntryStatus;
+            $visit['ddeStatus']            = $ddeStatus;
             $visit['visitRegDueDate']      = $visitRegDueDate;
             $visit['dataEntryDueDate']     = $dataEntryDueDate;
             $visit['instrCompleted']       = $instrCompleted;
+            $visit['ddeInstrCompleted']    = $ddeInstrCompleted;
             $visit['totalInstrs']          = getTotalInstruments($visitLabel, $subproject);
             $visit['visitLabel']           = $visitLabel;
             $visit['cohort']               = getCohortName($subproject);
@@ -267,6 +279,19 @@ function getTotalInstruments($visitLabel, $subproject) {
             'CID' => $subproject,
             'V'   => $visitLabel
         )
+    );
+
+    return $totalInstruments;
+}
+
+function getDDETotalInstrumentsCompleted($sessionID) {
+    global $DB;
+
+    $totalInstruments = $DB->pselectOne(
+        "SELECT COUNT(ID)
+         FROM flag
+         WHERE SessionID=:SID AND Data_entry='Complete' AND CommentID LIKE 'DDE_%'",
+        array('SID' => $sessionID)
     );
 
     return $totalInstruments;

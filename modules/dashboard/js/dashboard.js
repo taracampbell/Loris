@@ -487,15 +487,16 @@ var VisitCell = function (_React$Component6) {
     _createClass(VisitCell, [{
         key: "render",
         value: function render() {
+            var visit = this.props.visit;
             var style = {};
-            if (this.props.visit.visitLabel === this.props.currentVisit) {
+            if (visit.visitLabel === this.props.currentVisit) {
                 style = { backgroundColor: HIGHLIGHT_COLOR };
             }
-            if (this.props.visit.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
-                var visitClass = "circle " + this.props.visit.initDataEntryStatus + " " + this.props.visit.visitRegStatus;
+            if (visit.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
+                var visitClass = "circle " + visit.initDataEntryStatus + " " + visit.visitRegStatus;
 
                 var tooltipContent = [];
-                var vr = this.props.prettyStatus(this.props.visit.visitRegStatus, this.props.visit.visitRegDueDate);
+                var vr = this.props.prettyStatus(visit.visitRegStatus, visit.visitRegDueDate);
                 tooltipContent.push(React.createElement(
                     "p",
                     null,

@@ -259,18 +259,19 @@ class SideBar extends React.Component {
 
 class VisitCell extends React.Component {
     render () {
+        let visit = this.props.visit;
         let style = {};
-        if (this.props.visit.visitLabel === this.props.currentVisit) {
+        if (visit.visitLabel === this.props.currentVisit) {
             style = {backgroundColor: HIGHLIGHT_COLOR};
         }
-        if (this.props.visit.cohort === this.props.currentCohort
+        if (visit.cohort === this.props.currentCohort
             || this.props.currentCohort === "all") {
             let visitClass = "circle "
-                + this.props.visit.initDataEntryStatus + " "
-                + this.props.visit.visitRegStatus;
+                + visit.initDataEntryStatus + " "
+                + visit.visitRegStatus;
 
             let tooltipContent = [];
-            let vr = this.props.prettyStatus(this.props.visit.visitRegStatus, this.props.visit.visitRegDueDate);
+            let vr = this.props.prettyStatus(visit.visitRegStatus, visit.visitRegDueDate);
             tooltipContent.push(<p>Visit Registration: {vr.html}</p>);
 
             if (this.props.visit.initDataEntryStatus) {

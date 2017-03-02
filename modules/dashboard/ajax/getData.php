@@ -278,7 +278,7 @@ function getInitTotalInstrumentsCompleted($sessionID) {
     $totalInstruments = $DB->pselectOne(
         "SELECT COUNT(ID)
          FROM flag
-         WHERE SessionID=:SID AND Data_entry='Complete'",
+         WHERE SessionID=:SID AND Data_entry='Complete' AND CommentID NOT LIKE 'DDE_%'",
         array('SID' => $sessionID)
     );
 

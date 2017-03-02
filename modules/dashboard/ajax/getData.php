@@ -104,41 +104,59 @@ function getTableData() {
             $subproject       = null;
             $visitDate        = null;
             $visitRegStatus   = determineVisitRegStatus($visitLabel, $candID, $screeningDone);
-            $dataEntryStatus  = null;
-            $visitRegDueDate  = null;
-            $dataEntryDueDate = null;
-            $instrCompleted   = 0;
+            $initDataEntryStatus  = null;
+            $ddeStatus         = null;
+            $visitRegDueDate   = null;
+            $dataEntryDueDate  = null;
+            $instrCompleted    = 0;
+            $ddeInstrCompleted = 0;
 
             if (!empty($session) && $session['Current_stage'] != 'Not Started') {
                 $sessionID        = $session['ID'];
                 $subproject       = $session['SubprojectID'];
                 $visitDate        = $session['Date_visit'];
                 $visitRegStatus   = 'complete-visit';
-                $dataEntryStatus  = determineDataEntryStatus($sessionID, $visitDate);
+                $instrCompleted = getInitTotalInstrumentsCompleted($sessionID);
+                $totalInstrs = getTotalInstruments($visitLabel, $subproject);
                 $dataEntryDueDate = determineDataEntryDueDate($visitDate);
-                $instrCompleted   = getTotalInstrumentsCompleted($sessionID);
+                $ddeInstrCompleted = getDDETotalInstrumentsCompleted($sessionID);
+
+                if ($instrCompleted == $totalInstrs) {
+                    $initDataEntryStatus = "complete-init-data-entry";
+                } else {
+                    $initDataEntryStatus = determineInitDataEntryStatus($sessionID, $visitDate);
+                }
+
+                if ($ddeInstrCompleted == $totalInstrs) {
+                    $ddeStatus = "complete-dde";
+                } else if ($ddeInstrCompleted > 0) {
+                    $ddeStatus = "dde-in-progress";
+                } else {
+                    $ddeStatus = "dde-not-started";
+                }
             } else {
                 $sessionID = $sessIDPlaceHold--;
             }
-
             if ($status > 1) {
                 $visitRegStatus  = 'cancelled-visit';
-                $dataEntryStatus = 'cancelled-data';
+                $initDataEntryStatus = 'cancelled-data';
                 $dataEntryDueDate = null;
             } else {
                 $visitRegDueDate = determineVisitRegDueDate($visitLabel, $candID, $screeningDone);
             }
 
             $visit = array();
-            $visit['sessionID']        = $sessionID;
-            $visit['visitRegStatus']   = $visitRegStatus;
-            $visit['dataEntryStatus']  = $dataEntryStatus;
-            $visit['visitRegDueDate']  = $visitRegDueDate;
-            $visit['dataEntryDueDate'] = $dataEntryDueDate;
-            $visit['instrCompleted']   = $instrCompleted;
-            $visit['totalInstrs']      = getTotalInstruments($visitLabel, $subproject);
-            $visit['visitLabel']       = $visitLabel;
-            $visit['cohort']           = getCohortName($subproject);
+            $visit['sessionID']            = $sessionID;
+            $visit['visitRegStatus']       = $visitRegStatus;
+            $visit['initDataEntryStatus']  = $initDataEntryStatus;
+            $visit['ddeStatus']            = $ddeStatus;
+            $visit['visitRegDueDate']      = $visitRegDueDate;
+            $visit['dataEntryDueDate']     = $dataEntryDueDate;
+            $visit['instrCompleted']       = $instrCompleted;
+            $visit['ddeInstrCompleted']    = $ddeInstrCompleted;
+            $visit['totalInstrs']          = getTotalInstruments($visitLabel, $subproject);
+            $visit['visitLabel']           = $visitLabel;
+            $visit['cohort']               = getCohortName($subproject);
             array_push($visits, $visit);
         }
 
@@ -229,22 +247,20 @@ function determineVisitRegStatus($visitLabel, $candID, $screeningDone) {
     }
 }
 
-function determineDataEntryStatus($sessionID, $visitDate) {
+function determineInitDataEntryStatus($sessionID, $visitDate) {
     global $DB;
 
     $session = $DB->pselect(
-        "SELECT Submitted, Current_stage
+        "SELECT Current_stage
          FROM session
          WHERE ID=:SID",
         array('SID' => $sessionID)
     );
 
+
     if ($session['Current_stage'] == 'Recycling Bin') {
         return 'cancelled-data';
-    } else if ($session['Submitted'] =='Y') {
-        return 'complete-data-entry';
     }
-
     if (!datePast(determineDataEntryDueDate($visitDate))) {
         return 'deadline-approaching-data-entry';
     } else {
@@ -268,13 +284,26 @@ function getTotalInstruments($visitLabel, $subproject) {
     return $totalInstruments;
 }
 
-function getTotalInstrumentsCompleted($sessionID) {
+function getDDETotalInstrumentsCompleted($sessionID) {
     global $DB;
 
     $totalInstruments = $DB->pselectOne(
         "SELECT COUNT(ID)
          FROM flag
-         WHERE SessionID=:SID AND Data_entry='Complete'",
+         WHERE SessionID=:SID AND Data_entry='Complete' AND CommentID LIKE 'DDE_%'",
+        array('SID' => $sessionID)
+    );
+
+    return $totalInstruments;
+}
+
+function getInitTotalInstrumentsCompleted($sessionID) {
+    global $DB;
+
+    $totalInstruments = $DB->pselectOne(
+        "SELECT COUNT(ID)
+         FROM flag
+         WHERE SessionID=:SID AND Data_entry='Complete' AND CommentID NOT LIKE 'DDE_%'",
         array('SID' => $sessionID)
     );
 

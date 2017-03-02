@@ -98,6 +98,10 @@ body {
     margin: auto;
 }
 
+.complete-init {
+    color: #00DD00
+}
+
 .complete {
     color: #4A90E2;
 }
@@ -125,7 +129,14 @@ body {
     margin: auto;
 }
 
-.complete-data-entry {
+.complete-init-data-entry {
+    background-image:
+        radial-gradient(
+            circle, #7CFC00, #00FF00
+        );
+}
+
+.complete-dde {
     background-image:
         radial-gradient(
             circle, #6CB3E8, #4A90E2

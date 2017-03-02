@@ -138,7 +138,7 @@ class SideBarCandContent extends React.Component {
             function(v) {
                 if (v.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
                     let vr = this.props.prettyStatus(v.visitRegStatus, v.visitRegDueDate);
-                    let de = this.props.prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
+                    let de = this.props.prettyStatus(v.initDataEntryStatus, v.dataEntryDueDate);
                     if (vr.status === "complete" && de.status === "complete") {
                         visitContent = visitContent.concat(
                             <p style={{fontSize: "18px"}}>
@@ -151,7 +151,7 @@ class SideBarCandContent extends React.Component {
                             <div>
                                 <h4>{v.visitLabel}:</h4>
                                 <p className="left-indent">Visit Registration: {vr.html}</p>
-                                <p className="left-indent">Data Entry: {de.html}</p>
+                                <p className="left-indent">Initial Data Entry: {de.html}</p>
                             </div>
                         );
                     }
@@ -207,7 +207,7 @@ class SideBarVisitContent extends React.Component {
                                 <p className="left-indent">{pscid}: {vr.html}</p>
                             );
                         }
-                        let de = this.props.prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
+                        let de = this.props.prettyStatus(v.initDataEntryStatus, v.dataEntryDueDate);
                         if (de.status === "deadline-past" || de.status === "deadline-approaching") {
                             dataDeadlines = dataDeadlines.concat(
                                 <p className="left-indent">{pscid}: {de.html}</p>
@@ -258,36 +258,79 @@ class SideBar extends React.Component {
 
 class VisitCell extends React.Component {
     render () {
+        let visit = this.props.visit;
         let style = {};
-        if (this.props.visit.visitLabel === this.props.currentVisit) {
+        if (visit.visitLabel === this.props.currentVisit) {
             style = {backgroundColor: HIGHLIGHT_COLOR};
         }
-        if (this.props.visit.cohort === this.props.currentCohort
+        if (visit.cohort === this.props.currentCohort
             || this.props.currentCohort === "all") {
+            let deClass = (visit.ddeStatus == "complete-dde") ? visit.ddeStatus : visit.initDataEntryStatus;
             let visitClass = "circle "
-                + this.props.visit.dataEntryStatus + " "
-                + this.props.visit.visitRegStatus;
+                + deClass + " "
+                + visit.visitRegStatus;
 
             let tooltipContent = [];
-            let vr = this.props.prettyStatus(this.props.visit.visitRegStatus, this.props.visit.visitRegDueDate);
+            let vr = this.props.prettyStatus(visit.visitRegStatus, visit.visitRegDueDate);
             tooltipContent.push(<p>Visit Registration: {vr.html}</p>);
 
-            if (this.props.visit.dataEntryStatus) {
-                let de = this.props.prettyStatus(this.props.visit.dataEntryStatus, this.props.visit.dataEntryDueDate);
-                tooltipContent.push(<p>Data Entry: {de.html}</p>);
+            if (visit.initDataEntryStatus) {
+                let de = this.props.prettyStatus(visit.initDataEntryStatus, visit.dataEntryDueDate);
+
+                if (de.status === "complete") {
+                    let dde = this.props.prettyStatus(visit.ddeStatus, new Date());
+                    if (dde.status === "complete") {
+                        tooltipContent.push(<p>Double Data Entry: {dde.html}</p>);
+                    } else {
+                        tooltipContent.push(<p>Initial Data Entry: {de.html}</p>);
+                        tooltipContent.push(<p>Double Data Entry: {dde.html}</p>);
+                        tooltipContent.push(
+                            <p className="center">
+                                <i>
+                                    {visit.instrCompleted}/{visit.totalInstrs} instruments entered
+                                </i>
+                            </p>
+                        );
+                        tooltipContent.push(
+                            <p className="center">
+                                <i>
+                                    {visit.ddeInstrCompleted}/{visit.totalInstrs} DDE completed
+                                </i>
+                            </p>
+                        );
+                    }
+                } else {
+                    tooltipContent.push(<p>Initial Data Entry: {de.html}</p>);
+                    tooltipContent.push(
+                        <p className="center">
+                            <i>
+                                {visit.instrCompleted}/{visit.totalInstrs} instruments entered
+                            </i>
+                        </p>
+                    );
+                }
+            }
+            /*if (visit.ddeStatus === "complete-dde") {
+                // no deadline for dde yet, so just pass it unused dummy value
+                let dde = this.props.prettyStatus(visit.ddeStatus, new Date());
+                tooltipContent.push(<p>Double Data Entry: {dde.html}</p>);
+            }
+            else if (visit.initDataEntryStatus) {
+                let de = this.props.prettyStatus(visit.initDataEntryStatus, visit.dataEntryDueDate);
+                tooltipContent.push(<p>Initial Data Entry: {de.html}</p>);
                 tooltipContent.push(
                     <p className="center">
                         <i>
-                            {this.props.visit.instrCompleted}/{this.props.visit.totalInstrs} instruments entered
+                            {visit.instrCompleted}/{visit.totalInstrs} instruments entered
                         </i>
                     </p>
                 );
-            }
+            }*/
 
             return (
-                <td className={this.props.visit.visitLabel} style={style}>
-                    <div data-tip data-for={this.props.visit.sessionID} className={visitClass}>
-                        <ReactTooltip id={this.props.visit.sessionID} place="top" type="dark" effect="solid">
+                <td className={visit.visitLabel} style={style}>
+                    <div data-tip data-for={visit.sessionID} className={visitClass}>
+                        <ReactTooltip id={visit.sessionID} place="top" type="dark" effect="solid">
                             <div className="ReactTooltipContent">
                                 {tooltipContent}
                             </div>
@@ -296,7 +339,7 @@ class VisitCell extends React.Component {
                 </td>
             );
         } else {
-            return (<td className={this.props.visit.visitLabel} style={style}/>);
+            return (<td className={visit.visitLabel} style={style}/>);
         }
     }
 }
@@ -500,7 +543,6 @@ class StudyTracker extends React.Component {
     prettyStatus(status, dueDate) {
         let html, toReturn;
 
-
         toReturn = {
             "status": "",
             "html": ""
@@ -508,12 +550,41 @@ class StudyTracker extends React.Component {
 
         if (!status) return toReturn;
 
-        if (~status.indexOf("complete")) {
+        if (~status.indexOf("complete-init")) {
+            html = <span className="complete-init right-align right-indent">Complete</span>;
+            toReturn = {
+                "status":"complete",
+                "html": html
+            };
+            return toReturn;
+        } else if (~status.indexOf("complete-dde")) {
             html = <span className="complete right-align right-indent">Complete</span>;
             toReturn = {
                 "status":"complete",
                 "html":html
             };
+            return toReturn;
+        } else if (~status.indexOf("complete-visit")) {
+            html = <span className="complete right-align right-indent">Complete</span>;
+            toReturn = {
+                "status": "complete",
+                "html": html
+            };
+            return toReturn;
+        } else if (~status.indexOf("dde-in-progress")) {
+            html = <span className="deadline-approaching right-align right-indent">In Progress</span>;
+            toReturn = {
+                "status":"in-progress",
+                "html":html
+            }
+            return toReturn;
+        } else if (~status.indexOf("dde-not-started")) {
+            html = <span className="deadline-past right-align right-indent">Not started</span>;
+            toReturn = {
+                "status":"not-started",
+                "html":html
+            };
+            return toReturn;
         } else if (~status.indexOf("deadline-approaching")) {
             let daysLeft = Math.ceil((new Date(dueDate) - new Date()) * MS_TO_DAYS) + "";
 
@@ -523,6 +594,7 @@ class StudyTracker extends React.Component {
                 "status":"deadline-approaching",
                 "html":html
             };
+            return toReturn;
         } else if (~status.indexOf("deadline-past")) {
             let daysPast = Math.ceil((new Date() - new Date(dueDate)) * MS_TO_DAYS);
             daysPast += daysPast == 1 ? " day" : " days";
@@ -531,21 +603,23 @@ class StudyTracker extends React.Component {
                 "status":"deadline-past",
                 "html":html
             };
+            return toReturn;
         } else if (~status.indexOf("cancelled")) {
             html = <span className="cancelled right-align right-indent">Visit cancelled</span>;
             toReturn = {
                 "status":"cancelled",
                 "html":html
             };
-
+            return toReturn;
         } else if (~status.indexOf("no-deadline")) {
             html = <span className="no-deadline right-align right-indent">No deadline specified</span>;
             toReturn = {
                 "status":"no-deadline",
                 "html":html
             };
-        }
+            return toReturn;
 
+        }
         return toReturn;
     }
 

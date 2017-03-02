@@ -233,7 +233,7 @@ var SideBarCandContent = function (_React$Component3) {
             visits.forEach(function (v) {
                 if (v.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
                     var vr = this.props.prettyStatus(v.visitRegStatus, v.visitRegDueDate);
-                    var de = this.props.prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
+                    var de = this.props.prettyStatus(v.initDataEntryStatus, v.dataEntryDueDate);
                     if (vr.status === "complete" && de.status === "complete") {
                         visitContent = visitContent.concat(React.createElement(
                             "p",
@@ -261,7 +261,7 @@ var SideBarCandContent = function (_React$Component3) {
                             React.createElement(
                                 "p",
                                 { className: "left-indent" },
-                                "Data Entry: ",
+                                "Initial Data Entry: ",
                                 de.html
                             )
                         ));
@@ -370,7 +370,7 @@ var SideBarVisitContent = function (_React$Component4) {
                                             vr.html
                                         ));
                                     }
-                                    var de = this.props.prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
+                                    var de = this.props.prettyStatus(v.initDataEntryStatus, v.dataEntryDueDate);
                                     if (de.status === "deadline-past" || de.status === "deadline-approaching") {
                                         dataDeadlines = dataDeadlines.concat(React.createElement(
                                             "p",
@@ -486,15 +486,17 @@ var VisitCell = function (_React$Component6) {
     _createClass(VisitCell, [{
         key: "render",
         value: function render() {
+            var visit = this.props.visit;
             var style = {};
-            if (this.props.visit.visitLabel === this.props.currentVisit) {
+            if (visit.visitLabel === this.props.currentVisit) {
                 style = { backgroundColor: HIGHLIGHT_COLOR };
             }
-            if (this.props.visit.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
-                var visitClass = "circle " + this.props.visit.dataEntryStatus + " " + this.props.visit.visitRegStatus;
+            if (visit.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
+                var deClass = visit.ddeStatus == "complete-dde" ? visit.ddeStatus : visit.initDataEntryStatus;
+                var visitClass = "circle " + deClass + " " + visit.visitRegStatus;
 
                 var tooltipContent = [];
-                var vr = this.props.prettyStatus(this.props.visit.visitRegStatus, this.props.visit.visitRegDueDate);
+                var vr = this.props.prettyStatus(visit.visitRegStatus, visit.visitRegDueDate);
                 tooltipContent.push(React.createElement(
                     "p",
                     null,
@@ -502,37 +504,103 @@ var VisitCell = function (_React$Component6) {
                     vr.html
                 ));
 
-                if (this.props.visit.dataEntryStatus) {
-                    var de = this.props.prettyStatus(this.props.visit.dataEntryStatus, this.props.visit.dataEntryDueDate);
-                    tooltipContent.push(React.createElement(
-                        "p",
-                        null,
-                        "Data Entry: ",
-                        de.html
-                    ));
-                    tooltipContent.push(React.createElement(
-                        "p",
-                        { className: "center" },
-                        React.createElement(
-                            "i",
+                if (visit.initDataEntryStatus) {
+                    var de = this.props.prettyStatus(visit.initDataEntryStatus, visit.dataEntryDueDate);
+
+                    if (de.status === "complete") {
+                        var dde = this.props.prettyStatus(visit.ddeStatus, new Date());
+                        if (dde.status === "complete") {
+                            tooltipContent.push(React.createElement(
+                                "p",
+                                null,
+                                "Double Data Entry: ",
+                                dde.html
+                            ));
+                        } else {
+                            tooltipContent.push(React.createElement(
+                                "p",
+                                null,
+                                "Initial Data Entry: ",
+                                de.html
+                            ));
+                            tooltipContent.push(React.createElement(
+                                "p",
+                                null,
+                                "Double Data Entry: ",
+                                dde.html
+                            ));
+                            tooltipContent.push(React.createElement(
+                                "p",
+                                { className: "center" },
+                                React.createElement(
+                                    "i",
+                                    null,
+                                    visit.instrCompleted,
+                                    "/",
+                                    visit.totalInstrs,
+                                    " instruments entered"
+                                )
+                            ));
+                            tooltipContent.push(React.createElement(
+                                "p",
+                                { className: "center" },
+                                React.createElement(
+                                    "i",
+                                    null,
+                                    visit.ddeInstrCompleted,
+                                    "/",
+                                    visit.totalInstrs,
+                                    " DDE completed"
+                                )
+                            ));
+                        }
+                    } else {
+                        tooltipContent.push(React.createElement(
+                            "p",
                             null,
-                            this.props.visit.instrCompleted,
-                            "/",
-                            this.props.visit.totalInstrs,
-                            " instruments entered"
-                        )
-                    ));
+                            "Initial Data Entry: ",
+                            de.html
+                        ));
+                        tooltipContent.push(React.createElement(
+                            "p",
+                            { className: "center" },
+                            React.createElement(
+                                "i",
+                                null,
+                                visit.instrCompleted,
+                                "/",
+                                visit.totalInstrs,
+                                " instruments entered"
+                            )
+                        ));
+                    }
                 }
+                /*if (visit.ddeStatus === "complete-dde") {
+                    // no deadline for dde yet, so just pass it unused dummy value
+                    let dde = this.props.prettyStatus(visit.ddeStatus, new Date());
+                    tooltipContent.push(<p>Double Data Entry: {dde.html}</p>);
+                }
+                else if (visit.initDataEntryStatus) {
+                    let de = this.props.prettyStatus(visit.initDataEntryStatus, visit.dataEntryDueDate);
+                    tooltipContent.push(<p>Initial Data Entry: {de.html}</p>);
+                    tooltipContent.push(
+                        <p className="center">
+                            <i>
+                                {visit.instrCompleted}/{visit.totalInstrs} instruments entered
+                            </i>
+                        </p>
+                    );
+                }*/
 
                 return React.createElement(
                     "td",
-                    { className: this.props.visit.visitLabel, style: style },
+                    { className: visit.visitLabel, style: style },
                     React.createElement(
                         "div",
-                        { "data-tip": true, "data-for": this.props.visit.sessionID, className: visitClass },
+                        { "data-tip": true, "data-for": visit.sessionID, className: visitClass },
                         React.createElement(
                             ReactTooltip,
-                            { id: this.props.visit.sessionID, place: "top", type: "dark", effect: "solid" },
+                            { id: visit.sessionID, place: "top", type: "dark", effect: "solid" },
                             React.createElement(
                                 "div",
                                 { className: "ReactTooltipContent" },
@@ -542,7 +610,7 @@ var VisitCell = function (_React$Component6) {
                     )
                 );
             } else {
-                return React.createElement("td", { className: this.props.visit.visitLabel, style: style });
+                return React.createElement("td", { className: visit.visitLabel, style: style });
             }
         }
     }]);
@@ -814,7 +882,18 @@ var StudyTracker = function (_React$Component10) {
 
             if (!status) return toReturn;
 
-            if (~status.indexOf("complete")) {
+            if (~status.indexOf("complete-init")) {
+                html = React.createElement(
+                    "span",
+                    { className: "complete-init right-align right-indent" },
+                    "Complete"
+                );
+                toReturn = {
+                    "status": "complete",
+                    "html": html
+                };
+                return toReturn;
+            } else if (~status.indexOf("complete-dde")) {
                 html = React.createElement(
                     "span",
                     { className: "complete right-align right-indent" },
@@ -824,6 +903,40 @@ var StudyTracker = function (_React$Component10) {
                     "status": "complete",
                     "html": html
                 };
+                return toReturn;
+            } else if (~status.indexOf("complete-visit")) {
+                html = React.createElement(
+                    "span",
+                    { className: "complete right-align right-indent" },
+                    "Complete"
+                );
+                toReturn = {
+                    "status": "complete",
+                    "html": html
+                };
+                return toReturn;
+            } else if (~status.indexOf("dde-in-progress")) {
+                html = React.createElement(
+                    "span",
+                    { className: "deadline-approaching right-align right-indent" },
+                    "In Progress"
+                );
+                toReturn = {
+                    "status": "in-progress",
+                    "html": html
+                };
+                return toReturn;
+            } else if (~status.indexOf("dde-not-started")) {
+                html = React.createElement(
+                    "span",
+                    { className: "deadline-past right-align right-indent" },
+                    "Not started"
+                );
+                toReturn = {
+                    "status": "not-started",
+                    "html": html
+                };
+                return toReturn;
             } else if (~status.indexOf("deadline-approaching")) {
                 var daysLeft = Math.ceil((new Date(dueDate) - new Date()) * MS_TO_DAYS) + "";
 
@@ -838,6 +951,7 @@ var StudyTracker = function (_React$Component10) {
                     "status": "deadline-approaching",
                     "html": html
                 };
+                return toReturn;
             } else if (~status.indexOf("deadline-past")) {
                 var daysPast = Math.ceil((new Date() - new Date(dueDate)) * MS_TO_DAYS);
                 daysPast += daysPast == 1 ? " day" : " days";
@@ -851,6 +965,7 @@ var StudyTracker = function (_React$Component10) {
                     "status": "deadline-past",
                     "html": html
                 };
+                return toReturn;
             } else if (~status.indexOf("cancelled")) {
                 html = React.createElement(
                     "span",
@@ -861,6 +976,7 @@ var StudyTracker = function (_React$Component10) {
                     "status": "cancelled",
                     "html": html
                 };
+                return toReturn;
             } else if (~status.indexOf("no-deadline")) {
                 html = React.createElement(
                     "span",
@@ -871,8 +987,8 @@ var StudyTracker = function (_React$Component10) {
                     "status": "no-deadline",
                     "html": html
                 };
+                return toReturn;
             }
-
             return toReturn;
         }
     }, {

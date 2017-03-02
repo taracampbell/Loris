@@ -2,6 +2,7 @@ const MS_TO_DAYS = 1/(1000 * 60 * 60 * 24);
 const SIDEBAR_WIDTH = "20%";
 const HIGHLIGHT_COLOR = "#E9EBF3";
 const GET_DATA_URL = loris.BaseURL + "/dashboard/ajax/getData.php";
+console.log(loris.BaseURL);
 
 function SiteFilter(props) {
     let options = [];
@@ -265,15 +266,15 @@ class VisitCell extends React.Component {
         if (this.props.visit.cohort === this.props.currentCohort
             || this.props.currentCohort === "all") {
             let visitClass = "circle "
-                + this.props.visit.dataEntryStatus + " "
+                + this.props.visit.initDataEntryStatus + " "
                 + this.props.visit.visitRegStatus;
 
             let tooltipContent = [];
             let vr = this.props.prettyStatus(this.props.visit.visitRegStatus, this.props.visit.visitRegDueDate);
             tooltipContent.push(<p>Visit Registration: {vr.html}</p>);
 
-            if (this.props.visit.dataEntryStatus) {
-                let de = this.props.prettyStatus(this.props.visit.dataEntryStatus, this.props.visit.dataEntryDueDate);
+            if (this.props.visit.initDataEntryStatus) {
+                let de = this.props.prettyStatus(this.props.visit.initDataEntryStatus, this.props.visit.dataEntryDueDate);
                 tooltipContent.push(<p>Data Entry: {de.html}</p>);
                 tooltipContent.push(
                     <p className="center">
@@ -499,7 +500,6 @@ class StudyTracker extends React.Component {
     // Returns an object which contains a clean status and styled html to display
     prettyStatus(status, dueDate) {
         let html, toReturn;
-
 
         toReturn = {
             "status": "",

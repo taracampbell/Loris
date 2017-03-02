@@ -12,6 +12,7 @@ var MS_TO_DAYS = 1 / (1000 * 60 * 60 * 24);
 var SIDEBAR_WIDTH = "20%";
 var HIGHLIGHT_COLOR = "#E9EBF3";
 var GET_DATA_URL = loris.BaseURL + "/dashboard/ajax/getData.php";
+console.log(loris.BaseURL);
 
 function SiteFilter(props) {
     var options = [];
@@ -491,7 +492,7 @@ var VisitCell = function (_React$Component6) {
                 style = { backgroundColor: HIGHLIGHT_COLOR };
             }
             if (this.props.visit.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
-                var visitClass = "circle " + this.props.visit.dataEntryStatus + " " + this.props.visit.visitRegStatus;
+                var visitClass = "circle " + this.props.visit.initDataEntryStatus + " " + this.props.visit.visitRegStatus;
 
                 var tooltipContent = [];
                 var vr = this.props.prettyStatus(this.props.visit.visitRegStatus, this.props.visit.visitRegDueDate);
@@ -502,8 +503,8 @@ var VisitCell = function (_React$Component6) {
                     vr.html
                 ));
 
-                if (this.props.visit.dataEntryStatus) {
-                    var de = this.props.prettyStatus(this.props.visit.dataEntryStatus, this.props.visit.dataEntryDueDate);
+                if (this.props.visit.initDataEntryStatus) {
+                    var de = this.props.prettyStatus(this.props.visit.initDataEntryStatus, this.props.visit.dataEntryDueDate);
                     tooltipContent.push(React.createElement(
                         "p",
                         null,

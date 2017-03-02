@@ -104,7 +104,8 @@ function getTableData() {
             $subproject       = null;
             $visitDate        = null;
             $visitRegStatus   = determineVisitRegStatus($visitLabel, $candID, $screeningDone);
-            $dataEntryStatus  = null;
+            $initDataEntryStatus  = null;
+            $ddeStatus = null;
             $visitRegDueDate  = null;
             $dataEntryDueDate = null;
             $instrCompleted   = 0;
@@ -114,31 +115,36 @@ function getTableData() {
                 $subproject       = $session['SubprojectID'];
                 $visitDate        = $session['Date_visit'];
                 $visitRegStatus   = 'complete-visit';
-                $dataEntryStatus  = determineDataEntryStatus($sessionID, $visitDate);
+                $instrCompleted = getInitTotalInstrumentsCompleted($sessionID);
+                $totalInsts = getTotalInstruments($visitLabel, $subproject);
+                if ($instrCompleted == $totalInsts) {
+                    $initDataEntryStatus = "complete-init-data-entry";
+                } else {
+                    $initDataEntryStatus = determineInitDataEntryStatus($sessionID, $visitDate);
+                }
+
                 $dataEntryDueDate = determineDataEntryDueDate($visitDate);
-                $instrCompleted   = getTotalInstrumentsCompleted($sessionID);
             } else {
                 $sessionID = $sessIDPlaceHold--;
             }
-
             if ($status > 1) {
                 $visitRegStatus  = 'cancelled-visit';
-                $dataEntryStatus = 'cancelled-data';
+                $initDataEntryStatus = 'cancelled-data';
                 $dataEntryDueDate = null;
             } else {
                 $visitRegDueDate = determineVisitRegDueDate($visitLabel, $candID, $screeningDone);
             }
 
             $visit = array();
-            $visit['sessionID']        = $sessionID;
-            $visit['visitRegStatus']   = $visitRegStatus;
-            $visit['dataEntryStatus']  = $dataEntryStatus;
-            $visit['visitRegDueDate']  = $visitRegDueDate;
-            $visit['dataEntryDueDate'] = $dataEntryDueDate;
-            $visit['instrCompleted']   = $instrCompleted;
-            $visit['totalInstrs']      = getTotalInstruments($visitLabel, $subproject);
-            $visit['visitLabel']       = $visitLabel;
-            $visit['cohort']           = getCohortName($subproject);
+            $visit['sessionID']            = $sessionID;
+            $visit['visitRegStatus']       = $visitRegStatus;
+            $visit['initDataEntryStatus']  = $initDataEntryStatus;
+            $visit['visitRegDueDate']      = $visitRegDueDate;
+            $visit['dataEntryDueDate']     = $dataEntryDueDate;
+            $visit['instrCompleted']       = $instrCompleted;
+            $visit['totalInstrs']          = getTotalInstruments($visitLabel, $subproject);
+            $visit['visitLabel']           = $visitLabel;
+            $visit['cohort']               = getCohortName($subproject);
             array_push($visits, $visit);
         }
 
@@ -229,22 +235,20 @@ function determineVisitRegStatus($visitLabel, $candID, $screeningDone) {
     }
 }
 
-function determineDataEntryStatus($sessionID, $visitDate) {
+function determineInitDataEntryStatus($sessionID, $visitDate) {
     global $DB;
 
     $session = $DB->pselect(
-        "SELECT Submitted, Current_stage
+        "SELECT Current_stage
          FROM session
          WHERE ID=:SID",
         array('SID' => $sessionID)
     );
 
+
     if ($session['Current_stage'] == 'Recycling Bin') {
         return 'cancelled-data';
-    } else if ($session['Submitted'] =='Y') {
-        return 'complete-data-entry';
     }
-
     if (!datePast(determineDataEntryDueDate($visitDate))) {
         return 'deadline-approaching-data-entry';
     } else {
@@ -268,7 +272,7 @@ function getTotalInstruments($visitLabel, $subproject) {
     return $totalInstruments;
 }
 
-function getTotalInstrumentsCompleted($sessionID) {
+function getInitTotalInstrumentsCompleted($sessionID) {
     global $DB;
 
     $totalInstruments = $DB->pselectOne(

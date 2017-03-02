@@ -4,6 +4,15 @@ body {
     font-family: sans-serif;
 }
 
+#legend-link{
+    color: black;
+    font-weight: bold;
+    text-align: center;
+    margin: auto;
+    display: inline-block;
+    width: initial;
+}
+
 .dashboard-header {
     margin: 0;
 }

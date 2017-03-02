@@ -665,18 +665,24 @@ var StudyTrackerHeader = function (_React$Component9) {
         _this9.state = {
             visitInFocus: null
         };
+        _this9.showLegend = _this9.showLegend.bind(_this9);
         _this9.highlightColumns = _this9.highlightColumns.bind(_this9);
         _this9.unhighlightColumns = _this9.unhighlightColumns.bind(_this9);
         _this9.keepHighlightedShowVisitFocus = _this9.keepHighlightedShowVisitFocus.bind(_this9);
         return _this9;
     }
 
-    // When mouse enters header cell, highlight all cells for that visit
-    // This means that the text that shows up in the column header
-    // must be equal to the css class name which is perhaps bad design
-
-
     _createClass(StudyTrackerHeader, [{
+        key: "showLegend",
+        value: function showLegend(event) {
+            swal("hello");
+        }
+
+        // When mouse enters header cell, highlight all cells for that visit
+        // This means that the text that shows up in the column header
+        // must be equal to the css class name which is perhaps bad design
+
+    }, {
         key: "highlightColumns",
         value: function highlightColumns(event) {
             var visitClass = "." + $(event.target).text();
@@ -725,7 +731,15 @@ var StudyTrackerHeader = function (_React$Component9) {
                 React.createElement(
                     "tr",
                     null,
-                    React.createElement("th", { className: "col-md-1" }),
+                    React.createElement(
+                        "th",
+                        { className: "col-md-1 legend-link-container" },
+                        React.createElement(
+                            "a",
+                            { id: "legend-link", href: "#", onClick: this.showLegend },
+                            "?"
+                        )
+                    ),
                     visitLabelHeaders
                 )
             );

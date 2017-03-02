@@ -387,9 +387,14 @@ class StudyTrackerHeader extends React.Component {
         this.state = {
           visitInFocus: null
         };
+        this.showLegend = this.showLegend.bind(this);
         this.highlightColumns = this.highlightColumns.bind(this);
         this.unhighlightColumns = this.unhighlightColumns.bind(this);
         this.keepHighlightedShowVisitFocus = this.keepHighlightedShowVisitFocus.bind(this);
+    }
+
+    showLegend(event) {
+        swal("hello");
     }
 
     // When mouse enters header cell, highlight all cells for that visit
@@ -433,7 +438,11 @@ class StudyTrackerHeader extends React.Component {
     return (
         <thead className="StudyTrackerHeader">
             <tr>
-                <th className="col-md-1"/>
+                <th className="col-md-1 legend-link-container">
+                    <a id="legend-link" href="#" onClick={this.showLegend}>
+                        ?
+                    </a>
+                </th>
                 {visitLabelHeaders}
             </tr>
         </thead>

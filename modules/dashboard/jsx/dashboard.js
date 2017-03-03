@@ -3,6 +3,7 @@ const SIDEBAR_WIDTH = "20%";
 const HIGHLIGHT_COLOR = "#E9EBF3";
 const GET_DATA_URL = loris.BaseURL + "/dashboard/ajax/getData.php";
 
+
 function SiteFilter(props) {
     let options = [];
     props.sites.forEach(function (name, alias) {
@@ -393,8 +394,43 @@ class StudyTrackerHeader extends React.Component {
         this.keepHighlightedShowVisitFocus = this.keepHighlightedShowVisitFocus.bind(this);
     }
 
-    showLegend(event) {
-        swal("hello");
+    showLegend() {
+        const LEGEND = "<div class='circle legend-visit-circle'></div>" +
+            "<span>This outer circle represents the " +
+            "<em>Visit Registration</em> " +
+            " status</span>" +
+            "<div class='circle legend-data-circle'></div>" +
+            "<span>and the fill of the circle represents the " +
+            "<em>Data Entry</em> " +
+            " status.</span>" +
+            "<div class='circle complete-visit'></div>" +
+            "<span>If the outer circle is blue, this means visit registration has been " +
+            "<span class='complete'>completed.</span>" +
+            "</span>" +
+            "<div class='circle deadline-approaching-visit'></div>" +
+            "<span>If it's yellow, this means the visit " +
+            "<span class='deadline-approaching'>deadline is approaching</span>" +
+            "</span>" +
+            "<div class='circle deadline-past-visit'></div>" +
+            "<span>A pink outer circle means the " +
+            "<span class='deadline-past'>deadline has past.</span>" +
+            "</span>" +
+            "<div class='circle no-deadline-visit'></div>" +
+            "<span>Dark gray means no deadline has been specified for this visit.</span>" +
+            "<div class='circle cancelled-visit'></div>" +
+            "<span>Light gray means the visit has been cancelled.</span>"+
+            "<div class='row'>" +
+                "<div class='col-lg-6 circle complete-data-entry'/>"+
+                "<div class='col-lg-6 circle deadline-approaching-data-entry'/>"+
+                "<div class='col-lg-6 circle deadline-past-data-entry'/>"+
+                "<div class='col-lg-6 circle cancelled-data'/>" +
+            "</div>" +
+            "<span>Data entry follows the same coloring convention, with the exception </span>";
+        swal({
+            title: "Legend",
+            text: LEGEND,
+            html: true
+        });
     }
 
     // When mouse enters header cell, highlight all cells for that visit

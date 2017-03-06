@@ -142,7 +142,15 @@ function getTableData() {
             array_push($visits, $visit);
         }
 
-        array_push($tableData, array('pscid' => $pscid, 'psc' => $psc, 'visits' => $visits));
+        array_push(
+            $tableData,
+            array(
+                'pscid' => $pscid,
+                'psc' => $psc,
+                'candid' => $candID,
+                'visits' => $visits
+            )
+        );
     }
 
     return $tableData;

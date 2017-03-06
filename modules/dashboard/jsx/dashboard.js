@@ -71,7 +71,13 @@ class SideBarCandInstContent extends React.Component {
         let bold = {
             fontWeight: "bold"
         };
-        content[0] = <h3 className="center">Participant {this.props.pscid}</h3>;
+
+        content[0]
+            = <h3 className="center">
+                <a href={loris.BaseURL + "/" + this.props.candid} target="_blank">
+                    Participant {this.props.pscid}
+                </a>
+            </h3>;
         let data = this.props.data;
         for(let v in data) {
             content.push(<h4 style={bold}>{v}</h4>);
@@ -116,8 +122,12 @@ class SideBarCandInstContent extends React.Component {
 class SideBarCandContent extends React.Component {
     render () {
         let content = [];
-
-        content[0] = <h3 className="center">Participant {this.props.pscid}</h3>;
+        content[0]
+            = <h3 className="center">
+                <a href={loris.BaseURL + "/" + this.props.candid} target="_blank">
+                    Participant {this.props.pscid}
+                </a>
+            </h3>;
         if (this.props.currentCohort !== "all") {
             content = content.concat(<h4 className="center">{this.props.currentCohort} Visits</h4>);
         }
@@ -505,10 +515,18 @@ class StudyTracker extends React.Component {
             pscid = this.state.currentPSCID;
         }
 
+        let candid;
+        for (let r of this.state.rows) {
+            if (r.pscid === pscid) {
+                candid = r.candid;
+            }
+        }
+
         $.get(GET_DATA_URL, {data: "instruments", pscid: pscid}, function(data, status) {
             if (status === "success") {
                 let sideBarContent = <SideBarCandInstContent
                     pscid={pscid}
+                    candid={candid}
                     data={data}
                 />;
 
@@ -536,8 +554,17 @@ class StudyTracker extends React.Component {
             pscid = this.state.currentPSCID;
         }
 
+        let candid;
+
+        for (let r of this.state.rows) {
+            if (r.pscid === pscid) {
+                candid = r.candid;
+            }
+        }
+
         let sideBarContent = <SideBarCandContent
                 pscid={pscid}
+                candid={candid}
                 currentCohort={this.state.currentCohort}
                 rows={this.state.rows}
             />;

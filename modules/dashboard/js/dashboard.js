@@ -130,11 +130,16 @@ var SideBarCandInstContent = function (_React$Component2) {
             var bold = {
                 fontWeight: "bold"
             };
+
             content[0] = React.createElement(
                 "h3",
                 { className: "center" },
-                "Participant ",
-                this.props.pscid
+                React.createElement(
+                    "a",
+                    { href: loris.BaseURL + "/" + this.props.candid, target: "_blank" },
+                    "Participant ",
+                    this.props.pscid
+                )
             );
             var data = this.props.data;
             for (var v in data) {
@@ -202,12 +207,15 @@ var SideBarCandContent = function (_React$Component3) {
         key: "render",
         value: function render() {
             var content = [];
-
             content[0] = React.createElement(
                 "h3",
                 { className: "center" },
-                "Participant ",
-                this.props.pscid
+                React.createElement(
+                    "a",
+                    { href: loris.BaseURL + "/" + this.props.candid, target: "_blank" },
+                    "Participant ",
+                    this.props.pscid
+                )
             );
             if (this.props.currentCohort !== "all") {
                 content = content.concat(React.createElement(
@@ -809,10 +817,39 @@ var StudyTracker = function (_React$Component10) {
                 pscid = this.state.currentPSCID;
             }
 
+            var candid = void 0;
+            var _iteratorNormalCompletion3 = true;
+            var _didIteratorError3 = false;
+            var _iteratorError3 = undefined;
+
+            try {
+                for (var _iterator3 = this.state.rows[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                    var r = _step3.value;
+
+                    if (r.pscid === pscid) {
+                        candid = r.candid;
+                    }
+                }
+            } catch (err) {
+                _didIteratorError3 = true;
+                _iteratorError3 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                        _iterator3.return();
+                    }
+                } finally {
+                    if (_didIteratorError3) {
+                        throw _iteratorError3;
+                    }
+                }
+            }
+
             $.get(GET_DATA_URL, { data: "instruments", pscid: pscid }, function (data, status) {
                 if (status === "success") {
                     var sideBarContent = React.createElement(SideBarCandInstContent, {
                         pscid: pscid,
+                        candid: candid,
                         data: data
                     });
 
@@ -843,8 +880,38 @@ var StudyTracker = function (_React$Component10) {
                 pscid = this.state.currentPSCID;
             }
 
+            var candid = void 0;
+
+            var _iteratorNormalCompletion4 = true;
+            var _didIteratorError4 = false;
+            var _iteratorError4 = undefined;
+
+            try {
+                for (var _iterator4 = this.state.rows[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                    var r = _step4.value;
+
+                    if (r.pscid === pscid) {
+                        candid = r.candid;
+                    }
+                }
+            } catch (err) {
+                _didIteratorError4 = true;
+                _iteratorError4 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                        _iterator4.return();
+                    }
+                } finally {
+                    if (_didIteratorError4) {
+                        throw _iteratorError4;
+                    }
+                }
+            }
+
             var sideBarContent = React.createElement(SideBarCandContent, {
                 pscid: pscid,
+                candid: candid,
                 currentCohort: this.state.currentCohort,
                 rows: this.state.rows
             });

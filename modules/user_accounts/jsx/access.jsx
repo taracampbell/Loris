@@ -22,6 +22,7 @@ var Role = React.createClass({
                 onMouseOver={this.handleMouseOver}
                 onMouseOut={this.handleMouseOut}>
                 <input
+                    name={"roleID[" + this.props.id + "]"}
                     type="checkbox"
                     value={this.props.id}
                     id={this.props.id}
@@ -53,9 +54,13 @@ var RoleList = React.createClass({
             );
         }, this);
         return (
-            <div className="roleList col-md-2">
-                <label>Roles</label>
-                {roleNodes}
+            <div className="col-md-2">
+                <div className="row">
+                    <label>Roles</label>
+                </div>
+                <div className="roleList col-md-12">
+                    {roleNodes}
+                </div>
             </div>
         );
     }
@@ -159,7 +164,6 @@ var Access = React.createClass({
                     roles: data.roles,
                     permissions: data.permissions
                 });
-                this.calculateRoles();
             }.bind(this),
             error: function(xhr, status, err) {
                 console.error(this.props.dataURL, status, err.toString());

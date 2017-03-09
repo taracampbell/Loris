@@ -85,14 +85,6 @@ class NDB_Form_User_Accounts extends NDB_Form
             // remove the password hash
             unset($defaults['Password_md5']);
 
-            // get the user's permissions
-            $perms = $user->getPermissionIDs();
-
-            // set the user's permission defaults
-            foreach ($perms as $value) {
-                $defaults["permID[$value]"] = 'on';
-            }
-
             // Prevent Javascript injection on all fields
             $defaults['UserID']      = htmlspecialchars($defaults['UserID']);
             $defaults['First_name']  = htmlspecialchars($defaults['First_name']);
@@ -183,6 +175,13 @@ class NDB_Form_User_Accounts extends NDB_Form
             $permIDs = $values['permID'];
         }
         unset($values['permID']);
+
+        // store the role IDs
+        $roleIDs = array();
+        if (!empty($values['roleID'])) {
+            $roleIDs = $values['roleID'];
+        }
+        unset($values['roleID']);
 
         // store whether to send an email or not
         if (!empty($values['SendEmail'])) {
@@ -386,6 +385,26 @@ class NDB_Form_User_Accounts extends NDB_Form
 
             if (!empty($permIDs)) {
                 $user->addPermissions(array_keys($permIDs));
+            }
+
+            // Update roles
+            $userID = $user->getData('ID');
+
+            $DB->delete(
+                'users_permission_categories_rel',
+                array(
+                 'user_id' => $userID,
+                )
+            );
+
+            foreach ($roleIDs as $roleID) {
+                $DB->insert(
+                    'users_permission_categories_rel',
+                    array(
+                     'user_id'                => $userID,
+                     'permission_category_id' => $roleID,
+                    )
+                );
             }
         }
 
@@ -618,42 +637,6 @@ class NDB_Form_User_Accounts extends NDB_Form
 
         //------------------------------------------------------------
 
-        // get the editor's permissions
-        $perms    = $editor->getPermissionsVerbose();
-        $lastRole = '';
-        foreach ($perms as $row) {
-            if ($row['type'] != $lastRole) {
-                $lastRole = $row['type'];
-                $group[]  = $this->form->createElement(
-                    'static',
-                    null,
-                    null,
-                    '</div>'
-                    . "<h3 id=\"header_$lastRole\" "
-                    . "class=\"perm_header button\" "
-                    . "style=\"text-align: center; margin-top: 5px;\">"
-                    .ucwords($row['type'])
-                    . '</h3>'
-                    . "<div id=\"perms_$lastRole\" style=\"margin-top: 5px;\">"
-                );
-            }
-
-            // If the user is editing his/her own account, disable all permission
-            // checkboxes. Note that they will not be submitted when the form is
-            // saved
-            $attribs = array("class" => "perm_$lastRole");
-            if ($this->_isEditingOwnAccount()) {
-                $attribs['disabled'] = true;
-            }
-            $group[] = $this->createCheckbox(
-                'permID['.$row['permID'].']',
-                htmlspecialchars($row['description']) . "<br>",
-                $attribs
-            );
-        }
-        $this->addGroup($group, 'PermID_Group', 'Permissions', "", false);
-        unset($group);
-
         //getting users name and emails to create checkboxes
         // to email supervisors on permissions changes
         $DB_factory = NDB_Factory::singleton();
@@ -688,20 +671,6 @@ class NDB_Form_User_Accounts extends NDB_Form
 
         $this->addGroup($group, 'Supervisors_Group', 'Supervisors', "", false);
         unset($group);
-
-        if (!$this->isCreatingNewUser()) {
-            $user = User::factory($this->identifier);
-
-            // add hidden permissions if editor has less permissions than user
-            // being edited
-            $perms = array_diff(
-                $user->getPermissionIDs(),
-                $editor->getPermissionIDs()
-            );
-            foreach ($perms as $value) {
-                $this->addHidden("permID[$value]", 1);
-            }
-        }
 
         //------------------------------------------------------------
 
@@ -1130,6 +1099,22 @@ class NDB_Form_User_Accounts extends NDB_Form
             list(,$description) = each($permission[0]);
         }
         return $permission;
+    }
+
+    /**
+     * Include additional CSS files:
+     *
+     * @return array of css to be included
+     */
+    function getCSSDependencies()
+    {
+        $factory = NDB_Factory::singleton();
+        $baseURL = $factory->settings()->getBaseURL();
+        $deps    = parent::getCSSDependencies();
+        return array_merge(
+            $deps,
+            [$baseURL . "/user_accounts/css/user_accounts.css"]
+        );
     }
 
     /**

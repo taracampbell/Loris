@@ -102,6 +102,8 @@ body {
     color: #4A90E2;
 }
 
+
+
 .deadline-approaching {
     color: #FFCD0D;
 }
@@ -123,6 +125,13 @@ body {
     width: 26px;
     height: 26px;
     margin: auto;
+}
+
+.sent-to-dcc {
+    background-image:
+        radial-gradient(
+            circle, #4A90E2, #4A90E2
+        );
 }
 
 .complete-data-entry {

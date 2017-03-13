@@ -100,16 +100,17 @@ function getTableData() {
                 array('CID' => $candID, 'VL' => $visitLabel)
             );
 
-            $sessionID        = null;
-            $subproject       = null;
-            $visitDate        = null;
-            $visitRegStatus   = determineVisitRegStatus($visitLabel, $candID, $screeningDone);
-            $dataEntryStatus  = null;
-            $visitRegDueDate  = null;
-            $dataEntryDueDate = null;
-            $ddeStatus        = null;
-            $sentToDCC        = null;
-            $instrCompleted   = 0;
+            $sessionID           = null;
+            $subproject          = null;
+            $visitDate           = null;
+            $visitRegStatus      = determineVisitRegStatus($visitLabel, $candID, $screeningDone);
+            $dataEntryStatus     = null;
+            $visitRegDueDate     = null;
+            $dataEntryDueDate    = null;
+            $ddeCompleted        = null;
+            $sentToDCC           = null;
+            $instrCompleted      = 0;
+            $ddeInstCompleted    = 0;
 
             if (!empty($session) && $session['Current_stage'] != 'Not Started') {
                 $sessionID        = $session['ID'];
@@ -118,23 +119,32 @@ function getTableData() {
                 $visitRegStatus   = 'complete-visit';
                 $sentToDCC        = sentToDCC($sessionID);
                 $totalInstrs      = getTotalInstruments($visitLabel, $subproject);
+                // If not sent to DCC, check DDE completion
                 if (!$sentToDCC) {
-                    $instrCompleted = getTotalInstrumentsCompleted($sessionID);
-                    if ($instrCompleted === $totalInstrs) {
-                        $dataEntryStatus = "complete-data-entry";
+                    $ddeInstCompleted = getDDEInstrumentsCompleted($sessionID);
+                    // If DDE is not complete, check initial DE
+                    if ($ddeInstCompleted !== $totalInstrs) {
+                        $instrCompleted = getTotalInstrumentsCompleted($sessionID);
+                        if ($instrCompleted === $totalInstrs) {
+                            $dataEntryStatus = "complete-data-entry";
+                        } else {
+                            $dataEntryStatus = determineDataEntryStatus($sessionID, $visitDate);
+                            $dataEntryDueDate = determineDataEntryDueDate($visitDate);
+                        }
                     } else {
-                        $dataEntryStatus = determineDataEntryStatus($sessionID, $visitDate);
+                        $ddeCompleted = true;
+                        $dataEntryStatus = 'complete-data-entry';
                     }
-                    $ddeStatus = determineDDEStatus($sessionID, $totalInstrs);
-                    $dataEntryDueDate = determineDataEntryDueDate($visitDate);
+                } else {
+                    $dataEntryStatus = "sent-to-dcc";
                 }
             } else {
                 $sessionID = $sessIDPlaceHold--;
             }
 
             if ($status > 1) {
-                $visitRegStatus  = 'cancelled-visit';
-                $dataEntryStatus = 'cancelled-data';
+                $visitRegStatus   = 'cancelled-visit';
+                $dataEntryStatus  = 'cancelled-data';
                 $dataEntryDueDate = null;
             } else {
                 $visitRegDueDate = determineVisitRegDueDate($visitLabel, $candID, $screeningDone);
@@ -144,13 +154,15 @@ function getTableData() {
             $visit['sessionID']        = $sessionID;
             $visit['visitRegStatus']   = $visitRegStatus;
             $visit['dataEntryStatus']  = $dataEntryStatus;
-            $visit['ddeStatus']        = $ddeStatus;
             $visit['visitRegDueDate']  = $visitRegDueDate;
             $visit['dataEntryDueDate'] = $dataEntryDueDate;
             $visit['instrCompleted']   = $instrCompleted;
             $visit['totalInstrs']      = $totalInstrs;
             $visit['visitLabel']       = $visitLabel;
             $visit['cohort']           = getCohortName($subproject);
+            $visit['ddeCompleted']     = $ddeCompleted;
+            $visit['ddeInstCompleted'] = $ddeInstCompleted;
+            $visit['sentToDCC']        = $sentToDCC;
             array_push($visits, $visit);
         }
 
@@ -180,9 +192,9 @@ function sentToDCC($sessionID) {
 
     if ($submitted === "Y") {
         return true;
-    } else {
-        return false;
     }
+
+    return false;
 }
 
 function screeningDone($candID) {
@@ -268,7 +280,7 @@ function determineVisitRegStatus($visitLabel, $candID, $screeningDone) {
     }
 }
 
-function determineDDEStatus($sessionID, $totalInstrs) {
+function getDDEInstrumentsCompleted($sessionID) {
     global $DB;
 
     $totalDDEComplete = $DB->pselectOne(
@@ -280,11 +292,7 @@ function determineDDEStatus($sessionID, $totalInstrs) {
         array('SID' => $sessionID)
     );
 
-    if ($totalInstrs === $totalDDEComplete) {
-        return "dde-complete";
-    } else {
-        return null;
-    }
+    return $totalDDEComplete;
 }
 
 function determineDataEntryStatus($sessionID, $visitDate) {

@@ -71,12 +71,16 @@ class SideBarCandInstContent extends React.Component {
         let bold = {
             fontWeight: "bold"
         };
-        content[0] = <h3 className="center">Participant {this.props.pscid}</h3>;
+
+        content[0]
+            = <h3 className="center">
+                <a href={loris.BaseURL + "/" + this.props.candid} target="_blank">
+                    Participant {this.props.pscid}
+                </a>
+            </h3>;
         let data = this.props.data;
         for(let v in data) {
-            //console.log(visit);
             content.push(<h4 style={bold}>{v}</h4>);
-            console.log(data[v]);
             if (data[v].length === 0) {
                 content.push(
                     <p className="left-indent">
@@ -118,8 +122,12 @@ class SideBarCandInstContent extends React.Component {
 class SideBarCandContent extends React.Component {
     render () {
         let content = [];
-
-        content[0] = <h3 className="center">Participant {this.props.pscid}</h3>;
+        content[0]
+            = <h3 className="center">
+                <a href={loris.BaseURL + "/" + this.props.candid} target="_blank">
+                    Participant {this.props.pscid}
+                </a>
+            </h3>;
         if (this.props.currentCohort !== "all") {
             content = content.concat(<h4 className="center">{this.props.currentCohort} Visits</h4>);
         }
@@ -137,8 +145,8 @@ class SideBarCandContent extends React.Component {
         visits.forEach(
             function(v) {
                 if (v.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
-                    let vr = this.props.prettyStatus(v.visitRegStatus, v.visitRegDueDate);
-                    let de = this.props.prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
+                    let vr = prettyStatus(v.visitRegStatus, v.visitRegDueDate);
+                    let de = prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
                     if (vr.status === "complete" && de.status === "complete") {
                         visitContent = visitContent.concat(
                             <p style={{fontSize: "18px"}}>
@@ -201,13 +209,13 @@ class SideBarVisitContent extends React.Component {
             for(let v of row.visits) {
                 if (v.visitLabel === this.props.visit) {
                     if(v.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
-                        let vr = this.props.prettyStatus(v.visitRegStatus, v.visitRegDueDate);
+                        let vr = prettyStatus(v.visitRegStatus, v.visitRegDueDate);
                         if (vr.status === "deadline-past" || vr.status === "deadline-approaching") {
                             visitDeadlines = visitDeadlines.concat(
                                 <p className="left-indent">{pscid}: {vr.html}</p>
                             );
                         }
-                        let de = this.props.prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
+                        let de = prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
                         if (de.status === "deadline-past" || de.status === "deadline-approaching") {
                             dataDeadlines = dataDeadlines.concat(
                                 <p className="left-indent">{pscid}: {de.html}</p>
@@ -269,11 +277,11 @@ class VisitCell extends React.Component {
                 + this.props.visit.visitRegStatus;
 
             let tooltipContent = [];
-            let vr = this.props.prettyStatus(this.props.visit.visitRegStatus, this.props.visit.visitRegDueDate);
+            let vr = prettyStatus(this.props.visit.visitRegStatus, this.props.visit.visitRegDueDate);
             tooltipContent.push(<p>Visit Registration: {vr.html}</p>);
 
             if (this.props.visit.dataEntryStatus) {
-                let de = this.props.prettyStatus(this.props.visit.dataEntryStatus, this.props.visit.dataEntryDueDate);
+                let de = prettyStatus(this.props.visit.dataEntryStatus, this.props.visit.dataEntryDueDate);
                 tooltipContent.push(<p>Data Entry: {de.html}</p>);
                 tooltipContent.push(
                     <p className="center">
@@ -355,7 +363,6 @@ class StudyTrackerRow extends React.Component {
                     visit={v}
                     currentCohort={this.props.currentCohort}
                     currentVisit={this.props.currentVisit}
-                    prettyStatus={this.props.prettyStatus}
                 />
             }.bind(this)
         );
@@ -461,7 +468,6 @@ class StudyTracker extends React.Component {
              currentVisit: null,
              currentSideBarFocus: null
         };
-        this.prettyStatus = this.prettyStatus.bind(this);
         this.showCandInstFocus = this.showCandInstFocus.bind(this);
         this.showCandFocus = this.showCandFocus.bind(this);
         this.showVisitFocus = this.showVisitFocus.bind(this);
@@ -499,59 +505,6 @@ class StudyTracker extends React.Component {
 
     }
 
-    // Returns an object which contains a clean status and styled html to display
-    prettyStatus(status, dueDate) {
-        let html, toReturn;
-
-
-        toReturn = {
-            "status": "",
-            "html": ""
-        };
-
-        if (!status) return toReturn;
-
-        if (~status.indexOf("complete")) {
-            html = <span className="complete right-align right-indent">Complete</span>;
-            toReturn = {
-                "status":"complete",
-                "html":html
-            };
-        } else if (~status.indexOf("deadline-approaching")) {
-            let daysLeft = Math.ceil((new Date(dueDate) - new Date()) * MS_TO_DAYS) + "";
-
-            daysLeft += daysLeft == 1 ? " day" : " days";
-            html = <span className="deadline-approaching right-align right-indent">Due in {daysLeft}</span>;
-            toReturn = {
-                "status":"deadline-approaching",
-                "html":html
-            };
-        } else if (~status.indexOf("deadline-past")) {
-            let daysPast = Math.ceil((new Date() - new Date(dueDate)) * MS_TO_DAYS);
-            daysPast += daysPast == 1 ? " day" : " days";
-            html = <span className="deadline-past right-align right-indent">{daysPast} late</span>;
-            toReturn = {
-                "status":"deadline-past",
-                "html":html
-            };
-        } else if (~status.indexOf("cancelled")) {
-            html = <span className="cancelled right-align right-indent">Visit cancelled</span>;
-            toReturn = {
-                "status":"cancelled",
-                "html":html
-            };
-
-        } else if (~status.indexOf("no-deadline")) {
-            html = <span className="no-deadline right-align right-indent">No deadline specified</span>;
-            toReturn = {
-                "status":"no-deadline",
-                "html":html
-            };
-        }
-
-        return toReturn;
-    }
-
     showCandInstFocus(event) {
         let pscid;
         if (event) {
@@ -565,10 +518,18 @@ class StudyTracker extends React.Component {
             pscid = this.state.currentPSCID;
         }
 
+        let candid;
+        for (let r of this.state.rows) {
+            if (r.pscid === pscid) {
+                candid = r.candid;
+            }
+        }
+
         $.get(GET_DATA_URL, {data: "instruments", pscid: pscid}, function(data, status) {
             if (status === "success") {
                 let sideBarContent = <SideBarCandInstContent
                     pscid={pscid}
+                    candid={candid}
                     data={data}
                 />;
 
@@ -596,11 +557,19 @@ class StudyTracker extends React.Component {
             pscid = this.state.currentPSCID;
         }
 
+        let candid;
+
+        for (let r of this.state.rows) {
+            if (r.pscid === pscid) {
+                candid = r.candid;
+            }
+        }
+
         let sideBarContent = <SideBarCandContent
                 pscid={pscid}
+                candid={candid}
                 currentCohort={this.state.currentCohort}
                 rows={this.state.rows}
-                prettyStatus={this.prettyStatus}
             />;
 
         this.setState({
@@ -632,7 +601,6 @@ class StudyTracker extends React.Component {
             currentSite={this.state.currentSite}
             currentCohort={this.state.currentCohort}
             rows={this.state.rows}
-            prettyStatus={this.prettyStatus}
         />;
         this.setState(
             {sideBarContent: sidebarContent}
@@ -732,7 +700,6 @@ class StudyTracker extends React.Component {
                             currentPSCID={this.state.currentPSCID}
                             showCandFocus={this.showCandFocus}
                             showCandInstFocus={this.showCandInstFocus}
-                            prettyStatus={this.prettyStatus}
                         />
                     )
                 }
@@ -773,6 +740,59 @@ class StudyTracker extends React.Component {
             </div>
         );
     }
+}
+
+// Returns an object which contains a clean status and styled html to display
+function prettyStatus(status, dueDate) {
+    let html, toReturn;
+
+
+    toReturn = {
+        "status": "",
+        "html": ""
+    };
+
+    if (!status) return toReturn;
+
+    if (~status.indexOf("complete")) {
+        html = <span className="complete right-align right-indent">Complete</span>;
+        toReturn = {
+            "status":"complete",
+            "html":html
+        };
+    } else if (~status.indexOf("deadline-approaching")) {
+        let daysLeft = Math.ceil((new Date(dueDate) - new Date()) * MS_TO_DAYS) + "";
+
+        daysLeft += daysLeft == 1 ? " day" : " days";
+        html = <span className="deadline-approaching right-align right-indent">Due in {daysLeft}</span>;
+        toReturn = {
+            "status":"deadline-approaching",
+            "html":html
+        };
+    } else if (~status.indexOf("deadline-past")) {
+        let daysPast = Math.ceil((new Date() - new Date(dueDate)) * MS_TO_DAYS);
+        daysPast += daysPast == 1 ? " day" : " days";
+        html = <span className="deadline-past right-align right-indent">{daysPast} late</span>;
+        toReturn = {
+            "status":"deadline-past",
+            "html":html
+        };
+    } else if (~status.indexOf("cancelled")) {
+        html = <span className="cancelled right-align right-indent">Visit cancelled</span>;
+        toReturn = {
+            "status":"cancelled",
+            "html":html
+        };
+
+    } else if (~status.indexOf("no-deadline")) {
+        html = <span className="no-deadline right-align right-indent">No deadline specified</span>;
+        toReturn = {
+            "status":"no-deadline",
+            "html":html
+        };
+    }
+
+    return toReturn;
 }
 
 window.onload = function() {

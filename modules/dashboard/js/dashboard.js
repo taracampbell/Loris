@@ -130,21 +130,24 @@ var SideBarCandInstContent = function (_React$Component2) {
             var bold = {
                 fontWeight: "bold"
             };
+
             content[0] = React.createElement(
                 "h3",
                 { className: "center" },
-                "Participant ",
-                this.props.pscid
+                React.createElement(
+                    "a",
+                    { href: loris.BaseURL + "/" + this.props.candid, target: "_blank" },
+                    "Participant ",
+                    this.props.pscid
+                )
             );
             var data = this.props.data;
             for (var v in data) {
-                //console.log(visit);
                 content.push(React.createElement(
                     "h4",
                     { style: bold },
                     v
                 ));
-                console.log(data[v]);
                 if (data[v].length === 0) {
                     content.push(React.createElement(
                         "p",
@@ -204,12 +207,15 @@ var SideBarCandContent = function (_React$Component3) {
         key: "render",
         value: function render() {
             var content = [];
-
             content[0] = React.createElement(
                 "h3",
                 { className: "center" },
-                "Participant ",
-                this.props.pscid
+                React.createElement(
+                    "a",
+                    { href: loris.BaseURL + "/" + this.props.candid, target: "_blank" },
+                    "Participant ",
+                    this.props.pscid
+                )
             );
             if (this.props.currentCohort !== "all") {
                 content = content.concat(React.createElement(
@@ -232,8 +238,8 @@ var SideBarCandContent = function (_React$Component3) {
             var visitContent = [];
             visits.forEach(function (v) {
                 if (v.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
-                    var vr = this.props.prettyStatus(v.visitRegStatus, v.visitRegDueDate);
-                    var de = this.props.prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
+                    var vr = prettyStatus(v.visitRegStatus, v.visitRegDueDate);
+                    var de = prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
                     if (vr.status === "complete" && de.status === "complete") {
                         visitContent = visitContent.concat(React.createElement(
                             "p",
@@ -360,7 +366,7 @@ var SideBarVisitContent = function (_React$Component4) {
 
                             if (v.visitLabel === this.props.visit) {
                                 if (v.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
-                                    var vr = this.props.prettyStatus(v.visitRegStatus, v.visitRegDueDate);
+                                    var vr = prettyStatus(v.visitRegStatus, v.visitRegDueDate);
                                     if (vr.status === "deadline-past" || vr.status === "deadline-approaching") {
                                         visitDeadlines = visitDeadlines.concat(React.createElement(
                                             "p",
@@ -370,7 +376,7 @@ var SideBarVisitContent = function (_React$Component4) {
                                             vr.html
                                         ));
                                     }
-                                    var de = this.props.prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
+                                    var de = prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
                                     if (de.status === "deadline-past" || de.status === "deadline-approaching") {
                                         dataDeadlines = dataDeadlines.concat(React.createElement(
                                             "p",
@@ -494,7 +500,7 @@ var VisitCell = function (_React$Component6) {
                 var visitClass = "circle " + this.props.visit.dataEntryStatus + " " + this.props.visit.visitRegStatus;
 
                 var tooltipContent = [];
-                var vr = this.props.prettyStatus(this.props.visit.visitRegStatus, this.props.visit.visitRegDueDate);
+                var vr = prettyStatus(this.props.visit.visitRegStatus, this.props.visit.visitRegDueDate);
                 tooltipContent.push(React.createElement(
                     "p",
                     null,
@@ -503,7 +509,7 @@ var VisitCell = function (_React$Component6) {
                 ));
 
                 if (this.props.visit.dataEntryStatus) {
-                    var de = this.props.prettyStatus(this.props.visit.dataEntryStatus, this.props.visit.dataEntryDueDate);
+                    var de = prettyStatus(this.props.visit.dataEntryStatus, this.props.visit.dataEntryDueDate);
                     tooltipContent.push(React.createElement(
                         "p",
                         null,
@@ -625,8 +631,7 @@ var StudyTrackerRow = function (_React$Component8) {
                     key: index,
                     visit: v,
                     currentCohort: this.props.currentCohort,
-                    currentVisit: this.props.currentVisit,
-                    prettyStatus: this.props.prettyStatus
+                    currentVisit: this.props.currentVisit
                 });
             }.bind(this));
             if (this.props.pscid === this.props.currentPSCID) {
@@ -760,7 +765,6 @@ var StudyTracker = function (_React$Component10) {
             currentVisit: null,
             currentSideBarFocus: null
         };
-        _this10.prettyStatus = _this10.prettyStatus.bind(_this10);
         _this10.showCandInstFocus = _this10.showCandInstFocus.bind(_this10);
         _this10.showCandFocus = _this10.showCandFocus.bind(_this10);
         _this10.showVisitFocus = _this10.showVisitFocus.bind(_this10);
@@ -801,84 +805,7 @@ var StudyTracker = function (_React$Component10) {
         return _this10;
     }
 
-    // Returns an object which contains a clean status and styled html to display
-
-
     _createClass(StudyTracker, [{
-        key: "prettyStatus",
-        value: function prettyStatus(status, dueDate) {
-            var html = void 0,
-                toReturn = void 0;
-
-            toReturn = {
-                "status": "",
-                "html": ""
-            };
-
-            if (!status) return toReturn;
-
-            if (~status.indexOf("complete")) {
-                html = React.createElement(
-                    "span",
-                    { className: "complete right-align right-indent" },
-                    "Complete"
-                );
-                toReturn = {
-                    "status": "complete",
-                    "html": html
-                };
-            } else if (~status.indexOf("deadline-approaching")) {
-                var daysLeft = Math.ceil((new Date(dueDate) - new Date()) * MS_TO_DAYS) + "";
-
-                daysLeft += daysLeft == 1 ? " day" : " days";
-                html = React.createElement(
-                    "span",
-                    { className: "deadline-approaching right-align right-indent" },
-                    "Due in ",
-                    daysLeft
-                );
-                toReturn = {
-                    "status": "deadline-approaching",
-                    "html": html
-                };
-            } else if (~status.indexOf("deadline-past")) {
-                var daysPast = Math.ceil((new Date() - new Date(dueDate)) * MS_TO_DAYS);
-                daysPast += daysPast == 1 ? " day" : " days";
-                html = React.createElement(
-                    "span",
-                    { className: "deadline-past right-align right-indent" },
-                    daysPast,
-                    " late"
-                );
-                toReturn = {
-                    "status": "deadline-past",
-                    "html": html
-                };
-            } else if (~status.indexOf("cancelled")) {
-                html = React.createElement(
-                    "span",
-                    { className: "cancelled right-align right-indent" },
-                    "Visit cancelled"
-                );
-                toReturn = {
-                    "status": "cancelled",
-                    "html": html
-                };
-            } else if (~status.indexOf("no-deadline")) {
-                html = React.createElement(
-                    "span",
-                    { className: "no-deadline right-align right-indent" },
-                    "No deadline specified"
-                );
-                toReturn = {
-                    "status": "no-deadline",
-                    "html": html
-                };
-            }
-
-            return toReturn;
-        }
-    }, {
         key: "showCandInstFocus",
         value: function showCandInstFocus(event) {
             var pscid = void 0;
@@ -893,10 +820,39 @@ var StudyTracker = function (_React$Component10) {
                 pscid = this.state.currentPSCID;
             }
 
+            var candid = void 0;
+            var _iteratorNormalCompletion3 = true;
+            var _didIteratorError3 = false;
+            var _iteratorError3 = undefined;
+
+            try {
+                for (var _iterator3 = this.state.rows[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                    var r = _step3.value;
+
+                    if (r.pscid === pscid) {
+                        candid = r.candid;
+                    }
+                }
+            } catch (err) {
+                _didIteratorError3 = true;
+                _iteratorError3 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                        _iterator3.return();
+                    }
+                } finally {
+                    if (_didIteratorError3) {
+                        throw _iteratorError3;
+                    }
+                }
+            }
+
             $.get(GET_DATA_URL, { data: "instruments", pscid: pscid }, function (data, status) {
                 if (status === "success") {
                     var sideBarContent = React.createElement(SideBarCandInstContent, {
                         pscid: pscid,
+                        candid: candid,
                         data: data
                     });
 
@@ -927,11 +883,40 @@ var StudyTracker = function (_React$Component10) {
                 pscid = this.state.currentPSCID;
             }
 
+            var candid = void 0;
+
+            var _iteratorNormalCompletion4 = true;
+            var _didIteratorError4 = false;
+            var _iteratorError4 = undefined;
+
+            try {
+                for (var _iterator4 = this.state.rows[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                    var r = _step4.value;
+
+                    if (r.pscid === pscid) {
+                        candid = r.candid;
+                    }
+                }
+            } catch (err) {
+                _didIteratorError4 = true;
+                _iteratorError4 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                        _iterator4.return();
+                    }
+                } finally {
+                    if (_didIteratorError4) {
+                        throw _iteratorError4;
+                    }
+                }
+            }
+
             var sideBarContent = React.createElement(SideBarCandContent, {
                 pscid: pscid,
+                candid: candid,
                 currentCohort: this.state.currentCohort,
-                rows: this.state.rows,
-                prettyStatus: this.prettyStatus
+                rows: this.state.rows
             });
 
             this.setState({
@@ -965,8 +950,7 @@ var StudyTracker = function (_React$Component10) {
                 visit: visit,
                 currentSite: this.state.currentSite,
                 currentCohort: this.state.currentCohort,
-                rows: this.state.rows,
-                prettyStatus: this.prettyStatus
+                rows: this.state.rows
             });
             this.setState({ sideBarContent: sidebarContent });
 
@@ -1075,8 +1059,7 @@ var StudyTracker = function (_React$Component10) {
                         currentVisit: this.state.currentVisit,
                         currentPSCID: this.state.currentPSCID,
                         showCandFocus: this.showCandFocus,
-                        showCandInstFocus: this.showCandInstFocus,
-                        prettyStatus: this.prettyStatus
+                        showCandInstFocus: this.showCandInstFocus
                     });
                 }
             }.bind(this));
@@ -1133,6 +1116,82 @@ var StudyTracker = function (_React$Component10) {
 
     return StudyTracker;
 }(React.Component);
+
+// Returns an object which contains a clean status and styled html to display
+
+
+function prettyStatus(status, dueDate) {
+    var html = void 0,
+        toReturn = void 0;
+
+    toReturn = {
+        "status": "",
+        "html": ""
+    };
+
+    if (!status) return toReturn;
+
+    if (~status.indexOf("complete")) {
+        html = React.createElement(
+            "span",
+            { className: "complete right-align right-indent" },
+            "Complete"
+        );
+        toReturn = {
+            "status": "complete",
+            "html": html
+        };
+    } else if (~status.indexOf("deadline-approaching")) {
+        var daysLeft = Math.ceil((new Date(dueDate) - new Date()) * MS_TO_DAYS) + "";
+
+        daysLeft += daysLeft == 1 ? " day" : " days";
+        html = React.createElement(
+            "span",
+            { className: "deadline-approaching right-align right-indent" },
+            "Due in ",
+            daysLeft
+        );
+        toReturn = {
+            "status": "deadline-approaching",
+            "html": html
+        };
+    } else if (~status.indexOf("deadline-past")) {
+        var daysPast = Math.ceil((new Date() - new Date(dueDate)) * MS_TO_DAYS);
+        daysPast += daysPast == 1 ? " day" : " days";
+        html = React.createElement(
+            "span",
+            { className: "deadline-past right-align right-indent" },
+            daysPast,
+            " late"
+        );
+        toReturn = {
+            "status": "deadline-past",
+            "html": html
+        };
+    } else if (~status.indexOf("cancelled")) {
+        html = React.createElement(
+            "span",
+            { className: "cancelled right-align right-indent" },
+            "Visit cancelled"
+        );
+        toReturn = {
+            "status": "cancelled",
+            "html": html
+        };
+    } else if (~status.indexOf("no-deadline")) {
+        html = React.createElement(
+            "span",
+            { className: "no-deadline right-align right-indent" },
+            "No deadline specified"
+        );
+        toReturn = {
+            "status": "no-deadline",
+            "html": html
+        };
+    }
+
+    return toReturn;
+}
 
 window.onload = function () {
     var dashboard = React.createElement(StudyTracker, null);

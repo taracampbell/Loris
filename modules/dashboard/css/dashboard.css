@@ -125,10 +125,17 @@ body {
     margin: auto;
 }
 
-.complete-data-entry {
+.complete-data-entry-dcc {
     background-image:
         radial-gradient(
             circle, #6CB3E8, #4A90E2
+        );
+}
+
+.complete-data-entry {
+    background-image:
+        radial-gradient(
+            circle, #A6D3F5, #84C5F5
         );
 }
 

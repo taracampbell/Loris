@@ -355,6 +355,9 @@ var SideBarVisitContent = function (_React$Component4) {
                         continue;
                     }
                     var pscid = row.pscid;
+                    var candid = row.candid;
+                    var instListUrl = loris.BaseURL + "/instrument_list/?candID=" + candid + "&sessionID=";
+                    var timepointListURL = loris.BaseURL + "/timepoint_list/?candID=" + candid;
                     // Look for visit with corresponding visit label
                     var _iteratorNormalCompletion2 = true;
                     var _didIteratorError2 = false;
@@ -366,13 +369,18 @@ var SideBarVisitContent = function (_React$Component4) {
 
                             if (v.visitLabel === this.props.visit) {
                                 if (v.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
+                                    instListUrl += v.sessionID;
                                     var vr = prettyStatus(v.visitRegStatus, v.visitRegDueDate);
                                     if (vr.status === "deadline-past" || vr.status === "deadline-approaching") {
                                         visitDeadlines = visitDeadlines.concat(React.createElement(
                                             "p",
                                             { className: "left-indent" },
-                                            pscid,
-                                            ": ",
+                                            React.createElement(
+                                                "a",
+                                                { href: timepointListURL, target: "_blank" },
+                                                pscid,
+                                                ":"
+                                            ),
                                             vr.html
                                         ));
                                     }
@@ -381,8 +389,12 @@ var SideBarVisitContent = function (_React$Component4) {
                                         dataDeadlines = dataDeadlines.concat(React.createElement(
                                             "p",
                                             { className: "left-indent" },
-                                            pscid,
-                                            ": ",
+                                            React.createElement(
+                                                "a",
+                                                { href: instListUrl, target: "_blank" },
+                                                pscid,
+                                                ":"
+                                            ),
                                             de.html
                                         ));
                                     }

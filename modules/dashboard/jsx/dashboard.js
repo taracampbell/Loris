@@ -205,20 +205,30 @@ class SideBarVisitContent extends React.Component {
                 continue;
             }
             let pscid = row.pscid;
+            let candid = row.candid;
+            let instListUrl = loris.BaseURL + "/instrument_list/?candID="+candid+"&sessionID=";
+            let timepointListURL = loris.BaseURL + "/timepoint_list/?candID="+candid;
             // Look for visit with corresponding visit label
             for(let v of row.visits) {
                 if (v.visitLabel === this.props.visit) {
                     if(v.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
+                        instListUrl += v.sessionID;
                         let vr = prettyStatus(v.visitRegStatus, v.visitRegDueDate);
                         if (vr.status === "deadline-past" || vr.status === "deadline-approaching") {
                             visitDeadlines = visitDeadlines.concat(
-                                <p className="left-indent">{pscid}: {vr.html}</p>
+                                <p className="left-indent">
+                                    <a href={timepointListURL} target="_blank">{pscid}:</a>
+                                    {vr.html}
+                                </p>
                             );
                         }
                         let de = prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
                         if (de.status === "deadline-past" || de.status === "deadline-approaching") {
                             dataDeadlines = dataDeadlines.concat(
-                                <p className="left-indent">{pscid}: {de.html}</p>
+                                <p className="left-indent">
+                                    <a href={instListUrl} target="_blank">{pscid}:</a>
+                                    {de.html}
+                                </p>
                             );
                         }
                     }

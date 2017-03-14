@@ -758,11 +758,14 @@ var StudyTrackerHeader = function (_React$Component9) {
     }, {
         key: "render",
         value: function render() {
+            var colWidth = 91.6666 / this.props.visitLabels.length;
+            var colStyle = { width: colWidth + '%' };
             var visitLabelHeaders = this.props.visitLabels.map(function (vl) {
                 var cssClass = "VLHeader " + vl;
                 return React.createElement(
                     "th",
                     {
+                        style: colStyle,
                         onMouseEnter: this.highlightColumns,
                         onMouseLeave: this.unhighlightColumns,
                         onClick: this.keepHighlightedShowVisitFocus,

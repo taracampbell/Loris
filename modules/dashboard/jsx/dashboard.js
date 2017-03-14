@@ -455,10 +455,13 @@ class StudyTrackerHeader extends React.Component {
         this.props.showVisitFocus(event);
     }
   render() {
+    let colWidth = 91.6666/this.props.visitLabels.length;
+    let colStyle = {width: colWidth + '%'}
     let visitLabelHeaders = this.props.visitLabels.map(function(vl) {
             let cssClass = "VLHeader " + vl;
             return (
             <th
+                style={colStyle}
                 onMouseEnter={this.highlightColumns}
                 onMouseLeave={this.unhighlightColumns}
                 onClick={this.keepHighlightedShowVisitFocus}

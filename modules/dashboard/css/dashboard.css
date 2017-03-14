@@ -127,17 +127,18 @@ body {
     margin: auto;
 }
 
-.sent-to-dcc {
+
+.complete-data-entry-dcc {
     background-image:
         radial-gradient(
-            circle, #4A90E2, #4A90E2
+            circle, #ACE3E8, #6CB3E8
         );
 }
 
 .complete-data-entry {
     background-image:
         radial-gradient(
-            circle, #ACE3E8, #6CB3E8
+            circle, #A6D3F5, #84C5F5
         );
 }
 

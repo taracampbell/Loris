@@ -137,7 +137,7 @@ function getTableData() {
                         $dataEntryStatus = 'complete-data-entry';
                     }
                 } else {
-                    $dataEntryStatus = "sent-to-dcc";
+                    $dataEntryStatus = "complete-data-entry-dcc";
                 }
             } else {
                 $sessionID = $sessIDPlaceHold--;

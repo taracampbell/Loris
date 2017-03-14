@@ -148,18 +148,25 @@ class SideBarCandContent extends React.Component {
                     let vr = prettyStatus(v.visitRegStatus, v.visitRegDueDate);
                     let de = prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
                     if (vr.status === "complete" && de.status === "complete") {
-                        visitContent = visitContent.concat(
+                        visitContent.push(
                             <p style={{fontSize: "18px"}}>
                                 {v.visitLabel}:
                                 {vr.html}
                             </p>
                         );
-                    } else {
-                        visitContent = visitContent.concat(
+                    } else if(de.html){
+                        visitContent.push(
                             <div>
                                 <h4>{v.visitLabel}:</h4>
                                 <p className="left-indent">Visit Registration: {vr.html}</p>
                                 <p className="left-indent">Data Entry: {de.html}</p>
+                            </div>
+                        );
+                    } else {
+                        visitContent.push(
+                            <div>
+                                <h4>{v.visitLabel}:</h4>
+                                <p className="left-indent">Visit Registration: {vr.html}</p>
                             </div>
                         );
                     }
@@ -169,7 +176,7 @@ class SideBarCandContent extends React.Component {
         if (visitContent.length === 0) {
             visitContent = <p className="center">No applicable visits for this participant for cohort {this.props.currentCohort}</p>
         }
-        content = content.concat(visitContent);
+        content.push(visitContent);
 
         return (
             <div className="SideBarCandContent">

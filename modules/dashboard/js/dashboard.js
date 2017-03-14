@@ -241,15 +241,15 @@ var SideBarCandContent = function (_React$Component3) {
                     var vr = prettyStatus(v.visitRegStatus, v.visitRegDueDate);
                     var de = prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
                     if (vr.status === "complete" && de.status === "complete") {
-                        visitContent = visitContent.concat(React.createElement(
+                        visitContent.push(React.createElement(
                             "p",
                             { style: { fontSize: "18px" } },
                             v.visitLabel,
                             ":",
                             vr.html
                         ));
-                    } else {
-                        visitContent = visitContent.concat(React.createElement(
+                    } else if (de.html) {
+                        visitContent.push(React.createElement(
                             "div",
                             null,
                             React.createElement(
@@ -271,6 +271,23 @@ var SideBarCandContent = function (_React$Component3) {
                                 de.html
                             )
                         ));
+                    } else {
+                        visitContent.push(React.createElement(
+                            "div",
+                            null,
+                            React.createElement(
+                                "h4",
+                                null,
+                                v.visitLabel,
+                                ":"
+                            ),
+                            React.createElement(
+                                "p",
+                                { className: "left-indent" },
+                                "Visit Registration: ",
+                                vr.html
+                            )
+                        ));
                     }
                 }
             }.bind(this));
@@ -282,7 +299,7 @@ var SideBarCandContent = function (_React$Component3) {
                     this.props.currentCohort
                 );
             }
-            content = content.concat(visitContent);
+            content.push(visitContent);
 
             return React.createElement(
                 "div",

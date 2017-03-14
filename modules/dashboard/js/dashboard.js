@@ -499,30 +499,6 @@ var VisitCell = function (_React$Component6) {
                 bgColor = { backgroundColor: HIGHLIGHT_COLOR };
             }
             if (visit.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
-
-                var innerCircleInfo = null;
-                var innerCircleStyle = {
-                    fontWeight: "bold",
-                    color: "white",
-                    position: "inherit",
-                    fontSize: "110%"
-                };
-                if (visit.sentToDCC) {
-                    innerCircleInfo = React.createElement(
-                        "div",
-                        { className: "center", style: innerCircleStyle },
-                        "\u2713"
-                    );
-                } else if (visit.ddeCompleted) {
-                    innerCircleInfo = React.createElement(
-                        "div",
-                        { className: "center", style: innerCircleStyle },
-                        "D"
-                    );
-                }
-
-                var visitClass = "circle " + visit.dataEntryStatus + " " + visit.visitRegStatus;
-
                 var tooltipContent = [];
                 var vr = prettyStatus(visit.visitRegStatus, visit.visitRegDueDate);
                 tooltipContent.push(React.createElement(
@@ -531,7 +507,7 @@ var VisitCell = function (_React$Component6) {
                     "Visit Registration: ",
                     vr.html
                 ));
-
+                var innerCircleInfo = null;
                 if (visit.dataEntryStatus) {
                     var de = prettyStatus(visit.dataEntryStatus, visit.dataEntryDueDate);
                     tooltipContent.push(React.createElement(
@@ -539,8 +515,7 @@ var VisitCell = function (_React$Component6) {
                         null,
                         "Data Entry: ",
                         de.html
-                    ));
-                    tooltipContent.push(React.createElement(
+                    ), React.createElement(
                         "p",
                         { className: "center" },
                         React.createElement(
@@ -552,7 +527,54 @@ var VisitCell = function (_React$Component6) {
                             " instruments entered"
                         )
                     ));
+                    tooltipContent.push(React.createElement(
+                        "p",
+                        null,
+                        "Double Data Entry:"
+                    ), React.createElement(
+                        "p",
+                        { className: "center" },
+                        React.createElement(
+                            "i",
+                            null,
+                            visit.ddeInstCompleted,
+                            "/",
+                            visit.totalInstrs,
+                            " instruments entered"
+                        )
+                    ));
+                    var innerCircleStyle = {
+                        fontWeight: "bold",
+                        color: "white",
+                        position: "inherit",
+                        fontSize: "110%"
+                    };
+                    if (visit.sentToDCC) {
+                        innerCircleInfo = React.createElement(
+                            "div",
+                            { className: "center", style: innerCircleStyle },
+                            "\u2713"
+                        );
+                        tooltipContent.push(React.createElement(
+                            "p",
+                            { className: "complete" },
+                            "Data sent to DCC"
+                        ));
+                    } else if (visit.ddeCompleted) {
+                        innerCircleInfo = React.createElement(
+                            "div",
+                            { className: "center", style: innerCircleStyle },
+                            "D"
+                        );
+                        tooltipContent.push(React.createElement(
+                            "p",
+                            { className: "deadline-approaching" },
+                            "Data not yet sent to DCC"
+                        ));
+                    }
                 }
+
+                var visitClass = "circle " + visit.dataEntryStatus + " " + visit.visitRegStatus;
 
                 return React.createElement(
                     "td",

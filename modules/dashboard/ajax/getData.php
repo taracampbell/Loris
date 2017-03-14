@@ -119,12 +119,13 @@ function getTableData() {
                 $visitRegStatus   = 'complete-visit';
                 $sentToDCC        = sentToDCC($sessionID);
                 $totalInstrs      = getTotalInstruments($visitLabel, $subproject);
-                // If not sent to DCC, check DDE completion
                 if (!$sentToDCC) {
+
                     $ddeInstCompleted = getDDEInstrumentsCompleted($sessionID);
-                    // If DDE is not complete, check initial DE
+                    $instrCompleted = getTotalInstrumentsCompleted($sessionID);
+
                     if ($ddeInstCompleted !== $totalInstrs) {
-                        $instrCompleted = getTotalInstrumentsCompleted($sessionID);
+
                         if ($instrCompleted === $totalInstrs) {
                             $dataEntryStatus = "complete-data-entry";
                         } else {

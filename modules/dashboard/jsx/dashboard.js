@@ -273,39 +273,54 @@ class VisitCell extends React.Component {
             bgColor = {backgroundColor: HIGHLIGHT_COLOR};
         }
         if (visit.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
-
-            let innerCircleInfo = null;
-            let innerCircleStyle = {
-                fontWeight: "bold",
-                color: "white",
-                position: "inherit",
-                fontSize: "110%"
-            };
-            if (visit.sentToDCC) {
-                innerCircleInfo = <div className="center" style={innerCircleStyle}>&#10003;</div>;
-            } else if (visit.ddeCompleted) {
-                innerCircleInfo = <div className="center" style={innerCircleStyle}>D</div>;
-            }
-
-            let visitClass = "circle "
-                + visit.dataEntryStatus + " "
-                + visit.visitRegStatus;
-
             let tooltipContent = [];
             let vr = prettyStatus(visit.visitRegStatus, visit.visitRegDueDate);
             tooltipContent.push(<p>Visit Registration: {vr.html}</p>);
-
+            let innerCircleInfo = null;
             if (visit.dataEntryStatus) {
                 let de = prettyStatus(visit.dataEntryStatus, visit.dataEntryDueDate);
-                tooltipContent.push(<p>Data Entry: {de.html}</p>);
                 tooltipContent.push(
+                    <p>Data Entry: {de.html}</p>,
                     <p className="center">
                         <i>
                             {visit.instrCompleted}/{visit.totalInstrs} instruments entered
                         </i>
                     </p>
                 );
+                tooltipContent.push(
+                    <p>Double Data Entry:</p>,
+                    <p className="center">
+                        <i>
+                            {visit.ddeInstCompleted}/{visit.totalInstrs} instruments entered
+                        </i>
+                    </p>
+                );
+                let innerCircleStyle = {
+                    fontWeight: "bold",
+                    color: "white",
+                    position: "inherit",
+                    fontSize: "110%"
+                };
+                if (visit.sentToDCC) {
+                    innerCircleInfo = <div className="center" style={innerCircleStyle}>&#10003;</div>;
+                    tooltipContent.push(
+                        <p className="complete">
+                            Data sent to DCC
+                        </p>
+                    );
+                } else if (visit.ddeCompleted) {
+                    innerCircleInfo = <div className="center" style={innerCircleStyle}>D</div>;
+                    tooltipContent.push(
+                        <p className="deadline-approaching">
+                            Data not yet sent to DCC
+                        </p>
+                    );
+                }
             }
+
+            let visitClass = "circle "
+                + visit.dataEntryStatus + " "
+                + visit.visitRegStatus;
 
             return (
                 <td className={visit.visitLabel} style={bgColor}>

@@ -168,7 +168,7 @@ var SideBarCandInstContent = function (_React$Component2) {
                                     className: "complete left-align",
                                     style: bold
                                 },
-                                "\u2713"
+                                "✓"
                             );
                         }
                         content.push(React.createElement(
@@ -464,7 +464,7 @@ var SideBar = function (_React$Component5) {
                         className: "closebtn",
                         onClick: this.props.closeSideBar
                     },
-                    "\xD7"
+                    "×"
                 ),
                 this.props.sideBarContent
             );
@@ -706,11 +706,14 @@ var StudyTrackerHeader = function (_React$Component9) {
     }, {
         key: "render",
         value: function render() {
+            var colWidth = 91.6666 / this.props.visitLabels.length;
+            var colStyle = { width: colWidth + '%' };
             var visitLabelHeaders = this.props.visitLabels.map(function (vl) {
                 var cssClass = "VLHeader " + vl;
                 return React.createElement(
                     "th",
                     {
+                        style: colStyle,
                         onMouseEnter: this.highlightColumns,
                         onMouseLeave: this.unhighlightColumns,
                         onClick: this.keepHighlightedShowVisitFocus,

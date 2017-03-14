@@ -171,7 +171,7 @@ var SideBarCandInstContent = function (_React$Component2) {
                                     className: "complete left-align",
                                     style: bold
                                 },
-                                "✓"
+                                "\u2713"
                             );
                         }
                         content.push(React.createElement(
@@ -470,7 +470,7 @@ var SideBar = function (_React$Component5) {
                         className: "closebtn",
                         onClick: this.props.closeSideBar
                     },
-                    "×"
+                    "\xD7"
                 ),
                 this.props.sideBarContent
             );
@@ -492,53 +492,100 @@ var VisitCell = function (_React$Component6) {
     _createClass(VisitCell, [{
         key: "render",
         value: function render() {
-            var style = {};
-            if (this.props.visit.visitLabel === this.props.currentVisit) {
-                style = { backgroundColor: HIGHLIGHT_COLOR };
-            }
-            if (this.props.visit.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
-                var visitClass = "circle " + this.props.visit.dataEntryStatus + " " + this.props.visit.visitRegStatus;
+            var visit = this.props.visit;
+            var bgColor = {};
 
+            if (visit.visitLabel === this.props.currentVisit) {
+                bgColor = { backgroundColor: HIGHLIGHT_COLOR };
+            }
+            if (visit.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
                 var tooltipContent = [];
-                var vr = prettyStatus(this.props.visit.visitRegStatus, this.props.visit.visitRegDueDate);
+                var vr = prettyStatus(visit.visitRegStatus, visit.visitRegDueDate);
                 tooltipContent.push(React.createElement(
                     "p",
                     null,
                     "Visit Registration: ",
                     vr.html
                 ));
-
-                if (this.props.visit.dataEntryStatus) {
-                    var de = prettyStatus(this.props.visit.dataEntryStatus, this.props.visit.dataEntryDueDate);
+                var innerCircleInfo = null;
+                if (visit.dataEntryStatus) {
+                    var de = prettyStatus(visit.dataEntryStatus, visit.dataEntryDueDate);
                     tooltipContent.push(React.createElement(
                         "p",
                         null,
                         "Data Entry: ",
                         de.html
-                    ));
-                    tooltipContent.push(React.createElement(
+                    ), React.createElement(
                         "p",
                         { className: "center" },
                         React.createElement(
                             "i",
                             null,
-                            this.props.visit.instrCompleted,
+                            visit.instrCompleted,
                             "/",
-                            this.props.visit.totalInstrs,
+                            visit.totalInstrs,
                             " instruments entered"
                         )
                     ));
+                    tooltipContent.push(React.createElement(
+                        "p",
+                        null,
+                        "Double Data Entry:"
+                    ), React.createElement(
+                        "p",
+                        { className: "center" },
+                        React.createElement(
+                            "i",
+                            null,
+                            visit.ddeInstCompleted,
+                            "/",
+                            visit.totalInstrs,
+                            " instruments entered"
+                        )
+                    ));
+                    var innerCircleStyle = {
+                        fontWeight: "bold",
+                        color: "white",
+                        position: "inherit",
+                        fontSize: "110%"
+                    };
+                    if (visit.sentToDCC) {
+                        innerCircleInfo = React.createElement(
+                            "div",
+                            { className: "center", style: innerCircleStyle },
+                            "\u2713"
+                        );
+                        tooltipContent.push(React.createElement(
+                            "p",
+                            { className: "complete" },
+                            "Data sent to DCC"
+                        ));
+                    } else if (visit.ddeCompleted) {
+                        innerCircleInfo = React.createElement(
+                            "div",
+                            { className: "center", style: innerCircleStyle },
+                            "D"
+                        );
+                        tooltipContent.push(React.createElement(
+                            "p",
+                            { className: "deadline-approaching" },
+                            "Data not yet sent to DCC"
+                        ));
+                    }
                 }
+
+                var visitClass = "circle " + visit.dataEntryStatus + " " + visit.visitRegStatus;
 
                 return React.createElement(
                     "td",
-                    { className: this.props.visit.visitLabel, style: style },
+                    { className: visit.visitLabel, style: bgColor },
                     React.createElement(
                         "div",
-                        { "data-tip": true, "data-for": this.props.visit.sessionID, className: visitClass },
+                        { "data-tip": true, "data-for": visit.sessionID, className: visitClass },
+                        innerCircleInfo,
                         React.createElement(
                             ReactTooltip,
-                            { id: this.props.visit.sessionID, place: "top", type: "dark", effect: "solid" },
+                            { id: visit.sessionID, place: "top", type: "dark", effect: "solid" },
                             React.createElement(
                                 "div",
                                 { className: "ReactTooltipContent" },
@@ -548,7 +595,7 @@ var VisitCell = function (_React$Component6) {
                     )
                 );
             } else {
-                return React.createElement("td", { className: this.props.visit.visitLabel, style: style });
+                return React.createElement("td", { className: visit.visitLabel, style: bgColor });
             }
         }
     }]);

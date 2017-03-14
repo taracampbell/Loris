@@ -100,30 +100,52 @@ function getTableData() {
                 array('CID' => $candID, 'VL' => $visitLabel)
             );
 
-            $sessionID        = null;
-            $subproject       = null;
-            $visitDate        = null;
-            $visitRegStatus   = determineVisitRegStatus($visitLabel, $candID, $screeningDone);
-            $dataEntryStatus  = null;
-            $visitRegDueDate  = null;
-            $dataEntryDueDate = null;
-            $instrCompleted   = 0;
+            $sessionID           = null;
+            $subproject          = null;
+            $visitDate           = null;
+            $visitRegStatus      = determineVisitRegStatus($visitLabel, $candID, $screeningDone);
+            $dataEntryStatus     = null;
+            $visitRegDueDate     = null;
+            $dataEntryDueDate    = null;
+            $ddeCompleted        = null;
+            $sentToDCC           = null;
+            $instrCompleted      = 0;
+            $ddeInstCompleted    = 0;
 
             if (!empty($session) && $session['Current_stage'] != 'Not Started') {
                 $sessionID        = $session['ID'];
                 $subproject       = $session['SubprojectID'];
                 $visitDate        = $session['Date_visit'];
                 $visitRegStatus   = 'complete-visit';
-                $dataEntryStatus  = determineDataEntryStatus($sessionID, $visitDate);
-                $dataEntryDueDate = determineDataEntryDueDate($visitDate);
-                $instrCompleted   = getTotalInstrumentsCompleted($sessionID);
+                $sentToDCC        = sentToDCC($sessionID);
+                $totalInstrs      = getTotalInstruments($visitLabel, $subproject);
+                if (!$sentToDCC) {
+
+                    $ddeInstCompleted = getDDEInstrumentsCompleted($sessionID);
+                    $instrCompleted = getTotalInstrumentsCompleted($sessionID);
+
+                    if ($ddeInstCompleted !== $totalInstrs) {
+
+                        if ($instrCompleted === $totalInstrs) {
+                            $dataEntryStatus = "complete-data-entry";
+                        } else {
+                            $dataEntryStatus = determineDataEntryStatus($sessionID, $visitDate);
+                            $dataEntryDueDate = determineDataEntryDueDate($visitDate);
+                        }
+                    } else {
+                        $ddeCompleted = true;
+                        $dataEntryStatus = 'complete-data-entry';
+                    }
+                } else {
+                    $dataEntryStatus = "complete-data-entry-dcc";
+                }
             } else {
                 $sessionID = $sessIDPlaceHold--;
             }
 
             if ($status > 1) {
-                $visitRegStatus  = 'cancelled-visit';
-                $dataEntryStatus = 'cancelled-data';
+                $visitRegStatus   = 'cancelled-visit';
+                $dataEntryStatus  = 'cancelled-data';
                 $dataEntryDueDate = null;
             } else {
                 $visitRegDueDate = determineVisitRegDueDate($visitLabel, $candID, $screeningDone);
@@ -136,9 +158,12 @@ function getTableData() {
             $visit['visitRegDueDate']  = $visitRegDueDate;
             $visit['dataEntryDueDate'] = $dataEntryDueDate;
             $visit['instrCompleted']   = $instrCompleted;
-            $visit['totalInstrs']      = getTotalInstruments($visitLabel, $subproject);
+            $visit['totalInstrs']      = $totalInstrs;
             $visit['visitLabel']       = $visitLabel;
             $visit['cohort']           = getCohortName($subproject);
+            $visit['ddeCompleted']     = $ddeCompleted;
+            $visit['ddeInstCompleted'] = $ddeInstCompleted;
+            $visit['sentToDCC']        = $sentToDCC;
             array_push($visits, $visit);
         }
 
@@ -156,13 +181,32 @@ function getTableData() {
     return $tableData;
 }
 
+function sentToDCC($sessionID) {
+    global $DB;
+
+    $submitted = $DB->pselectOne(
+        "SELECT Submitted 
+         FROM session 
+         WHERE ID=:SID",
+        array("SID" => $sessionID)
+    );
+
+    if ($submitted === "Y") {
+        return true;
+    }
+
+    return false;
+}
+
 function screeningDone($candID) {
     global $DB;
 
     $screening = $DB->pselectOne(
         "SELECT ID
          FROM session
-         WHERE CandID=:CID AND Visit_label='Initial_Assessment_Screening' AND Current_stage <> 'Not Started'",
+         WHERE CandID=:CID 
+         AND Visit_label='Initial_Assessment_Screening' 
+         AND Current_stage <> 'Not Started'",
         array('CID' => $candID)
     );
 
@@ -237,6 +281,21 @@ function determineVisitRegStatus($visitLabel, $candID, $screeningDone) {
     }
 }
 
+function getDDEInstrumentsCompleted($sessionID) {
+    global $DB;
+
+    $totalDDEComplete = $DB->pselectOne(
+        "SELECT COUNT(ID)
+         FROM flag
+         WHERE SessionID=:SID 
+         AND Data_entry='Complete' 
+         AND CommentID LIKE 'DDE_%'",
+        array('SID' => $sessionID)
+    );
+
+    return $totalDDEComplete;
+}
+
 function determineDataEntryStatus($sessionID, $visitDate) {
     global $DB;
 
@@ -249,8 +308,6 @@ function determineDataEntryStatus($sessionID, $visitDate) {
 
     if ($session['Current_stage'] == 'Recycling Bin') {
         return 'cancelled-data';
-    } else if ($session['Submitted'] =='Y') {
-        return 'complete-data-entry';
     }
 
     if (!datePast(determineDataEntryDueDate($visitDate))) {
@@ -282,7 +339,9 @@ function getTotalInstrumentsCompleted($sessionID) {
     $totalInstruments = $DB->pselectOne(
         "SELECT COUNT(ID)
          FROM flag
-         WHERE SessionID=:SID AND Data_entry='Complete'",
+         WHERE SessionID=:SID 
+         AND Data_entry='Complete' 
+         AND CommentID NOT LIKE 'DDE_%'",
         array('SID' => $sessionID)
     );
 

@@ -102,6 +102,8 @@ body {
     color: #4A90E2;
 }
 
+
+
 .deadline-approaching {
     color: #FFCD0D;
 }
@@ -125,10 +127,11 @@ body {
     margin: auto;
 }
 
+
 .complete-data-entry-dcc {
     background-image:
         radial-gradient(
-            circle, #6CB3E8, #4A90E2
+            circle, #ACE3E8, #6CB3E8
         );
 }
 

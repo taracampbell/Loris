@@ -266,36 +266,67 @@ class SideBar extends React.Component {
 
 class VisitCell extends React.Component {
     render () {
-        let style = {};
-        if (this.props.visit.visitLabel === this.props.currentVisit) {
-            style = {backgroundColor: HIGHLIGHT_COLOR};
+        let visit = this.props.visit;
+        let bgColor = {};
+
+        if (visit.visitLabel === this.props.currentVisit) {
+            bgColor = {backgroundColor: HIGHLIGHT_COLOR};
         }
-        if (this.props.visit.cohort === this.props.currentCohort
-            || this.props.currentCohort === "all") {
-            let visitClass = "circle "
-                + this.props.visit.dataEntryStatus + " "
-                + this.props.visit.visitRegStatus;
-
+        if (visit.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
             let tooltipContent = [];
-            let vr = prettyStatus(this.props.visit.visitRegStatus, this.props.visit.visitRegDueDate);
+            let vr = prettyStatus(visit.visitRegStatus, visit.visitRegDueDate);
             tooltipContent.push(<p>Visit Registration: {vr.html}</p>);
-
-            if (this.props.visit.dataEntryStatus) {
-                let de = prettyStatus(this.props.visit.dataEntryStatus, this.props.visit.dataEntryDueDate);
-                tooltipContent.push(<p>Data Entry: {de.html}</p>);
+            let innerCircleInfo = null;
+            if (visit.dataEntryStatus) {
+                let de = prettyStatus(visit.dataEntryStatus, visit.dataEntryDueDate);
                 tooltipContent.push(
+                    <p>Data Entry: {de.html}</p>,
                     <p className="center">
                         <i>
-                            {this.props.visit.instrCompleted}/{this.props.visit.totalInstrs} instruments entered
+                            {visit.instrCompleted}/{visit.totalInstrs} instruments entered
                         </i>
                     </p>
                 );
+                tooltipContent.push(
+                    <p>Double Data Entry:</p>,
+                    <p className="center">
+                        <i>
+                            {visit.ddeInstCompleted}/{visit.totalInstrs} instruments entered
+                        </i>
+                    </p>
+                );
+                let innerCircleStyle = {
+                    fontWeight: "bold",
+                    color: "white",
+                    position: "inherit",
+                    fontSize: "110%"
+                };
+                if (visit.sentToDCC) {
+                    innerCircleInfo = <div className="center" style={innerCircleStyle}>&#10003;</div>;
+                    tooltipContent.push(
+                        <p className="complete">
+                            Data sent to DCC
+                        </p>
+                    );
+                } else if (visit.ddeCompleted) {
+                    innerCircleInfo = <div className="center" style={innerCircleStyle}>D</div>;
+                    tooltipContent.push(
+                        <p className="deadline-approaching">
+                            Data not yet sent to DCC
+                        </p>
+                    );
+                }
             }
 
+            let visitClass = "circle "
+                + visit.dataEntryStatus + " "
+                + visit.visitRegStatus;
+
             return (
-                <td className={this.props.visit.visitLabel} style={style}>
-                    <div data-tip data-for={this.props.visit.sessionID} className={visitClass}>
-                        <ReactTooltip id={this.props.visit.sessionID} place="top" type="dark" effect="solid">
+                <td className={visit.visitLabel} style={bgColor}>
+                    <div data-tip data-for={visit.sessionID} className={visitClass}>
+                        {innerCircleInfo}
+                        <ReactTooltip id={visit.sessionID} place="top" type="dark" effect="solid">
                             <div className="ReactTooltipContent">
                                 {tooltipContent}
                             </div>
@@ -304,7 +335,7 @@ class VisitCell extends React.Component {
                 </td>
             );
         } else {
-            return (<td className={this.props.visit.visitLabel} style={style}/>);
+            return (<td className={visit.visitLabel} style={bgColor}/>);
         }
     }
 }

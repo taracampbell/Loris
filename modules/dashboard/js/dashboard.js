@@ -226,10 +226,11 @@ var SideBarCandContent = function (_React$Component3) {
                 ));
             }
             var visits = void 0;
-
+            var candid = void 0;
             for (var i = 0; i < this.props.rows.length; i++) {
                 var r = this.props.rows[i];
                 if (r.pscid === this.props.pscid) {
+                    candid = r.candid;
                     visits = r.visits;
                     break;
                 }
@@ -238,25 +239,36 @@ var SideBarCandContent = function (_React$Component3) {
             var visitContent = [];
             visits.forEach(function (v) {
                 if (v.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
+                    var url = loris.BaseURL + "/";
                     var vr = prettyStatus(v.visitRegStatus, v.visitRegDueDate);
                     var de = prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
                     if (vr.status === "complete" && de.status === "complete") {
-                        visitContent = visitContent.concat(React.createElement(
+                        url += "instrument_list/?candID=" + candid + "&sessionID=" + v.sessionID;
+                        visitContent.push(React.createElement(
                             "p",
                             { style: { fontSize: "18px" } },
-                            v.visitLabel,
-                            ":",
+                            React.createElement(
+                                "a",
+                                { href: url, target: "_blank" },
+                                v.visitLabel,
+                                ":"
+                            ),
                             vr.html
                         ));
-                    } else {
-                        visitContent = visitContent.concat(React.createElement(
+                    } else if (de.html) {
+                        url += "instrument_list/?candID=" + candid + "&sessionID=" + v.sessionID;
+                        visitContent.push(React.createElement(
                             "div",
                             null,
                             React.createElement(
-                                "h4",
-                                null,
-                                v.visitLabel,
-                                ":"
+                                "a",
+                                { href: url, target: "_blank" },
+                                React.createElement(
+                                    "h4",
+                                    null,
+                                    v.visitLabel,
+                                    ":"
+                                )
                             ),
                             React.createElement(
                                 "p",
@@ -271,6 +283,28 @@ var SideBarCandContent = function (_React$Component3) {
                                 de.html
                             )
                         ));
+                    } else {
+                        url += candid;
+                        visitContent.push(React.createElement(
+                            "div",
+                            null,
+                            React.createElement(
+                                "a",
+                                { href: url, target: "_blank" },
+                                React.createElement(
+                                    "h4",
+                                    null,
+                                    v.visitLabel,
+                                    ":"
+                                )
+                            ),
+                            React.createElement(
+                                "p",
+                                { className: "left-indent" },
+                                "Visit Registration: ",
+                                vr.html
+                            )
+                        ));
                     }
                 }
             }.bind(this));
@@ -282,7 +316,7 @@ var SideBarCandContent = function (_React$Component3) {
                     this.props.currentCohort
                 );
             }
-            content = content.concat(visitContent);
+            content.push(visitContent);
 
             return React.createElement(
                 "div",
@@ -355,6 +389,9 @@ var SideBarVisitContent = function (_React$Component4) {
                         continue;
                     }
                     var pscid = row.pscid;
+                    var candid = row.candid;
+                    var instListUrl = loris.BaseURL + "/instrument_list/?candID=" + candid + "&sessionID=";
+                    var timepointListURL = loris.BaseURL + "/timepoint_list/?candID=" + candid;
                     // Look for visit with corresponding visit label
                     var _iteratorNormalCompletion2 = true;
                     var _didIteratorError2 = false;
@@ -366,13 +403,18 @@ var SideBarVisitContent = function (_React$Component4) {
 
                             if (v.visitLabel === this.props.visit) {
                                 if (v.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
+                                    instListUrl += v.sessionID;
                                     var vr = prettyStatus(v.visitRegStatus, v.visitRegDueDate);
                                     if (vr.status === "deadline-past" || vr.status === "deadline-approaching") {
                                         visitDeadlines = visitDeadlines.concat(React.createElement(
                                             "p",
                                             { className: "left-indent" },
-                                            pscid,
-                                            ": ",
+                                            React.createElement(
+                                                "a",
+                                                { href: timepointListURL, target: "_blank" },
+                                                pscid,
+                                                ":"
+                                            ),
                                             vr.html
                                         ));
                                     }
@@ -381,8 +423,12 @@ var SideBarVisitContent = function (_React$Component4) {
                                         dataDeadlines = dataDeadlines.concat(React.createElement(
                                             "p",
                                             { className: "left-indent" },
-                                            pscid,
-                                            ": ",
+                                            React.createElement(
+                                                "a",
+                                                { href: instListUrl, target: "_blank" },
+                                                pscid,
+                                                ":"
+                                            ),
                                             de.html
                                         ));
                                     }

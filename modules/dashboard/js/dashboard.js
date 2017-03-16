@@ -226,10 +226,11 @@ var SideBarCandContent = function (_React$Component3) {
                 ));
             }
             var visits = void 0;
-
+            var candid = void 0;
             for (var i = 0; i < this.props.rows.length; i++) {
                 var r = this.props.rows[i];
                 if (r.pscid === this.props.pscid) {
+                    candid = r.candid;
                     visits = r.visits;
                     break;
                 }
@@ -238,25 +239,36 @@ var SideBarCandContent = function (_React$Component3) {
             var visitContent = [];
             visits.forEach(function (v) {
                 if (v.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
+                    var url = loris.BaseURL + "/";
                     var vr = prettyStatus(v.visitRegStatus, v.visitRegDueDate);
                     var de = prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
                     if (vr.status === "complete" && de.status === "complete") {
+                        url += "instrument_list/?candID=" + candid + "&sessionID=" + v.sessionID;
                         visitContent.push(React.createElement(
                             "p",
                             { style: { fontSize: "18px" } },
-                            v.visitLabel,
-                            ":",
+                            React.createElement(
+                                "a",
+                                { href: url, target: "_blank" },
+                                v.visitLabel,
+                                ":"
+                            ),
                             vr.html
                         ));
                     } else if (de.html) {
+                        url += "instrument_list/?candID=" + candid + "&sessionID=" + v.sessionID;
                         visitContent.push(React.createElement(
                             "div",
                             null,
                             React.createElement(
-                                "h4",
-                                null,
-                                v.visitLabel,
-                                ":"
+                                "a",
+                                { href: url, target: "_blank" },
+                                React.createElement(
+                                    "h4",
+                                    null,
+                                    v.visitLabel,
+                                    ":"
+                                )
                             ),
                             React.createElement(
                                 "p",
@@ -272,14 +284,19 @@ var SideBarCandContent = function (_React$Component3) {
                             )
                         ));
                     } else {
+                        url += candid;
                         visitContent.push(React.createElement(
                             "div",
                             null,
                             React.createElement(
-                                "h4",
-                                null,
-                                v.visitLabel,
-                                ":"
+                                "a",
+                                { href: url, target: "_blank" },
+                                React.createElement(
+                                    "h4",
+                                    null,
+                                    v.visitLabel,
+                                    ":"
+                                )
                             ),
                             React.createElement(
                                 "p",

@@ -132,10 +132,11 @@ class SideBarCandContent extends React.Component {
             content = content.concat(<h4 className="center">{this.props.currentCohort} Visits</h4>);
         }
         let visits;
-
+        let candid;
         for(let i = 0; i < this.props.rows.length; i++) {
             let r = this.props.rows[i];
             if (r.pscid === this.props.pscid) {
+                candid = r.candid;
                 visits = r.visits;
                 break;
             }
@@ -145,27 +146,35 @@ class SideBarCandContent extends React.Component {
         visits.forEach(
             function(v) {
                 if (v.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
+                    let url = loris.BaseURL + "/";
                     let vr = prettyStatus(v.visitRegStatus, v.visitRegDueDate);
                     let de = prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
                     if (vr.status === "complete" && de.status === "complete") {
+                        url += "instrument_list/?candID="+candid+"&sessionID="+v.sessionID;
                         visitContent.push(
                             <p style={{fontSize: "18px"}}>
-                                {v.visitLabel}:
+                                <a href={url} target="_blank">{v.visitLabel}:</a>
                                 {vr.html}
                             </p>
                         );
                     } else if(de.html){
+                        url += "instrument_list/?candID="+candid+"&sessionID="+v.sessionID;
                         visitContent.push(
                             <div>
+                                <a href={url} target="_blank">
                                 <h4>{v.visitLabel}:</h4>
+                                </a>
                                 <p className="left-indent">Visit Registration: {vr.html}</p>
                                 <p className="left-indent">Data Entry: {de.html}</p>
                             </div>
                         );
                     } else {
+                        url += candid;
                         visitContent.push(
                             <div>
-                                <h4>{v.visitLabel}:</h4>
+                                <a href={url} target="_blank">
+                                    <h4>{v.visitLabel}:</h4>
+                                </a>
                                 <p className="left-indent">Visit Registration: {vr.html}</p>
                             </div>
                         );

@@ -1,5 +1,7 @@
 "use strict";
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -131,56 +133,50 @@ var SideBarCandInstContent = function (_React$Component2) {
                 fontWeight: "bold"
             };
 
-            content[0] = React.createElement(
+            var instListURL = loris.BaseURL + "/instrument_list/?candID=" + this.props.candid + "&sessionID=" + this.props.sessionID;
+            content.push(React.createElement(
                 "h3",
                 { className: "center" },
                 React.createElement(
                     "a",
-                    { href: loris.BaseURL + "/" + this.props.candid, target: "_blank" },
+                    { href: instListURL, target: "_blank" },
                     "Participant ",
                     this.props.pscid
                 )
-            );
+            ));
             var data = this.props.data;
-            for (var v in data) {
+            var sessionID = this.props.sessionID;
+            var candid = this.props.candid;
+            for (var sg in data) {
                 content.push(React.createElement(
                     "h4",
                     { style: bold },
-                    v
+                    sg
                 ));
-                if (data[v].length === 0) {
-                    content.push(React.createElement(
-                        "p",
-                        { className: "left-indent" },
-                        "Visit has not been registered yet."
-                    ));
-                }
-                for (var sg in data[v]) {
-                    content.push(React.createElement(
-                        "p",
-                        { className: "left-indent", style: bold },
-                        sg
-                    ));
-                    for (var i in data[v][sg]) {
-                        var inst = data[v][sg][i];
-                        var checkComplete = null;
-                        if (inst.completion === "Complete") {
-                            checkComplete = React.createElement(
-                                "span",
-                                {
-                                    className: "complete left-align",
-                                    style: bold
-                                },
-                                "\u2713"
-                            );
-                        }
-                        content.push(React.createElement(
-                            "p",
-                            { className: "left-indent2" },
-                            checkComplete,
-                            inst.testName
-                        ));
+                for (var t in data[sg]) {
+                    var inst = data[sg][t];
+                    var url = loris.BaseURL + "/" + inst.testName + "/?commentID=" + inst.commentID + "&sessionID=" + sessionID + "&candID=" + candid;
+                    var checkComplete = void 0;
+                    if (inst.completion === "Complete") {
+                        checkComplete = React.createElement(
+                            "span",
+                            {
+                                className: "complete left-align",
+                                style: bold
+                            },
+                            "\u2713"
+                        );
                     }
+                    content.push(React.createElement(
+                        "div",
+                        null,
+                        React.createElement(
+                            "a",
+                            { href: url, target: "_blank", className: "left-indent" },
+                            checkComplete,
+                            inst.fullName
+                        )
+                    ));
                 }
             }
             return React.createElement(
@@ -538,6 +534,8 @@ var VisitCell = function (_React$Component6) {
     _createClass(VisitCell, [{
         key: "render",
         value: function render() {
+            var _this7 = this;
+
             var visit = this.props.visit;
             var bgColor = {};
 
@@ -545,101 +543,115 @@ var VisitCell = function (_React$Component6) {
                 bgColor = { backgroundColor: HIGHLIGHT_COLOR };
             }
             if (visit.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
-                var tooltipContent = [];
-                var vr = prettyStatus(visit.visitRegStatus, visit.visitRegDueDate);
-                tooltipContent.push(React.createElement(
-                    "p",
-                    null,
-                    "Visit Registration: ",
-                    vr.html
-                ));
-                var innerCircleInfo = null;
-                if (visit.dataEntryStatus) {
-                    var de = prettyStatus(visit.dataEntryStatus, visit.dataEntryDueDate);
+                var _ret = function () {
+                    var tooltipContent = [];
+                    var vr = prettyStatus(visit.visitRegStatus, visit.visitRegDueDate);
                     tooltipContent.push(React.createElement(
                         "p",
                         null,
-                        "Data Entry: ",
-                        de.html
-                    ), React.createElement(
-                        "p",
-                        { className: "center" },
-                        React.createElement(
-                            "i",
-                            null,
-                            visit.instrCompleted,
-                            "/",
-                            visit.totalInstrs,
-                            " instruments entered"
-                        )
+                        "Visit Registration: ",
+                        vr.html
                     ));
-                    tooltipContent.push(React.createElement(
-                        "p",
-                        null,
-                        "Double Data Entry:"
-                    ), React.createElement(
-                        "p",
-                        { className: "center" },
-                        React.createElement(
-                            "i",
-                            null,
-                            visit.ddeInstCompleted,
-                            "/",
-                            visit.totalInstrs,
-                            " instruments entered"
-                        )
-                    ));
-                    var innerCircleStyle = {
-                        fontWeight: "bold",
-                        color: "white",
-                        position: "inherit",
-                        fontSize: "110%"
-                    };
-                    if (visit.sentToDCC) {
-                        innerCircleInfo = React.createElement(
-                            "div",
-                            { className: "center", style: innerCircleStyle },
-                            "\u2713"
-                        );
+                    var innerCircleInfo = null;
+                    if (visit.dataEntryStatus) {
+                        var de = prettyStatus(visit.dataEntryStatus, visit.dataEntryDueDate);
                         tooltipContent.push(React.createElement(
                             "p",
-                            { className: "complete" },
-                            "Data sent to DCC"
+                            null,
+                            "Data Entry: ",
+                            de.html
+                        ), React.createElement(
+                            "p",
+                            { className: "center" },
+                            React.createElement(
+                                "i",
+                                null,
+                                visit.instrCompleted,
+                                "/",
+                                visit.totalInstrs,
+                                " instruments entered"
+                            )
                         ));
-                    } else if (visit.ddeCompleted) {
-                        innerCircleInfo = React.createElement(
-                            "div",
-                            { className: "center", style: innerCircleStyle },
-                            "D"
-                        );
                         tooltipContent.push(React.createElement(
                             "p",
-                            { className: "deadline-approaching" },
-                            "Data not yet sent to DCC"
+                            null,
+                            "Double Data Entry:"
+                        ), React.createElement(
+                            "p",
+                            { className: "center" },
+                            React.createElement(
+                                "i",
+                                null,
+                                visit.ddeInstCompleted,
+                                "/",
+                                visit.totalInstrs,
+                                " instruments entered"
+                            )
                         ));
+                        var innerCircleStyle = {
+                            fontWeight: "bold",
+                            color: "white",
+                            position: "inherit",
+                            fontSize: "110%"
+                        };
+                        if (visit.sentToDCC) {
+                            innerCircleInfo = React.createElement(
+                                "div",
+                                { className: "center", style: innerCircleStyle },
+                                "\u2713"
+                            );
+                            tooltipContent.push(React.createElement(
+                                "p",
+                                { className: "complete" },
+                                "Data sent to DCC"
+                            ));
+                        } else if (visit.ddeCompleted) {
+                            innerCircleInfo = React.createElement(
+                                "div",
+                                { className: "center", style: innerCircleStyle },
+                                "D"
+                            );
+                            tooltipContent.push(React.createElement(
+                                "p",
+                                { className: "deadline-approaching" },
+                                "Data not yet sent to DCC"
+                            ));
+                        }
                     }
-                }
 
-                var visitClass = "circle " + visit.dataEntryStatus + " " + visit.visitRegStatus;
+                    var visitClass = "circle " + visit.dataEntryStatus + " " + visit.visitRegStatus;
 
-                return React.createElement(
-                    "td",
-                    { className: visit.visitLabel, style: bgColor },
-                    React.createElement(
-                        "div",
-                        { "data-tip": true, "data-for": visit.sessionID, className: visitClass },
-                        innerCircleInfo,
-                        React.createElement(
-                            ReactTooltip,
-                            { id: visit.sessionID, place: "top", type: "dark", effect: "solid" },
+                    var sidebarArgs = {
+                        sessionID: visit.sessionID,
+                        pscid: _this7.props.pscid,
+                        candid: _this7.props.candid
+                    };
+
+                    return {
+                        v: React.createElement(
+                            "td",
+                            { className: visit.visitLabel, style: bgColor },
                             React.createElement(
                                 "div",
-                                { className: "ReactTooltipContent" },
-                                tooltipContent
+                                { onClick: function onClick() {
+                                        return _this7.props.showCandInstFocus(sidebarArgs);
+                                    }, "data-tip": true, "data-for": visit.sessionID, className: visitClass },
+                                innerCircleInfo,
+                                React.createElement(
+                                    ReactTooltip,
+                                    { id: visit.sessionID, place: "top", type: "dark", effect: "solid" },
+                                    React.createElement(
+                                        "div",
+                                        { className: "ReactTooltipContent" },
+                                        tooltipContent
+                                    )
+                                )
                             )
                         )
-                    )
-                );
+                    };
+                }();
+
+                if ((typeof _ret === "undefined" ? "undefined" : _typeof(_ret)) === "object") return _ret.v;
             } else {
                 return React.createElement("td", { className: visit.visitLabel, style: bgColor });
             }
@@ -680,12 +692,12 @@ var StudyTrackerRow = function (_React$Component8) {
     function StudyTrackerRow(props) {
         _classCallCheck(this, StudyTrackerRow);
 
-        var _this8 = _possibleConstructorReturn(this, (StudyTrackerRow.__proto__ || Object.getPrototypeOf(StudyTrackerRow)).call(this, props));
+        var _this9 = _possibleConstructorReturn(this, (StudyTrackerRow.__proto__ || Object.getPrototypeOf(StudyTrackerRow)).call(this, props));
 
-        _this8.highlightRow = _this8.highlightRow.bind(_this8);
-        _this8.unhighlightRow = _this8.unhighlightRow.bind(_this8);
-        _this8.keepHighlightedShowCandFocus = _this8.keepHighlightedShowCandFocus.bind(_this8);
-        return _this8;
+        _this9.highlightRow = _this9.highlightRow.bind(_this9);
+        _this9.unhighlightRow = _this9.unhighlightRow.bind(_this9);
+        _this9.keepHighlightedShowCandFocus = _this9.keepHighlightedShowCandFocus.bind(_this9);
+        return _this9;
     }
 
     _createClass(StudyTrackerRow, [{
@@ -709,11 +721,7 @@ var StudyTrackerRow = function (_React$Component8) {
                 $("." + v.visitLabel).css("background-color", "");
             });
             this.highlightRow();
-            if ($(event.target).text() === this.props.pscid) {
-                this.props.showCandInstFocus(event);
-            } else {
-                this.props.showCandFocus(event);
-            }
+            this.props.showCandFocus(event);
         }
     }, {
         key: "render",
@@ -723,8 +731,11 @@ var StudyTrackerRow = function (_React$Component8) {
                 return React.createElement(VisitCell, {
                     key: index,
                     visit: v,
+                    pscid: this.props.pscid,
+                    candid: this.props.candid,
                     currentCohort: this.props.currentCohort,
-                    currentVisit: this.props.currentVisit
+                    currentVisit: this.props.currentVisit,
+                    showCandInstFocus: this.props.showCandInstFocus
                 });
             }.bind(this));
             if (this.props.pscid === this.props.currentPSCID) {
@@ -758,15 +769,15 @@ var StudyTrackerHeader = function (_React$Component9) {
     function StudyTrackerHeader(props) {
         _classCallCheck(this, StudyTrackerHeader);
 
-        var _this9 = _possibleConstructorReturn(this, (StudyTrackerHeader.__proto__ || Object.getPrototypeOf(StudyTrackerHeader)).call(this, props));
+        var _this10 = _possibleConstructorReturn(this, (StudyTrackerHeader.__proto__ || Object.getPrototypeOf(StudyTrackerHeader)).call(this, props));
 
-        _this9.state = {
+        _this10.state = {
             visitInFocus: null
         };
-        _this9.highlightColumns = _this9.highlightColumns.bind(_this9);
-        _this9.unhighlightColumns = _this9.unhighlightColumns.bind(_this9);
-        _this9.keepHighlightedShowVisitFocus = _this9.keepHighlightedShowVisitFocus.bind(_this9);
-        return _this9;
+        _this10.highlightColumns = _this10.highlightColumns.bind(_this10);
+        _this10.unhighlightColumns = _this10.unhighlightColumns.bind(_this10);
+        _this10.keepHighlightedShowVisitFocus = _this10.keepHighlightedShowVisitFocus.bind(_this10);
+        return _this10;
     }
 
     // When mouse enters header cell, highlight all cells for that visit
@@ -842,9 +853,9 @@ var StudyTracker = function (_React$Component10) {
     function StudyTracker() {
         _classCallCheck(this, StudyTracker);
 
-        var _this10 = _possibleConstructorReturn(this, (StudyTracker.__proto__ || Object.getPrototypeOf(StudyTracker)).call(this));
+        var _this11 = _possibleConstructorReturn(this, (StudyTracker.__proto__ || Object.getPrototypeOf(StudyTracker)).call(this));
 
-        _this10.state = {
+        _this11.state = {
             rows: [],
             visitLabels: [],
             currentSite: "all",
@@ -858,15 +869,15 @@ var StudyTracker = function (_React$Component10) {
             currentVisit: null,
             currentSideBarFocus: null
         };
-        _this10.showCandInstFocus = _this10.showCandInstFocus.bind(_this10);
-        _this10.showCandFocus = _this10.showCandFocus.bind(_this10);
-        _this10.showVisitFocus = _this10.showVisitFocus.bind(_this10);
-        _this10.showSideBar = _this10.showSideBar.bind(_this10);
-        _this10.closeSideBar = _this10.closeSideBar.bind(_this10);
-        _this10.filterSites = _this10.filterSites.bind(_this10);
-        _this10.filterTeams = _this10.filterTeams.bind(_this10);
-        _this10.filterCohorts = _this10.filterCohorts.bind(_this10);
-        _this10.rowHasCurrentCohortVisit = _this10.rowHasCurrentCohortVisit.bind(_this10);
+        _this11.showCandInstFocus = _this11.showCandInstFocus.bind(_this11);
+        _this11.showCandFocus = _this11.showCandFocus.bind(_this11);
+        _this11.showVisitFocus = _this11.showVisitFocus.bind(_this11);
+        _this11.showSideBar = _this11.showSideBar.bind(_this11);
+        _this11.closeSideBar = _this11.closeSideBar.bind(_this11);
+        _this11.filterSites = _this11.filterSites.bind(_this11);
+        _this11.filterTeams = _this11.filterTeams.bind(_this11);
+        _this11.filterCohorts = _this11.filterCohorts.bind(_this11);
+        _this11.rowHasCurrentCohortVisit = _this11.rowHasCurrentCohortVisit.bind(_this11);
 
         $.get(GET_DATA_URL, { data: "all" }, function (data, status) {
             if (status === "success") {
@@ -893,27 +904,59 @@ var StudyTracker = function (_React$Component10) {
                 }
                 this.setState({ visitLabels: visitLabels });
             }
-        }.bind(_this10));
+        }.bind(_this11));
 
-        return _this10;
+        return _this11;
     }
 
     _createClass(StudyTracker, [{
         key: "showCandInstFocus",
-        value: function showCandInstFocus(event) {
+        value: function showCandInstFocus(sidebarArgs) {
+            this.setState({
+                currentPSCID: sidebarArgs.pscid,
+                currentVisit: null,
+                currentSideBarFocus: "candidate_instruments"
+            });
+
+            if (sidebarArgs.sessionID > 0) {
+                $.get(GET_DATA_URL, { data: "instruments", "sessionID": sidebarArgs.sessionID }, function (data, status) {
+                    if (status === "success") {
+                        console.log(data);
+                        var sideBarContent = React.createElement(SideBarCandInstContent, {
+                            sessionID: sidebarArgs.sessionID,
+                            pscid: sidebarArgs.pscid,
+                            candid: sidebarArgs.candid,
+                            data: data
+                        });
+                        this.setState({
+                            sideBarContent: sideBarContent
+                        });
+                        this.showSideBar();
+                    }
+                }.bind(this));
+            }
+        }
+
+        // Sets the content of the SideBar and then shows SideBar
+        // for Candidate Focus
+
+    }, {
+        key: "showCandFocus",
+        value: function showCandFocus(event) {
             var pscid = void 0;
             if (event) {
-                pscid = $(event.target).text();
+                pscid = $(event.target).closest(".StudyTrackerRow").attr("id");
                 this.setState({
                     currentPSCID: pscid,
                     currentVisit: null,
-                    currentSideBarFocus: "candidate_instruments"
+                    currentSideBarFocus: "candidate"
                 });
             } else {
                 pscid = this.state.currentPSCID;
             }
 
             var candid = void 0;
+
             var _iteratorNormalCompletion3 = true;
             var _didIteratorError3 = false;
             var _iteratorError3 = undefined;
@@ -937,70 +980,6 @@ var StudyTracker = function (_React$Component10) {
                 } finally {
                     if (_didIteratorError3) {
                         throw _iteratorError3;
-                    }
-                }
-            }
-
-            $.get(GET_DATA_URL, { data: "instruments", pscid: pscid }, function (data, status) {
-                if (status === "success") {
-                    var sideBarContent = React.createElement(SideBarCandInstContent, {
-                        pscid: pscid,
-                        candid: candid,
-                        data: data
-                    });
-
-                    this.setState({
-                        sideBarContent: sideBarContent
-                    });
-
-                    this.showSideBar();
-                }
-            }.bind(this));
-        }
-
-        // Sets the content of the SideBar and then shows SideBar
-        // for Candidate Focus
-
-    }, {
-        key: "showCandFocus",
-        value: function showCandFocus(event) {
-            var pscid = void 0;
-            if (event) {
-                pscid = $(event.target).closest(".StudyTrackerRow").attr("id");
-                this.setState({
-                    currentPSCID: pscid,
-                    currentVisit: null,
-                    currentSideBarFocus: "candidate"
-                });
-            } else {
-                pscid = this.state.currentPSCID;
-            }
-
-            var candid = void 0;
-
-            var _iteratorNormalCompletion4 = true;
-            var _didIteratorError4 = false;
-            var _iteratorError4 = undefined;
-
-            try {
-                for (var _iterator4 = this.state.rows[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-                    var r = _step4.value;
-
-                    if (r.pscid === pscid) {
-                        candid = r.candid;
-                    }
-                }
-            } catch (err) {
-                _didIteratorError4 = true;
-                _iteratorError4 = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion4 && _iterator4.return) {
-                        _iterator4.return();
-                    }
-                } finally {
-                    if (_didIteratorError4) {
-                        throw _iteratorError4;
                     }
                 }
             }
@@ -1147,6 +1126,7 @@ var StudyTracker = function (_React$Component10) {
                     return React.createElement(StudyTrackerRow, {
                         key: row.pscid,
                         pscid: row.pscid,
+                        candid: row.candid,
                         visits: row.visits,
                         currentCohort: this.state.currentCohort,
                         currentVisit: this.state.currentVisit,

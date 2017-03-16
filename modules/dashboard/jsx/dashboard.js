@@ -241,12 +241,6 @@ class SideBarVisitContent extends React.Component {
                                     "pscid": pscid
                                 }
                             );
-                            // visitDeadlines = visitDeadlines.concat(
-                            //     <p className="left-indent">
-                            //         <a href={timepointListURL} target="_blank">{pscid}:</a>
-                            //         {vr.html}
-                            //     </p>
-                            // );
                         }
                         let de = prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
                         if (de.status === "deadline-past" || de.status === "deadline-approaching") {
@@ -257,12 +251,6 @@ class SideBarVisitContent extends React.Component {
                                     "pscid": pscid
                                 }
                             );
-                            // dataDeadlines = dataDeadlines.concat(
-                            //     <p className="left-indent">
-                            //         <a href={instListUrl} target="_blank">{pscid}:</a>
-                            //         {de.html}
-                            //     </p>
-                            // );
                         }
                     }
                     break;

@@ -414,12 +414,6 @@ var SideBarVisitContent = function (_React$Component4) {
                                             "URL": timepointListURL,
                                             "pscid": pscid
                                         });
-                                        // visitDeadlines = visitDeadlines.concat(
-                                        //     <p className="left-indent">
-                                        //         <a href={timepointListURL} target="_blank">{pscid}:</a>
-                                        //         {vr.html}
-                                        //     </p>
-                                        // );
                                     }
                                     var de = prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
                                     if (de.status === "deadline-past" || de.status === "deadline-approaching") {
@@ -428,12 +422,6 @@ var SideBarVisitContent = function (_React$Component4) {
                                             "URL": instListUrl,
                                             "pscid": pscid
                                         });
-                                        // dataDeadlines = dataDeadlines.concat(
-                                        //     <p className="left-indent">
-                                        //         <a href={instListUrl} target="_blank">{pscid}:</a>
-                                        //         {de.html}
-                                        //     </p>
-                                        // );
                                     }
                                 }
                                 break;

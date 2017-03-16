@@ -215,6 +215,9 @@ class SideBarVisitContent extends React.Component {
 
         let visitDeadlines = [<h4>Upcoming Visit Deadlines</h4>];
         let dataDeadlines = [<h4>Upcoming Data Entry Deadlines</h4>];
+
+        let visitsSortable = [];
+        let dataSortable = [];
         // Loop through rows
         for (let row of this.props.rows) {
             if (row.psc !== this.props.currentSite && this.props.currentSite !== "all") {
@@ -231,26 +234,64 @@ class SideBarVisitContent extends React.Component {
                         instListUrl += v.sessionID;
                         let vr = prettyStatus(v.visitRegStatus, v.visitRegDueDate);
                         if (vr.status === "deadline-past" || vr.status === "deadline-approaching") {
-                            visitDeadlines = visitDeadlines.concat(
-                                <p className="left-indent">
-                                    <a href={timepointListURL} target="_blank">{pscid}:</a>
-                                    {vr.html}
-                                </p>
+                            visitsSortable.push(
+                                {
+                                    "prettyStatus":vr,
+                                    "URL": timepointListURL,
+                                    "pscid": pscid
+                                }
                             );
+                            // visitDeadlines = visitDeadlines.concat(
+                            //     <p className="left-indent">
+                            //         <a href={timepointListURL} target="_blank">{pscid}:</a>
+                            //         {vr.html}
+                            //     </p>
+                            // );
                         }
                         let de = prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
                         if (de.status === "deadline-past" || de.status === "deadline-approaching") {
-                            dataDeadlines = dataDeadlines.concat(
-                                <p className="left-indent">
-                                    <a href={instListUrl} target="_blank">{pscid}:</a>
-                                    {de.html}
-                                </p>
+                            dataSortable.push(
+                                {
+                                    "prettyStatus":de,
+                                    "URL": instListUrl,
+                                    "pscid": pscid
+                                }
                             );
+                            // dataDeadlines = dataDeadlines.concat(
+                            //     <p className="left-indent">
+                            //         <a href={instListUrl} target="_blank">{pscid}:</a>
+                            //         {de.html}
+                            //     </p>
+                            // );
                         }
                     }
                     break;
                 }
             }
+        }
+
+        visitsSortable = visitsSortable.sort(function(a,b){
+           return a.prettyStatus.daysLeft - b.prettyStatus.daysLeft;
+        });
+        dataSortable = dataSortable.sort(function(a,b) {
+            return a.prettyStatus.daysLeft - b.prettyStatus.daysLeft;
+        });
+
+        for (let vr of visitsSortable) {
+            visitDeadlines.push(
+                    <p className="left-indent">
+                        <a href={vr.URL} target="_blank">{vr.pscid}:</a>
+                        {vr.prettyStatus.html}
+                    </p>
+            );
+        }
+        for (let de of dataSortable) {
+            dataDeadlines.push(
+                <p className="left-indent">
+                    <a href={de.URL} target="_blank">{de.pscid}:</a>
+                    {de.prettyStatus.html}
+                </p>
+            );
         }
         if (visitDeadlines.length <= 1) {
             visitDeadlines = visitDeadlines.concat(
@@ -806,7 +847,8 @@ function prettyStatus(status, dueDate) {
 
     toReturn = {
         "status": "",
-        "html": ""
+        "html": "",
+        "daysLeft": null
     };
 
     if (!status) return toReturn;
@@ -818,21 +860,24 @@ function prettyStatus(status, dueDate) {
             "html":html
         };
     } else if (~status.indexOf("deadline-approaching")) {
-        let daysLeft = Math.ceil((new Date(dueDate) - new Date()) * MS_TO_DAYS) + "";
-
-        daysLeft += daysLeft == 1 ? " day" : " days";
-        html = <span className="deadline-approaching right-align right-indent">Due in {daysLeft}</span>;
+        let daysLeft = Math.ceil((new Date(dueDate) - new Date()) * MS_TO_DAYS);
+        let strDaysLeft = daysLeft + "";
+        strDaysLeft += daysLeft == 1 ? " day" : " days";
+        html = <span className="deadline-approaching right-align right-indent">Due in {strDaysLeft}</span>;
         toReturn = {
             "status":"deadline-approaching",
-            "html":html
+            "html":html,
+            "daysLeft": daysLeft
         };
     } else if (~status.indexOf("deadline-past")) {
         let daysPast = Math.ceil((new Date() - new Date(dueDate)) * MS_TO_DAYS);
-        daysPast += daysPast == 1 ? " day" : " days";
-        html = <span className="deadline-past right-align right-indent">{daysPast} late</span>;
+        let strDaysPast = daysPast + "";
+        strDaysPast += daysPast == 1 ? " day" : " days";
+        html = <span className="deadline-past right-align right-indent">{strDaysPast} late</span>;
         toReturn = {
             "status":"deadline-past",
-            "html":html
+            "html":html,
+            "daysLeft": -daysPast
         };
     } else if (~status.indexOf("cancelled")) {
         html = <span className="cancelled right-align right-indent">Visit cancelled</span>;

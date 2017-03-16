@@ -450,7 +450,9 @@ class NDB_Form_Dashboard extends NDB_Form
         $deps    = parent::getCSSDependencies();
         return array_merge(
             $deps,
-            [$baseURL . "/dashboard/css/dashboard.css"]
+            [$baseURL . "/dashboard/css/dashboard.css",
+            $baseURL . "/dashboard/css/sweetalert.css"
+            ]
         );
     }
 
@@ -475,6 +477,7 @@ class NDB_Form_Dashboard extends NDB_Form
             array(
              $baseurl . '/dashboard/js/react-tooltip.min.js',
              $baseurl . '/dashboard/js/dashboard.js',
+                $baseurl . '/dashboard/js/sweetalert.js'
             )
         );
 

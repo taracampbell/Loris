@@ -831,18 +831,29 @@ var StudyTrackerHeader = function (_React$Component9) {
         _this9.state = {
             visitInFocus: null
         };
+        _this9.showLegend = _this9.showLegend.bind(_this9);
         _this9.highlightColumns = _this9.highlightColumns.bind(_this9);
         _this9.unhighlightColumns = _this9.unhighlightColumns.bind(_this9);
         _this9.keepHighlightedShowVisitFocus = _this9.keepHighlightedShowVisitFocus.bind(_this9);
         return _this9;
     }
 
-    // When mouse enters header cell, highlight all cells for that visit
-    // This means that the text that shows up in the column header
-    // must be equal to the css class name which is perhaps bad design
-
-
     _createClass(StudyTrackerHeader, [{
+        key: "showLegend",
+        value: function showLegend() {
+            var LEGEND = "<div class='circle legend-visit-circle'></div>" + "<span>This outer circle represents the <em>Visit Registration</em> status</span>" + "<div class='circle legend-data-circle'></div>" + "<span>and the fill of the circle represents the <em>Data Entry</em> status.</span><br>" + "<span class='complete'>Blue indicates <em>completion.</em></span><br>" + "<span class='deadline-approaching'>Yellow indicates that the <em>deadline is approaching.</em></span><br>" + "<span class='deadline-past'>Red means the <em>deadline has past.</em></span><br>" + "<span class='no-deadline'>Dark gray means that the deadline has <em>not specified a deadline.</em></span><br>" + "<span class='cancelled'>Light gray means the visit has been <em>cancelled.</em></span>";
+            swal({
+                title: "Legend",
+                text: LEGEND,
+                html: true
+            });
+        }
+
+        // When mouse enters header cell, highlight all cells for that visit
+        // This means that the text that shows up in the column header
+        // must be equal to the css class name which is perhaps bad design
+
+    }, {
         key: "highlightColumns",
         value: function highlightColumns(event) {
             var visitClass = "." + $(event.target).text();
@@ -894,7 +905,15 @@ var StudyTrackerHeader = function (_React$Component9) {
                 React.createElement(
                     "tr",
                     null,
-                    React.createElement("th", { className: "col-md-1" }),
+                    React.createElement(
+                        "th",
+                        { className: "col-md-1 legend-link-container" },
+                        React.createElement(
+                            "a",
+                            { id: "legend-link", href: "#", onClick: this.showLegend },
+                            "?"
+                        )
+                    ),
                     visitLabelHeaders
                 )
             );

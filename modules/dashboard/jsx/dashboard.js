@@ -3,6 +3,7 @@ const SIDEBAR_WIDTH = "20%";
 const HIGHLIGHT_COLOR = "#E9EBF3";
 const GET_DATA_URL = loris.BaseURL + "/dashboard/ajax/getData.php";
 
+
 function SiteFilter(props) {
     let options = [];
     props.sites.forEach(function (name, alias) {
@@ -480,9 +481,28 @@ class StudyTrackerHeader extends React.Component {
         this.state = {
           visitInFocus: null
         };
+        this.showLegend = this.showLegend.bind(this);
         this.highlightColumns = this.highlightColumns.bind(this);
         this.unhighlightColumns = this.unhighlightColumns.bind(this);
         this.keepHighlightedShowVisitFocus = this.keepHighlightedShowVisitFocus.bind(this);
+    }
+
+    showLegend() {
+        const LEGEND =
+            "<div class='circle legend-visit-circle'></div>" +
+            "<span>This outer circle represents the <em>Visit Registration</em> status</span>" +
+            "<div class='circle legend-data-circle'></div>" +
+            "<span>and the fill of the circle represents the <em>Data Entry</em> status.</span><br>" +
+            "<span class='complete'>Blue indicates <em>completion.</em></span><br>" +
+            "<span class='deadline-approaching'>Yellow indicates that the <em>deadline is approaching.</em></span><br>" +
+            "<span class='deadline-past'>Red means the <em>deadline has past.</em></span><br>" +
+            "<span class='no-deadline'>Dark gray means that the deadline has <em>not specified a deadline.</em></span><br>" +
+            "<span class='cancelled'>Light gray means the visit has been <em>cancelled.</em></span>";
+        swal({
+            title: "Legend",
+            text: LEGEND,
+            html: true
+        });
     }
 
     // When mouse enters header cell, highlight all cells for that visit
@@ -529,7 +549,11 @@ class StudyTrackerHeader extends React.Component {
     return (
         <thead className="StudyTrackerHeader">
             <tr>
-                <th className="col-md-1"/>
+                <th className="col-md-1 legend-link-container">
+                    <a id="legend-link" href="#" onClick={this.showLegend}>
+                        ?
+                    </a>
+                </th>
                 {visitLabelHeaders}
             </tr>
         </thead>

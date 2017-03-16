@@ -4,6 +4,15 @@ body {
     font-family: sans-serif;
 }
 
+#legend-link{
+    color: black;
+    font-weight: bold;
+    text-align: center;
+    margin: auto;
+    display: inline-block;
+    width: initial;
+}
+
 .dashboard-header {
     margin: 0;
 }
@@ -98,6 +107,8 @@ body {
     margin: auto;
 }
 
+
+
 .complete {
     color: #4A90E2;
 }
@@ -154,6 +165,17 @@ body {
         radial-gradient(
             circle, #FC3BB3, #DD286A
         );
+}
+
+.legend-data-circle {
+    background-image:
+    radial-gradient(
+        circle, #575757, #484848
+    );
+}
+
+.legend-visit-circle {
+    border: 4px solid #575757;
 }
 
 .complete-visit {

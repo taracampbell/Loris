@@ -92,7 +92,7 @@ class SideBarCandInstContent extends React.Component {
             display: "block"
         };
         for (let sg in data) {
-            content.push(<h4 style={bold}>{sg}</h4>);
+            content.push(<h4 style={bold}>&nbsp;{sg}</h4>);
             for (let t in data[sg]) {
                 let inst = data[sg][t];
                 let url = loris.BaseURL +
@@ -100,19 +100,26 @@ class SideBarCandInstContent extends React.Component {
                     "/?commentID="+ inst.commentID +
                     "&sessionID=" + sessionID +
                     "&candID=" + candid;
-                let checkComplete;
+                let flagCompletion;
                 if (inst.completion === "Complete") {
-                    checkComplete = <span
+                    flagCompletion = <span
                         className="complete left-align"
                         style={bold}
                     >
                         &#10003;
                     </span>
+                } else {
+                    flagCompletion = <span
+                        className="deadline-past left-align"
+                        style={bold}
+                    >
+                        ! &nbsp;
+                    </span>
                 }
                 content.push(
                     <div>
                         <a href={url} target="_blank" className="left-indent" style={style}>
-                            {checkComplete}
+                            {flagCompletion}
                             {inst.fullName}
                         </a>
                     </div>

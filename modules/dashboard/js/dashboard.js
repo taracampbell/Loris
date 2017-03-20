@@ -157,20 +157,30 @@ var SideBarCandInstContent = function (_React$Component2) {
                 content.push(React.createElement(
                     "h4",
                     { style: bold },
+                    "\xA0",
                     sg
                 ));
                 for (var t in data[sg]) {
                     var inst = data[sg][t];
                     var url = loris.BaseURL + "/" + inst.testName + "/?commentID=" + inst.commentID + "&sessionID=" + sessionID + "&candID=" + candid;
-                    var checkComplete = void 0;
+                    var flagCompletion = void 0;
                     if (inst.completion === "Complete") {
-                        checkComplete = React.createElement(
+                        flagCompletion = React.createElement(
                             "span",
                             {
                                 className: "complete left-align",
                                 style: bold
                             },
                             "\u2713"
+                        );
+                    } else {
+                        flagCompletion = React.createElement(
+                            "span",
+                            {
+                                className: "deadline-past left-align",
+                                style: bold
+                            },
+                            "! \xA0"
                         );
                     }
                     content.push(React.createElement(
@@ -179,7 +189,7 @@ var SideBarCandInstContent = function (_React$Component2) {
                         React.createElement(
                             "a",
                             { href: url, target: "_blank", className: "left-indent", style: style },
-                            checkComplete,
+                            flagCompletion,
                             inst.fullName
                         )
                     ));

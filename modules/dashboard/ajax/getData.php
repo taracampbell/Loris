@@ -20,9 +20,9 @@ if (isset($_GET['data'])) {
         header('Content-Type: application/json');
         echo json_encode(getVisitLabels());
     } else if ($data == "instruments") {
-        if ($_GET['pscid']) {
+        if ($_GET['sessionID']) {
             header('Content-Type: application/json');
-            echo json_encode(getInstruments($_GET['pscid']));
+            echo json_encode(getInstruments($_GET['sessionID']));
         } else {
             header("HTTP/1.1 400 Bad Request");
         }
@@ -359,40 +359,24 @@ function getCohortName($subproject) {
     );
 }
 
-// Returns an array of visit labels, each mapping to
-// an array of subgroups, and each of those mapping to
-// an array of instruments
-function getInstruments($pscid) {
+// Returns an array of subgroups which then map to
+// an array of instruments, each containing test name, full name,
+// data entry status, and commentID
+function getInstruments($sessionID) {
     global $DB;
 
     $result = array();
 
-    $visitLabels = getVisitLabels();
-    $candID = $DB->pselectOne(
-        "SELECT CandID FROM candidate WHERE PSCID=:pscid",
-        array("pscid" => $pscid)
+    $tests = $DB->pselect(
+        "SELECT Test_name, Data_entry, CommentID
+         FROM flag
+         WHERE SessionID=:sid AND CommentID NOT LIKE 'DDE_%'",
+        array("sid" => $sessionID)
     );
 
-    // Go through each visit
-    foreach($visitLabels as $vl) {
-        $visit = array();
-        $sessID = $DB->pselectOne(
-            "SELECT ID 
-             FROM session s 
-             WHERE CandID=:cid AND Visit_label=:vl",
-            array("cid" => $candID, "vl" => $vl)
-        );
 
-        $tests = $DB->pselect(
-            "SELECT Test_name, Data_entry
-             FROM flag
-             WHERE SessionID=:sid AND CommentID NOT LIKE 'DDE_%'",
-            array("sid" => $sessID)
-        );
-
-        // Go through all tests for the visit
-        foreach ($tests as $t) {
-            $sg = $DB->pselectOne(
+    foreach ($tests as $t) {
+        $sg = $DB->pselectOne(
               "SELECT Subgroup_name
                FROM test_subgroups s 
                INNER JOIN test_names t 
@@ -401,27 +385,34 @@ function getInstruments($pscid) {
                 array("tn" => $t['Test_name'])
             );
 
-            // add subgroup to keys
-            if (!array_key_exists($sg, $visit)) {
-                $visit[$sg] = array();
-            }
+        if (!array_key_exists($sg, $result)) {
+            $result[$sg] = array();
+        }
 
-            $fullName = $DB->pselectOne(
+        $fullName = $DB->pselectOne(
                 "SELECT Full_name 
                  FROM test_names
                  WHERE Test_name=:t",
                 array("t" => $t["Test_name"])
-            );
+        );
 
-            $visit[$sg][] = array(
-                "testName" => $fullName,
-                "completion" => $t['Data_entry']
+        if ($t["Data_entry"] === "Complete") {
+            $ddeComplete = $DB->pselectOne(
+                "SELECT Data_entry 
+                 FROM flag 
+                 WHERE CommentID=:cid",
+                array("cid" => "DDE_".$t["CommentID"])
             );
         }
 
-        $result[$vl] = $visit;
+        $result[$sg][] = array(
+            "fullName" => $fullName,
+            "testName" => $t["Test_name"],
+            "completion" => $t["Data_entry"],
+            "ddeCompletion" => $ddeComplete,
+            "commentID" => $t["CommentID"]
+        );
     }
-
     return $result;
 }
 

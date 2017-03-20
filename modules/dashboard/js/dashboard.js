@@ -378,6 +378,9 @@ var SideBarVisitContent = function (_React$Component4) {
                 null,
                 "Upcoming Data Entry Deadlines"
             )];
+
+            var visitsSortable = [];
+            var dataSortable = [];
             // Loop through rows
             var _iteratorNormalCompletion = true;
             var _didIteratorError = false;
@@ -395,60 +398,48 @@ var SideBarVisitContent = function (_React$Component4) {
                     var instListUrl = loris.BaseURL + "/instrument_list/?candID=" + candid + "&sessionID=";
                     var timepointListURL = loris.BaseURL + "/timepoint_list/?candID=" + candid;
                     // Look for visit with corresponding visit label
-                    var _iteratorNormalCompletion2 = true;
-                    var _didIteratorError2 = false;
-                    var _iteratorError2 = undefined;
+                    var _iteratorNormalCompletion4 = true;
+                    var _didIteratorError4 = false;
+                    var _iteratorError4 = undefined;
 
                     try {
-                        for (var _iterator2 = row.visits[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                            var v = _step2.value;
+                        for (var _iterator4 = row.visits[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                            var v = _step4.value;
 
                             if (v.visitLabel === this.props.visit) {
                                 if (v.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
                                     instListUrl += v.sessionID;
                                     var vr = prettyStatus(v.visitRegStatus, v.visitRegDueDate);
                                     if (vr.status === "deadline-past" || vr.status === "deadline-approaching") {
-                                        visitDeadlines = visitDeadlines.concat(React.createElement(
-                                            "p",
-                                            { className: "left-indent" },
-                                            React.createElement(
-                                                "a",
-                                                { href: timepointListURL, target: "_blank" },
-                                                pscid,
-                                                ":"
-                                            ),
-                                            vr.html
-                                        ));
+                                        visitsSortable.push({
+                                            "prettyStatus": vr,
+                                            "URL": timepointListURL,
+                                            "pscid": pscid
+                                        });
                                     }
                                     var de = prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
                                     if (de.status === "deadline-past" || de.status === "deadline-approaching") {
-                                        dataDeadlines = dataDeadlines.concat(React.createElement(
-                                            "p",
-                                            { className: "left-indent" },
-                                            React.createElement(
-                                                "a",
-                                                { href: instListUrl, target: "_blank" },
-                                                pscid,
-                                                ":"
-                                            ),
-                                            de.html
-                                        ));
+                                        dataSortable.push({
+                                            "prettyStatus": de,
+                                            "URL": instListUrl,
+                                            "pscid": pscid
+                                        });
                                     }
                                 }
                                 break;
                             }
                         }
                     } catch (err) {
-                        _didIteratorError2 = true;
-                        _iteratorError2 = err;
+                        _didIteratorError4 = true;
+                        _iteratorError4 = err;
                     } finally {
                         try {
-                            if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                                _iterator2.return();
+                            if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                                _iterator4.return();
                             }
                         } finally {
-                            if (_didIteratorError2) {
-                                throw _iteratorError2;
+                            if (_didIteratorError4) {
+                                throw _iteratorError4;
                             }
                         }
                     }
@@ -464,6 +455,83 @@ var SideBarVisitContent = function (_React$Component4) {
                 } finally {
                     if (_didIteratorError) {
                         throw _iteratorError;
+                    }
+                }
+            }
+
+            visitsSortable = visitsSortable.sort(function (a, b) {
+                return a.prettyStatus.daysLeft - b.prettyStatus.daysLeft;
+            });
+            dataSortable = dataSortable.sort(function (a, b) {
+                return a.prettyStatus.daysLeft - b.prettyStatus.daysLeft;
+            });
+
+            var _iteratorNormalCompletion2 = true;
+            var _didIteratorError2 = false;
+            var _iteratorError2 = undefined;
+
+            try {
+                for (var _iterator2 = visitsSortable[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                    var _vr = _step2.value;
+
+                    visitDeadlines.push(React.createElement(
+                        "p",
+                        { className: "left-indent" },
+                        React.createElement(
+                            "a",
+                            { href: _vr.URL, target: "_blank" },
+                            _vr.pscid,
+                            ":"
+                        ),
+                        _vr.prettyStatus.html
+                    ));
+                }
+            } catch (err) {
+                _didIteratorError2 = true;
+                _iteratorError2 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                        _iterator2.return();
+                    }
+                } finally {
+                    if (_didIteratorError2) {
+                        throw _iteratorError2;
+                    }
+                }
+            }
+
+            var _iteratorNormalCompletion3 = true;
+            var _didIteratorError3 = false;
+            var _iteratorError3 = undefined;
+
+            try {
+                for (var _iterator3 = dataSortable[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                    var _de = _step3.value;
+
+                    dataDeadlines.push(React.createElement(
+                        "p",
+                        { className: "left-indent" },
+                        React.createElement(
+                            "a",
+                            { href: _de.URL, target: "_blank" },
+                            _de.pscid,
+                            ":"
+                        ),
+                        _de.prettyStatus.html
+                    ));
+                }
+            } catch (err) {
+                _didIteratorError3 = true;
+                _iteratorError3 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                        _iterator3.return();
+                    }
+                } finally {
+                    if (_didIteratorError3) {
+                        throw _iteratorError3;
                     }
                 }
             }
@@ -963,29 +1031,29 @@ var StudyTracker = function (_React$Component10) {
 
             var candid = void 0;
 
-            var _iteratorNormalCompletion3 = true;
-            var _didIteratorError3 = false;
-            var _iteratorError3 = undefined;
+            var _iteratorNormalCompletion5 = true;
+            var _didIteratorError5 = false;
+            var _iteratorError5 = undefined;
 
             try {
-                for (var _iterator3 = this.state.rows[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-                    var r = _step3.value;
+                for (var _iterator5 = this.state.rows[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+                    var r = _step5.value;
 
                     if (r.pscid === pscid) {
                         candid = r.candid;
                     }
                 }
             } catch (err) {
-                _didIteratorError3 = true;
-                _iteratorError3 = err;
+                _didIteratorError5 = true;
+                _iteratorError5 = err;
             } finally {
                 try {
-                    if (!_iteratorNormalCompletion3 && _iterator3.return) {
-                        _iterator3.return();
+                    if (!_iteratorNormalCompletion5 && _iterator5.return) {
+                        _iterator5.return();
                     }
                 } finally {
-                    if (_didIteratorError3) {
-                        throw _iteratorError3;
+                    if (_didIteratorError5) {
+                        throw _iteratorError5;
                     }
                 }
             }
@@ -1205,7 +1273,8 @@ function prettyStatus(status, dueDate) {
 
     toReturn = {
         "status": "",
-        "html": ""
+        "html": "",
+        "daysLeft": null
     };
 
     if (!status) return toReturn;
@@ -1221,31 +1290,34 @@ function prettyStatus(status, dueDate) {
             "html": html
         };
     } else if (~status.indexOf("deadline-approaching")) {
-        var daysLeft = Math.ceil((new Date(dueDate) - new Date()) * MS_TO_DAYS) + "";
-
-        daysLeft += daysLeft == 1 ? " day" : " days";
+        var daysLeft = Math.ceil((new Date(dueDate) - new Date()) * MS_TO_DAYS);
+        var strDaysLeft = daysLeft + "";
+        strDaysLeft += daysLeft == 1 ? " day" : " days";
         html = React.createElement(
             "span",
             { className: "deadline-approaching right-align right-indent" },
             "Due in ",
-            daysLeft
+            strDaysLeft
         );
         toReturn = {
             "status": "deadline-approaching",
-            "html": html
+            "html": html,
+            "daysLeft": daysLeft
         };
     } else if (~status.indexOf("deadline-past")) {
         var daysPast = Math.ceil((new Date() - new Date(dueDate)) * MS_TO_DAYS);
-        daysPast += daysPast == 1 ? " day" : " days";
+        var strDaysPast = daysPast + "";
+        strDaysPast += daysPast == 1 ? " day" : " days";
         html = React.createElement(
             "span",
             { className: "deadline-past right-align right-indent" },
-            daysPast,
+            strDaysPast,
             " late"
         );
         toReturn = {
             "status": "deadline-past",
-            "html": html
+            "html": html,
+            "daysLeft": -daysPast
         };
     } else if (~status.indexOf("cancelled")) {
         html = React.createElement(

@@ -374,6 +374,7 @@ function getInstruments($sessionID) {
         array("sid" => $sessionID)
     );
 
+
     foreach ($tests as $t) {
         $sg = $DB->pselectOne(
               "SELECT Subgroup_name
@@ -395,10 +396,20 @@ function getInstruments($sessionID) {
                 array("t" => $t["Test_name"])
         );
 
+        if ($t["Data_entry"] === "Complete") {
+            $ddeComplete = $DB->pselectOne(
+                "SELECT Data_entry 
+                 FROM flag 
+                 WHERE CommentID=:cid",
+                array("cid" => "DDE_".$t["CommentID"])
+            );
+        }
+
         $result[$sg][] = array(
             "fullName" => $fullName,
             "testName" => $t["Test_name"],
             "completion" => $t["Data_entry"],
+            "ddeCompletion" => $ddeComplete,
             "commentID" => $t["CommentID"]
         );
     }

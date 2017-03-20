@@ -129,9 +129,11 @@ var SideBarCandInstContent = function (_React$Component2) {
         key: "render",
         value: function render() {
             var content = [];
-            var bold = {
-                fontWeight: "bold"
+            var flagStyle = {
+                fontWeight: "bold",
+                letterSpacing: "0em"
             };
+            var bold = { fontWeight: "bold" };
 
             var instListURL = loris.BaseURL + "/instrument_list/?candID=" + this.props.candid + "&sessionID=" + this.props.sessionID;
             content.push(React.createElement(
@@ -164,12 +166,21 @@ var SideBarCandInstContent = function (_React$Component2) {
                     var inst = data[sg][t];
                     var url = loris.BaseURL + "/" + inst.testName + "/?commentID=" + inst.commentID + "&sessionID=" + sessionID + "&candID=" + candid;
                     var flagCompletion = void 0;
-                    if (inst.completion === "Complete") {
+                    if (inst.ddeCompletion === "Complete") {
                         flagCompletion = React.createElement(
                             "span",
                             {
                                 className: "complete left-align",
-                                style: bold
+                                style: flagStyle
+                            },
+                            "\u2713\u2713"
+                        );
+                    } else if (inst.completion === "Complete") {
+                        flagCompletion = React.createElement(
+                            "span",
+                            {
+                                className: "complete left-align",
+                                style: flagStyle
                             },
                             "\u2713"
                         );
@@ -178,7 +189,7 @@ var SideBarCandInstContent = function (_React$Component2) {
                             "span",
                             {
                                 className: "deadline-past left-align",
-                                style: bold
+                                style: flagStyle
                             },
                             "! \xA0"
                         );
@@ -257,15 +268,20 @@ var SideBarCandContent = function (_React$Component3) {
                     if (vr.status === "complete" && de.status === "complete") {
                         url += "instrument_list/?candID=" + candid + "&sessionID=" + v.sessionID;
                         visitContent.push(React.createElement(
-                            "p",
-                            { style: { fontSize: "18px" } },
+                            "div",
+                            null,
                             React.createElement(
-                                "a",
-                                { href: url, target: "_blank" },
-                                v.visitLabel,
-                                ":"
-                            ),
-                            vr.html
+                                "p",
+                                { style: { fontSize: "18px" } },
+                                React.createElement(
+                                    "a",
+                                    { href: url, target: "_blank" },
+                                    "\xA0",
+                                    v.visitLabel,
+                                    ":"
+                                ),
+                                vr.html
+                            )
                         ));
                     } else if (de.html) {
                         url += "instrument_list/?candID=" + candid + "&sessionID=" + v.sessionID;
@@ -278,6 +294,7 @@ var SideBarCandContent = function (_React$Component3) {
                                 React.createElement(
                                     "h4",
                                     null,
+                                    "\xA0",
                                     v.visitLabel,
                                     ":"
                                 )
@@ -306,6 +323,7 @@ var SideBarCandContent = function (_React$Component3) {
                                 React.createElement(
                                     "h4",
                                     null,
+                                    "\xA0",
                                     v.visitLabel,
                                     ":"
                                 )
@@ -381,12 +399,12 @@ var SideBarVisitContent = function (_React$Component4) {
             var visitDeadlines = [React.createElement(
                 "h4",
                 null,
-                "Upcoming Visit Deadlines"
+                "\xA0Upcoming Visit Deadlines"
             )];
             var dataDeadlines = [React.createElement(
                 "h4",
                 null,
-                "Upcoming Data Entry Deadlines"
+                "\xA0Upcoming Data Entry Deadlines"
             )];
 
             var visitsSortable = [];
@@ -719,7 +737,10 @@ var VisitCell = function (_React$Component6) {
                                 "div",
                                 { onClick: function onClick() {
                                         return _this7.props.showCandInstFocus(sidebarArgs);
-                                    }, "data-tip": true, "data-for": visit.sessionID, className: visitClass },
+                                    },
+                                    "data-tip": true, "data-for": visit.sessionID,
+                                    className: visitClass
+                                },
                                 innerCircleInfo,
                                 React.createElement(
                                     ReactTooltip,
@@ -805,7 +826,13 @@ var StudyTrackerRow = function (_React$Component8) {
                 $("." + v.visitLabel).css("background-color", "");
             });
             this.highlightRow();
-            this.props.showCandFocus(event);
+            // if click occurs on a circle with data-entry in the class
+            // then it is both a Visit Circle and has instrument related data
+            // to be displayed.
+            // otherwise, show
+            if (!~event.target.className.indexOf('data-entry')) {
+                this.props.showCandFocus(event);
+            }
         }
     }, {
         key: "render",
@@ -1005,7 +1032,6 @@ var StudyTracker = function (_React$Component10) {
             if (sidebarArgs.sessionID > 0) {
                 $.get(GET_DATA_URL, { data: "instruments", "sessionID": sidebarArgs.sessionID }, function (data, status) {
                     if (status === "success") {
-                        console.log(data);
                         var sideBarContent = React.createElement(SideBarCandInstContent, {
                             sessionID: sidebarArgs.sessionID,
                             pscid: sidebarArgs.pscid,

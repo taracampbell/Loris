@@ -68,9 +68,11 @@ class Filters extends React.Component {
 class SideBarCandInstContent extends React.Component {
     render() {
         let content = [];
-        let bold = {
-            fontWeight: "bold"
+        let flagStyle = {
+            fontWeight: "bold",
+            letterSpacing: "0em"
         };
+        let bold = {fontWeight: "bold"};
 
         let instListURL = loris.BaseURL
             + "/instrument_list/?candID=" + this.props.candid
@@ -101,17 +103,24 @@ class SideBarCandInstContent extends React.Component {
                     "&sessionID=" + sessionID +
                     "&candID=" + candid;
                 let flagCompletion;
-                if (inst.completion === "Complete") {
+                if (inst.ddeCompletion === "Complete") {
                     flagCompletion = <span
                         className="complete left-align"
-                        style={bold}
+                        style={flagStyle}
+                    >
+                        &#10003;&#10003;
+                    </span>
+                } else if (inst.completion === "Complete") {
+                    flagCompletion = <span
+                        className="complete left-align"
+                        style={flagStyle}
                     >
                         &#10003;
                     </span>
                 } else {
                     flagCompletion = <span
                         className="deadline-past left-align"
-                        style={bold}
+                        style={flagStyle}
                     >
                         ! &nbsp;
                     </span>
@@ -167,17 +176,19 @@ class SideBarCandContent extends React.Component {
                     if (vr.status === "complete" && de.status === "complete") {
                         url += "instrument_list/?candID="+candid+"&sessionID="+v.sessionID;
                         visitContent.push(
-                            <p style={{fontSize: "18px"}}>
-                                <a href={url} target="_blank">{v.visitLabel}:</a>
-                                {vr.html}
-                            </p>
+                            <div>
+                                <p style={{fontSize: "18px"}}>
+                                    <a href={url} target="_blank">&nbsp;{v.visitLabel}:</a>
+                                    {vr.html}
+                                </p>
+                            </div>
                         );
                     } else if(de.html){
                         url += "instrument_list/?candID="+candid+"&sessionID="+v.sessionID;
                         visitContent.push(
                             <div>
                                 <a href={url} target="_blank">
-                                <h4>{v.visitLabel}:</h4>
+                                <h4>&nbsp;{v.visitLabel}:</h4>
                                 </a>
                                 <p className="left-indent">Visit Registration: {vr.html}</p>
                                 <p className="left-indent">Data Entry: {de.html}</p>
@@ -188,7 +199,7 @@ class SideBarCandContent extends React.Component {
                         visitContent.push(
                             <div>
                                 <a href={url} target="_blank">
-                                    <h4>{v.visitLabel}:</h4>
+                                    <h4>&nbsp;{v.visitLabel}:</h4>
                                 </a>
                                 <p className="left-indent">Visit Registration: {vr.html}</p>
                             </div>
@@ -198,7 +209,9 @@ class SideBarCandContent extends React.Component {
             }.bind(this)
         );
         if (visitContent.length === 0) {
-            visitContent = <p className="center">No applicable visits for this participant for cohort {this.props.currentCohort}</p>
+            visitContent = <p className="center">
+                    No applicable visits for this participant for cohort {this.props.currentCohort}
+                </p>
         }
         content.push(visitContent);
 
@@ -228,8 +241,8 @@ class SideBarVisitContent extends React.Component {
             content = content.concat(<h4 className="center">{subheader}</h4>)
         }
 
-        let visitDeadlines = [<h4>Upcoming Visit Deadlines</h4>];
-        let dataDeadlines = [<h4>Upcoming Data Entry Deadlines</h4>];
+        let visitDeadlines = [<h4>&nbsp;Upcoming Visit Deadlines</h4>];
+        let dataDeadlines = [<h4>&nbsp;Upcoming Data Entry Deadlines</h4>];
 
         let visitsSortable = [];
         let dataSortable = [];
@@ -400,7 +413,10 @@ class VisitCell extends React.Component {
 
             return (
                 <td className={visit.visitLabel} style={bgColor}>
-                    <div onClick={() => this.props.showCandInstFocus(sidebarArgs)}data-tip data-for={visit.sessionID} className={visitClass}>
+                    <div onClick={() => this.props.showCandInstFocus(sidebarArgs)}
+                         data-tip data-for={visit.sessionID}
+                         className={visitClass}
+                    >
                         {innerCircleInfo}
                         <ReactTooltip id={visit.sessionID} place="top" type="dark" effect="solid">
                             <div className="ReactTooltipContent">
@@ -455,7 +471,14 @@ class StudyTrackerRow extends React.Component {
             $("."+v.visitLabel).css("background-color","");
         });
         this.highlightRow();
-        this.props.showCandFocus(event);
+        // if click occurs on a circle with data-entry in the class
+        // then it is both a Visit Circle and has instrument related data
+        // to be displayed.
+        // otherwise, show
+        if (!~event.target.className.indexOf('data-entry')) {
+            this.props.showCandFocus(event);
+        }
+
     }
 
     render() {
@@ -528,6 +551,7 @@ class StudyTrackerHeader extends React.Component {
         this.highlightColumns(event);
 
         this.props.showVisitFocus(event);
+
     }
   render() {
     let colWidth = 91.6666/this.props.visitLabels.length;
@@ -621,7 +645,6 @@ class StudyTracker extends React.Component {
         if (sidebarArgs.sessionID > 0) {
             $.get(GET_DATA_URL, {data: "instruments", "sessionID":sidebarArgs.sessionID}, function(data,status) {
                 if (status === "success") {
-                    console.log(data);
                     let sideBarContent = <SideBarCandInstContent
                         sessionID={sidebarArgs.sessionID}
                         pscid={sidebarArgs.pscid}

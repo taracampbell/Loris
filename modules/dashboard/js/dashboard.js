@@ -129,10 +129,7 @@ var SideBarCandInstContent = function (_React$Component2) {
         key: "render",
         value: function render() {
             var content = [];
-            var flagStyle = {
-                fontWeight: "bold",
-                letterSpacing: "0em"
-            };
+
             var bold = { fontWeight: "bold" };
 
             var instListURL = loris.BaseURL + "/instrument_list/?candID=" + this.props.candid + "&sessionID=" + this.props.sessionID;
@@ -171,7 +168,7 @@ var SideBarCandInstContent = function (_React$Component2) {
                             "span",
                             {
                                 className: "complete left-align",
-                                style: flagStyle
+                                style: bold
                             },
                             "\u2713\u2713"
                         );
@@ -180,7 +177,7 @@ var SideBarCandInstContent = function (_React$Component2) {
                             "span",
                             {
                                 className: "complete left-align",
-                                style: flagStyle
+                                style: bold
                             },
                             "\u2713"
                         );
@@ -189,7 +186,7 @@ var SideBarCandInstContent = function (_React$Component2) {
                             "span",
                             {
                                 className: "deadline-past left-align",
-                                style: flagStyle
+                                style: bold
                             },
                             "! \xA0"
                         );

@@ -68,10 +68,7 @@ class Filters extends React.Component {
 class SideBarCandInstContent extends React.Component {
     render() {
         let content = [];
-        let flagStyle = {
-            fontWeight: "bold",
-            letterSpacing: "0em"
-        };
+
         let bold = {fontWeight: "bold"};
 
         let instListURL = loris.BaseURL
@@ -106,21 +103,21 @@ class SideBarCandInstContent extends React.Component {
                 if (inst.ddeCompletion === "Complete") {
                     flagCompletion = <span
                         className="complete left-align"
-                        style={flagStyle}
+                        style={bold}
                     >
                         &#10003;&#10003;
                     </span>
                 } else if (inst.completion === "Complete") {
                     flagCompletion = <span
                         className="complete left-align"
-                        style={flagStyle}
+                        style={bold}
                     >
                         &#10003;
                     </span>
                 } else {
                     flagCompletion = <span
                         className="deadline-past left-align"
-                        style={flagStyle}
+                        style={bold}
                     >
                         ! &nbsp;
                     </span>

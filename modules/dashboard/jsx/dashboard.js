@@ -85,13 +85,21 @@ class SideBarCandInstContent extends React.Component {
         let data = this.props.data;
         let sessionID = this.props.sessionID;
         let candid = this.props.candid;
+        let style = {
+            whiteSpace: "nowrap",
+            textOverflow: "ellipsis",
+            overflow: "hidden",
+            display: "block"
+        };
         for (let sg in data) {
             content.push(<h4 style={bold}>{sg}</h4>);
             for (let t in data[sg]) {
                 let inst = data[sg][t];
                 let url = loris.BaseURL +
                     "/" + inst.testName +
-                    "/?commentID="+ inst.commentID + "&sessionID=" + sessionID + "&candID="+candid;
+                    "/?commentID="+ inst.commentID +
+                    "&sessionID=" + sessionID +
+                    "&candID=" + candid;
                 let checkComplete;
                 if (inst.completion === "Complete") {
                     checkComplete = <span
@@ -103,7 +111,7 @@ class SideBarCandInstContent extends React.Component {
                 }
                 content.push(
                     <div>
-                        <a href={url} target="_blank" className="left-indent">
+                        <a href={url} target="_blank" className="left-indent" style={style}>
                             {checkComplete}
                             {inst.fullName}
                         </a>

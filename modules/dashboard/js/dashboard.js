@@ -147,6 +147,12 @@ var SideBarCandInstContent = function (_React$Component2) {
             var data = this.props.data;
             var sessionID = this.props.sessionID;
             var candid = this.props.candid;
+            var style = {
+                whiteSpace: "nowrap",
+                textOverflow: "ellipsis",
+                overflow: "hidden",
+                display: "block"
+            };
             for (var sg in data) {
                 content.push(React.createElement(
                     "h4",
@@ -172,7 +178,7 @@ var SideBarCandInstContent = function (_React$Component2) {
                         null,
                         React.createElement(
                             "a",
-                            { href: url, target: "_blank", className: "left-indent" },
+                            { href: url, target: "_blank", className: "left-indent", style: style },
                             checkComplete,
                             inst.fullName
                         )

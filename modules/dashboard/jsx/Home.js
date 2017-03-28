@@ -19,7 +19,7 @@ class WelcomePanel extends React.Component {
         <div className="panel-body">
           <h3 className="welcome">Welcome, {this.props.username}</h3>
           <p className="pull-right small login-time">Last login: {this.props.lastlogin}</p>
-          <p className="project-description">{this.props.description}</p>
+          <p className="project-description" dangerouslySetInnerHTML={{__html: this.props.description}} />
         </div>
         {linkJSX}
       </div>

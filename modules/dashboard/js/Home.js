@@ -56,11 +56,7 @@ var WelcomePanel = function (_React$Component) {
             "Last login: ",
             this.props.lastlogin
           ),
-          React.createElement(
-            "p",
-            { className: "project-description" },
-            this.props.description
-          )
+          React.createElement("p", { className: "project-description", dangerouslySetInnerHTML: { __html: this.props.description } })
         ),
         linkJSX
       );

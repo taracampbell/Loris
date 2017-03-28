@@ -11,7 +11,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var MS_TO_DAYS = 1 / (1000 * 60 * 60 * 24);
-var SIDEBAR_WIDTH = "20%";
+var SIDEBAR_WIDTH = "25%";
+var COMPRESS_TBL_WIDTH = "77%";
 var HIGHLIGHT_COLOR = "#E9EBF3";
 var GET_DATA_URL = loris.BaseURL + "/dashboard/ajax/getData.php";
 
@@ -257,6 +258,7 @@ var SideBarCandContent = function (_React$Component3) {
             }
 
             var visitContent = [];
+            var fontSize = { fontSize: "1.10em" };
             visits.forEach(function (v) {
                 if (v.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
                     var url = loris.BaseURL + "/";
@@ -269,7 +271,8 @@ var SideBarCandContent = function (_React$Component3) {
                             null,
                             React.createElement(
                                 "p",
-                                { style: { fontSize: "18px" } },
+                                { style: fontSize },
+                                "\xA0",
                                 React.createElement(
                                     "a",
                                     { href: url, target: "_blank" },
@@ -285,16 +288,12 @@ var SideBarCandContent = function (_React$Component3) {
                         visitContent.push(React.createElement(
                             "div",
                             null,
+                            "\xA0",
                             React.createElement(
                                 "a",
-                                { href: url, target: "_blank" },
-                                React.createElement(
-                                    "h4",
-                                    null,
-                                    "\xA0",
-                                    v.visitLabel,
-                                    ":"
-                                )
+                                { href: url, target: "_blank", style: fontSize },
+                                v.visitLabel,
+                                ":"
                             ),
                             React.createElement(
                                 "p",
@@ -314,16 +313,12 @@ var SideBarCandContent = function (_React$Component3) {
                         visitContent.push(React.createElement(
                             "div",
                             null,
+                            "\xA0",
                             React.createElement(
                                 "a",
-                                { href: url, target: "_blank" },
-                                React.createElement(
-                                    "h4",
-                                    null,
-                                    "\xA0",
-                                    v.visitLabel,
-                                    ":"
-                                )
+                                { href: url, target: "_blank", style: fontSize },
+                                v.visitLabel,
+                                ":"
                             ),
                             React.createElement(
                                 "p",
@@ -369,11 +364,12 @@ var SideBarVisitContent = function (_React$Component4) {
         key: "render",
         value: function render() {
             var content = [];
+            var headerSize = { fontSize: "1.5em" };
             content = content.concat(React.createElement(
-                "h3",
-                { className: "center" },
+                "p",
+                { className: "center", style: headerSize },
                 this.props.visit,
-                " Visit"
+                " Visits"
             ));
 
             var subheader = void 0; // Displays which cohort and visit is in focus
@@ -1141,7 +1137,7 @@ var StudyTracker = function (_React$Component10) {
         key: "showSideBar",
         value: function showSideBar() {
             $(".SideBar").css("width", SIDEBAR_WIDTH);
-            $(".table, .row").css("width", "82%"); // not great, need to figure out how to set this w/o magic numbers
+            $(".table, .row").css("width", COMPRESS_TBL_WIDTH);
         }
     }, {
         key: "closeSideBar",

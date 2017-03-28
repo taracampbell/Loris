@@ -1,5 +1,6 @@
 const MS_TO_DAYS = 1/(1000 * 60 * 60 * 24);
-const SIDEBAR_WIDTH = "20%";
+const SIDEBAR_WIDTH = "25%";
+const COMPRESS_TBL_WIDTH = "77%";
 const HIGHLIGHT_COLOR = "#E9EBF3";
 const GET_DATA_URL = loris.BaseURL + "/dashboard/ajax/getData.php";
 
@@ -164,6 +165,7 @@ class SideBarCandContent extends React.Component {
         }
 
         let visitContent = [];
+        let fontSize = {fontSize: "1.10em"};
         visits.forEach(
             function(v) {
                 if (v.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
@@ -174,7 +176,8 @@ class SideBarCandContent extends React.Component {
                         url += "instrument_list/?candID="+candid+"&sessionID="+v.sessionID;
                         visitContent.push(
                             <div>
-                                <p style={{fontSize: "18px"}}>
+                                <p style={fontSize}>
+                                    &nbsp;
                                     <a href={url} target="_blank">&nbsp;{v.visitLabel}:</a>
                                     {vr.html}
                                 </p>
@@ -184,8 +187,9 @@ class SideBarCandContent extends React.Component {
                         url += "instrument_list/?candID="+candid+"&sessionID="+v.sessionID;
                         visitContent.push(
                             <div>
-                                <a href={url} target="_blank">
-                                <h4>&nbsp;{v.visitLabel}:</h4>
+                                &nbsp;
+                                <a href={url} target="_blank" style={fontSize}>
+                                {v.visitLabel}:
                                 </a>
                                 <p className="left-indent">Visit Registration: {vr.html}</p>
                                 <p className="left-indent">Data Entry: {de.html}</p>
@@ -195,8 +199,9 @@ class SideBarCandContent extends React.Component {
                         url += candid;
                         visitContent.push(
                             <div>
-                                <a href={url} target="_blank">
-                                    <h4>&nbsp;{v.visitLabel}:</h4>
+                                &nbsp;
+                                <a href={url} target="_blank" style={fontSize}>
+                                    {v.visitLabel}:
                                 </a>
                                 <p className="left-indent">Visit Registration: {vr.html}</p>
                             </div>
@@ -223,7 +228,12 @@ class SideBarCandContent extends React.Component {
 class SideBarVisitContent extends React.Component {
     render () {
         let content = [];
-        content = content.concat(<h3 className="center">{this.props.visit} Visit</h3>);
+        let headerSize = {fontSize: "1.5em"};
+        content = content.concat(
+            <p className="center" style={headerSize}>
+                {this.props.visit} Visits
+            </p>
+        );
 
         let subheader; // Displays which cohort and visit is in focus
         if (this.props.currentSite !== "all" && this.props.currentCohort !== "all") {
@@ -728,7 +738,7 @@ class StudyTracker extends React.Component {
 
     showSideBar() {
         $(".SideBar").css("width", SIDEBAR_WIDTH);
-        $(".table, .row").css("width", "82%"); // not great, need to figure out how to set this w/o magic numbers
+        $(".table, .row").css("width", COMPRESS_TBL_WIDTH);
     }
 
     closeSideBar() {

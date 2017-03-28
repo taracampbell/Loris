@@ -11,8 +11,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var MS_TO_DAYS = 1 / (1000 * 60 * 60 * 24);
-var SIDEBAR_WIDTH = "25%";
-var COMPRESS_TBL_WIDTH = "77%";
+var SIDEBAR_WIDTH = "24%";
+var COMPRESS_TBL_WIDTH = "75%";
 var HIGHLIGHT_COLOR = "#E9EBF3";
 var GET_DATA_URL = loris.BaseURL + "/dashboard/ajax/getData.php";
 

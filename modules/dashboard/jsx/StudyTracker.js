@@ -1,6 +1,6 @@
 const MS_TO_DAYS = 1/(1000 * 60 * 60 * 24);
-const SIDEBAR_WIDTH = "25%";
-const COMPRESS_TBL_WIDTH = "77%";
+const SIDEBAR_WIDTH = "24%";
+const COMPRESS_TBL_WIDTH = "75%";
 const HIGHLIGHT_COLOR = "#E9EBF3";
 const GET_DATA_URL = loris.BaseURL + "/dashboard/ajax/getData.php";
 

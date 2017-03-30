@@ -49,6 +49,38 @@ function TeamFilter(props) {
     );
 }
 
+var CandidateFilter = function (_React$Component) {
+    _inherits(CandidateFilter, _React$Component);
+
+    function CandidateFilter(props) {
+        _classCallCheck(this, CandidateFilter);
+
+        var _this = _possibleConstructorReturn(this, (CandidateFilter.__proto__ || Object.getPrototypeOf(CandidateFilter)).call(this, props));
+
+        _this.handleTextInputChange = _this.handleTextInputChange.bind(_this);
+        return _this;
+    }
+
+    _createClass(CandidateFilter, [{
+        key: "handleTextInputChange",
+        value: function handleTextInputChange(e) {
+            this.props.filterCand(e.target.value);
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            return React.createElement("input", { type: "text",
+                name: "filterCand",
+                value: this.props.filterCandText,
+                onChange: this.handleTextInputChange,
+                placeholder: "Search by PSCID"
+            });
+        }
+    }]);
+
+    return CandidateFilter;
+}(React.Component);
+
 function CohortFilter(props) {
     var options = props.cohorts.map(function (cohort) {
         return React.createElement(
@@ -69,8 +101,8 @@ function CohortFilter(props) {
     );
 }
 
-var Filters = function (_React$Component) {
-    _inherits(Filters, _React$Component);
+var Filters = function (_React$Component2) {
+    _inherits(Filters, _React$Component2);
 
     function Filters() {
         _classCallCheck(this, Filters);
@@ -88,7 +120,14 @@ var Filters = function (_React$Component) {
                 null,
                 React.createElement(
                     "div",
-                    { className: "col-md-4" },
+                    { className: "col-md-3" },
+                    React.createElement(CandidateFilter, {
+                        filterCand: this.props.filterCand
+                    })
+                ),
+                React.createElement(
+                    "div",
+                    { className: "col-md-3" },
                     React.createElement(SiteFilter, {
                         sites: this.props.sites,
                         filterSites: this.props.filterSites
@@ -96,7 +135,7 @@ var Filters = function (_React$Component) {
                 ),
                 React.createElement(
                     "div",
-                    { className: "col-md-4" },
+                    { className: "col-md-3" },
                     React.createElement(TeamFilter, {
                         teams: this.props.teams,
                         filterTeams: this.props.filterTeams
@@ -104,7 +143,7 @@ var Filters = function (_React$Component) {
                 ),
                 React.createElement(
                     "div",
-                    { className: "col-md-4" },
+                    { className: "col-md-3" },
                     React.createElement(CohortFilter, {
                         cohorts: this.props.cohorts,
                         filterCohorts: this.props.filterCohorts
@@ -117,8 +156,8 @@ var Filters = function (_React$Component) {
     return Filters;
 }(React.Component);
 
-var SideBarCandInstContent = function (_React$Component2) {
-    _inherits(SideBarCandInstContent, _React$Component2);
+var SideBarCandInstContent = function (_React$Component3) {
+    _inherits(SideBarCandInstContent, _React$Component3);
 
     function SideBarCandInstContent() {
         _classCallCheck(this, SideBarCandInstContent);
@@ -215,8 +254,8 @@ var SideBarCandInstContent = function (_React$Component2) {
     return SideBarCandInstContent;
 }(React.Component);
 
-var SideBarCandContent = function (_React$Component3) {
-    _inherits(SideBarCandContent, _React$Component3);
+var SideBarCandContent = function (_React$Component4) {
+    _inherits(SideBarCandContent, _React$Component4);
 
     function SideBarCandContent() {
         _classCallCheck(this, SideBarCandContent);
@@ -351,8 +390,8 @@ var SideBarCandContent = function (_React$Component3) {
     return SideBarCandContent;
 }(React.Component);
 
-var SideBarVisitContent = function (_React$Component4) {
-    _inherits(SideBarVisitContent, _React$Component4);
+var SideBarVisitContent = function (_React$Component5) {
+    _inherits(SideBarVisitContent, _React$Component5);
 
     function SideBarVisitContent() {
         _classCallCheck(this, SideBarVisitContent);
@@ -585,8 +624,8 @@ var SideBarVisitContent = function (_React$Component4) {
     return SideBarVisitContent;
 }(React.Component);
 
-var SideBar = function (_React$Component5) {
-    _inherits(SideBar, _React$Component5);
+var SideBar = function (_React$Component6) {
+    _inherits(SideBar, _React$Component6);
 
     function SideBar() {
         _classCallCheck(this, SideBar);
@@ -617,8 +656,8 @@ var SideBar = function (_React$Component5) {
     return SideBar;
 }(React.Component);
 
-var VisitCell = function (_React$Component6) {
-    _inherits(VisitCell, _React$Component6);
+var VisitCell = function (_React$Component7) {
+    _inherits(VisitCell, _React$Component7);
 
     function VisitCell() {
         _classCallCheck(this, VisitCell);
@@ -629,7 +668,7 @@ var VisitCell = function (_React$Component6) {
     _createClass(VisitCell, [{
         key: "render",
         value: function render() {
-            var _this7 = this;
+            var _this8 = this;
 
             var visit = this.props.visit;
             var bgColor = {};
@@ -718,8 +757,8 @@ var VisitCell = function (_React$Component6) {
 
                     var sidebarArgs = {
                         sessionID: visit.sessionID,
-                        pscid: _this7.props.pscid,
-                        candid: _this7.props.candid
+                        pscid: _this8.props.pscid,
+                        candid: _this8.props.candid
                     };
 
                     return {
@@ -729,7 +768,7 @@ var VisitCell = function (_React$Component6) {
                             React.createElement(
                                 "div",
                                 { onClick: function onClick() {
-                                        return _this7.props.showCandInstFocus(sidebarArgs);
+                                        return _this8.props.showCandInstFocus(sidebarArgs);
                                     },
                                     "data-tip": true, "data-for": visit.sessionID,
                                     className: visitClass
@@ -759,8 +798,8 @@ var VisitCell = function (_React$Component6) {
     return VisitCell;
 }(React.Component);
 
-var PSCIDCell = function (_React$Component7) {
-    _inherits(PSCIDCell, _React$Component7);
+var PSCIDCell = function (_React$Component8) {
+    _inherits(PSCIDCell, _React$Component8);
 
     function PSCIDCell() {
         _classCallCheck(this, PSCIDCell);
@@ -784,18 +823,18 @@ var PSCIDCell = function (_React$Component7) {
     return PSCIDCell;
 }(React.Component);
 
-var StudyTrackerRow = function (_React$Component8) {
-    _inherits(StudyTrackerRow, _React$Component8);
+var StudyTrackerRow = function (_React$Component9) {
+    _inherits(StudyTrackerRow, _React$Component9);
 
     function StudyTrackerRow(props) {
         _classCallCheck(this, StudyTrackerRow);
 
-        var _this9 = _possibleConstructorReturn(this, (StudyTrackerRow.__proto__ || Object.getPrototypeOf(StudyTrackerRow)).call(this, props));
+        var _this10 = _possibleConstructorReturn(this, (StudyTrackerRow.__proto__ || Object.getPrototypeOf(StudyTrackerRow)).call(this, props));
 
-        _this9.highlightRow = _this9.highlightRow.bind(_this9);
-        _this9.unhighlightRow = _this9.unhighlightRow.bind(_this9);
-        _this9.keepHighlightedShowCandFocus = _this9.keepHighlightedShowCandFocus.bind(_this9);
-        return _this9;
+        _this10.highlightRow = _this10.highlightRow.bind(_this10);
+        _this10.unhighlightRow = _this10.unhighlightRow.bind(_this10);
+        _this10.keepHighlightedShowCandFocus = _this10.keepHighlightedShowCandFocus.bind(_this10);
+        return _this10;
     }
 
     _createClass(StudyTrackerRow, [{
@@ -867,21 +906,21 @@ var StudyTrackerRow = function (_React$Component8) {
     return StudyTrackerRow;
 }(React.Component);
 
-var StudyTrackerHeader = function (_React$Component9) {
-    _inherits(StudyTrackerHeader, _React$Component9);
+var StudyTrackerHeader = function (_React$Component10) {
+    _inherits(StudyTrackerHeader, _React$Component10);
 
     function StudyTrackerHeader(props) {
         _classCallCheck(this, StudyTrackerHeader);
 
-        var _this10 = _possibleConstructorReturn(this, (StudyTrackerHeader.__proto__ || Object.getPrototypeOf(StudyTrackerHeader)).call(this, props));
+        var _this11 = _possibleConstructorReturn(this, (StudyTrackerHeader.__proto__ || Object.getPrototypeOf(StudyTrackerHeader)).call(this, props));
 
-        _this10.state = {
+        _this11.state = {
             visitInFocus: null
         };
-        _this10.highlightColumns = _this10.highlightColumns.bind(_this10);
-        _this10.unhighlightColumns = _this10.unhighlightColumns.bind(_this10);
-        _this10.keepHighlightedShowVisitFocus = _this10.keepHighlightedShowVisitFocus.bind(_this10);
-        return _this10;
+        _this11.highlightColumns = _this11.highlightColumns.bind(_this11);
+        _this11.unhighlightColumns = _this11.unhighlightColumns.bind(_this11);
+        _this11.keepHighlightedShowVisitFocus = _this11.keepHighlightedShowVisitFocus.bind(_this11);
+        return _this11;
     }
 
     // When mouse enters header cell, highlight all cells for that visit
@@ -951,15 +990,15 @@ var StudyTrackerHeader = function (_React$Component9) {
     return StudyTrackerHeader;
 }(React.Component);
 
-var StudyTracker = function (_React$Component10) {
-    _inherits(StudyTracker, _React$Component10);
+var StudyTracker = function (_React$Component11) {
+    _inherits(StudyTracker, _React$Component11);
 
     function StudyTracker() {
         _classCallCheck(this, StudyTracker);
 
-        var _this11 = _possibleConstructorReturn(this, (StudyTracker.__proto__ || Object.getPrototypeOf(StudyTracker)).call(this));
+        var _this12 = _possibleConstructorReturn(this, (StudyTracker.__proto__ || Object.getPrototypeOf(StudyTracker)).call(this));
 
-        _this11.state = {
+        _this12.state = {
             rows: [],
             visitLabels: [],
             currentSite: "all",
@@ -971,17 +1010,20 @@ var StudyTracker = function (_React$Component10) {
             sideBarContent: null,
             currentPSCID: null,
             currentVisit: null,
-            currentSideBarFocus: null
+            currentSideBarFocus: null,
+            filterCandText: ""
         };
-        _this11.showCandInstFocus = _this11.showCandInstFocus.bind(_this11);
-        _this11.showCandFocus = _this11.showCandFocus.bind(_this11);
-        _this11.showVisitFocus = _this11.showVisitFocus.bind(_this11);
-        _this11.showSideBar = _this11.showSideBar.bind(_this11);
-        _this11.closeSideBar = _this11.closeSideBar.bind(_this11);
-        _this11.filterSites = _this11.filterSites.bind(_this11);
-        _this11.filterTeams = _this11.filterTeams.bind(_this11);
-        _this11.filterCohorts = _this11.filterCohorts.bind(_this11);
-        _this11.rowHasCurrentCohortVisit = _this11.rowHasCurrentCohortVisit.bind(_this11);
+        _this12.showCandInstFocus = _this12.showCandInstFocus.bind(_this12);
+        _this12.showCandFocus = _this12.showCandFocus.bind(_this12);
+        _this12.showVisitFocus = _this12.showVisitFocus.bind(_this12);
+        _this12.showSideBar = _this12.showSideBar.bind(_this12);
+        _this12.closeSideBar = _this12.closeSideBar.bind(_this12);
+        _this12.filterCand = _this12.filterCand.bind(_this12);
+        _this12.filterSites = _this12.filterSites.bind(_this12);
+        _this12.filterTeams = _this12.filterTeams.bind(_this12);
+        _this12.filterCohorts = _this12.filterCohorts.bind(_this12);
+        _this12.renderRow = _this12.renderRow.bind(_this12);
+        _this12.rowHasCurrentCohortVisit = _this12.rowHasCurrentCohortVisit.bind(_this12);
 
         $.get(GET_DATA_URL, { data: "all" }, function (data, status) {
             if (status === "success") {
@@ -1008,9 +1050,9 @@ var StudyTracker = function (_React$Component10) {
                 }
                 this.setState({ visitLabels: visitLabels });
             }
-        }.bind(_this11));
+        }.bind(_this12));
 
-        return _this11;
+        return _this12;
     }
 
     _createClass(StudyTracker, [{
@@ -1200,6 +1242,13 @@ var StudyTracker = function (_React$Component10) {
             }
             this.setState({ currentSite: event.target.value }, callback);
         }
+    }, {
+        key: "filterCand",
+        value: function filterCand(filterCandText) {
+            this.setState({
+                filterCandText: filterCandText
+            });
+        }
 
         //Checks to see if a row has a visit with the selected cohort
 
@@ -1219,13 +1268,22 @@ var StudyTracker = function (_React$Component10) {
             return result;
         }
     }, {
+        key: "renderRow",
+        value: function renderRow(row) {
+            if (this.rowHasCurrentCohortVisit(row) && (row.psc === this.state.currentSite || this.state.currentSite === "all") && row.pscid.startsWith(this.state.filterCandText)) {
+                return true;
+            }
+            //console.log(~row.pscid.indexOf(this.state.filterCandText));
+            return false;
+        }
+    }, {
         key: "render",
         value: function render() {
             // Filter out the entire row for candidates at sites other than
             // the currently selected one or if the candidate has no visits for
             // the currently selected cohort
             var dataRows = this.state.rows.map(function (row) {
-                if (this.rowHasCurrentCohortVisit(row) && (row.psc === this.state.currentSite || this.state.currentSite === "all")) {
+                if (this.renderRow(row)) {
                     return React.createElement(StudyTrackerRow, {
                         key: row.pscid,
                         pscid: row.pscid,
@@ -1258,6 +1316,7 @@ var StudyTracker = function (_React$Component10) {
                         "div",
                         { className: "col-md-6" },
                         React.createElement(Filters, {
+                            filterCand: this.filterCand,
                             sites: this.state.sites,
                             filterSites: this.filterSites,
                             teams: this.state.teams,

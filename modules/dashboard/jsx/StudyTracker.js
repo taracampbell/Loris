@@ -26,6 +26,26 @@ function TeamFilter(props) {
     );
 }
 
+class CandidateFilter extends React.Component{
+    constructor(props) {
+        super(props);
+        this.handleTextInputChange = this.handleTextInputChange.bind(this);
+    }
+    handleTextInputChange(e) {
+        this.props.filterCand(e.target.value);
+    }
+    render() {
+        return (
+            <input type="text"
+                   name="filterCand"
+                   value={this.props.filterCandText}
+                   onChange={this.handleTextInputChange}
+                   placeholder="Search by PSCID"
+            />
+        );
+    }
+}
+
 function CohortFilter(props) {
     let options = props.cohorts.map((cohort) =>
         <option key={cohort} value={cohort}>{cohort}</option>
@@ -43,19 +63,24 @@ class Filters extends React.Component {
     render() {
         return(
             <div>
-                <div className="col-md-4">
+                <div className="col-md-3">
+                    <CandidateFilter
+                        filterCand={this.props.filterCand}
+                    />
+                </div>
+                <div className="col-md-3">
                     <SiteFilter
                         sites={this.props.sites}
                         filterSites={this.props.filterSites}
                     />
                 </div>
-                <div className="col-md-4">
+                <div className="col-md-3">
                     <TeamFilter
                         teams={this.props.teams}
                         filterTeams={this.props.filterTeams}
                     />
                 </div>
-                <div className="col-md-4">
+                <div className="col-md-3">
                     <CohortFilter
                         cohorts={this.props.cohorts}
                         filterCohorts={this.props.filterCohorts}
@@ -603,16 +628,19 @@ class StudyTracker extends React.Component {
              sideBarContent: null,
              currentPSCID: null,
              currentVisit: null,
-             currentSideBarFocus: null
+             currentSideBarFocus: null,
+             filterCandText: ""
         };
         this.showCandInstFocus = this.showCandInstFocus.bind(this);
         this.showCandFocus = this.showCandFocus.bind(this);
         this.showVisitFocus = this.showVisitFocus.bind(this);
         this.showSideBar = this.showSideBar.bind(this);
         this.closeSideBar = this.closeSideBar.bind(this);
+        this.filterCand = this.filterCand.bind(this);
         this.filterSites = this.filterSites.bind(this);
         this.filterTeams = this.filterTeams.bind(this);
         this.filterCohorts = this.filterCohorts.bind(this);
+        this.renderRow = this.renderRow.bind(this);
         this.rowHasCurrentCohortVisit = this.rowHasCurrentCohortVisit.bind(this);
 
         $.get(GET_DATA_URL, {data: "all"}, function(data, status) {
@@ -792,6 +820,12 @@ class StudyTracker extends React.Component {
         this.setState({currentSite: event.target.value}, callback);
     }
 
+    filterCand(filterCandText) {
+        this.setState({
+            filterCandText: filterCandText
+        });
+    }
+
     //Checks to see if a row has a visit with the selected cohort
     rowHasCurrentCohortVisit(row) {
         if (this.state.currentCohort === "all") {
@@ -808,13 +842,23 @@ class StudyTracker extends React.Component {
         return result;
     }
 
+    renderRow(row) {
+        if (this.rowHasCurrentCohortVisit(row) &&
+            (row.psc === this.state.currentSite || this.state.currentSite === "all") &&
+            row.pscid.startsWith(this.state.filterCandText)
+        ) {
+            return true;
+        }
+        //console.log(~row.pscid.indexOf(this.state.filterCandText));
+        return false;
+    }
+
     render() {
         // Filter out the entire row for candidates at sites other than
         // the currently selected one or if the candidate has no visits for
         // the currently selected cohort
         let dataRows = this.state.rows.map(function (row) {
-                if(this.rowHasCurrentCohortVisit(row) &&
-                    (row.psc === this.state.currentSite || this.state.currentSite === "all")) {
+                if(this.renderRow(row)) {
                     return (
                         <StudyTrackerRow
                             key={row.pscid}
@@ -839,6 +883,7 @@ class StudyTracker extends React.Component {
                     </div>
                     <div className="col-md-6">
                         <Filters
+                            filterCand={this.filterCand}
                             sites={this.state.sites}
                             filterSites={this.filterSites}
                             teams={this.state.teams}

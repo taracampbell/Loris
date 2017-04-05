@@ -245,3 +245,13 @@ body {
 .cancelled-data {
     background: #DDDDDD;
 }
+
+.StudyTrackerHeader th {
+    border-top: 2px solid #ddd !important;
+    height: 50px;
+    vertical-align: middle !important;
+}
+
+.StudyTrackerRow td {
+    vertical-align: middle !important;
+}

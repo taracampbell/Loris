@@ -36,7 +36,8 @@ class CandidateFilter extends React.Component{
     }
     render() {
         return (
-            <input type="text"
+            <input className="form-control input-sm"
+                   type="text"
                    name="filterCand"
                    value={this.props.filterCandText}
                    onChange={this.handleTextInputChange}

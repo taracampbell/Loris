@@ -81,17 +81,8 @@ var SideNav = function (_React$Component2) {
       });
       return React.createElement(
         "div",
-        null,
-        React.createElement(
-          "div",
-          { className: "sidenav" },
-          sideNavButtons
-        ),
-        React.createElement(
-          "div",
-          { id: "content" },
-          React.createElement(Home, null)
-        )
+        { className: "sidenav" },
+        sideNavButtons
       );
     }
   }]);

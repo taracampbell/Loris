@@ -16,6 +16,13 @@ var GET_DATA_URL = loris.BaseURL + "/dashboard/ajax/getData.php";
 
 function SiteFilter(props) {
     var options = [];
+    if (props.sites.length) {
+        options.push(React.createElement(
+            "option",
+            { value: "all" },
+            "Show All Sites"
+        ));
+    }
     props.sites.forEach(function (name, alias) {
         options.push(React.createElement(
             "option",
@@ -26,11 +33,6 @@ function SiteFilter(props) {
     return React.createElement(
         "select",
         { className: "form-control input-sm", onChange: props.filterSites },
-        React.createElement(
-            "option",
-            { value: "all" },
-            "Show All Sites"
-        ),
         options
     );
 }

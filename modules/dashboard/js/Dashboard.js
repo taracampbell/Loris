@@ -22,7 +22,16 @@ var Dashboard = function (_React$Component) {
     value: function render() {
       var buttons = [{ name: "Home", glyph: "home", component: "home" }, { name: "Study Tracker", glyph: "object-align-left", component: "studyTracker" }];
 
-      return React.createElement(SideNav, { buttons: buttons });
+      return React.createElement(
+        "div",
+        { id: "dashboard" },
+        React.createElement(SideNav, { buttons: buttons }),
+        React.createElement(
+          "div",
+          { id: "content" },
+          React.createElement(Home, null)
+        )
+      );
     }
   }]);
 
@@ -30,14 +39,5 @@ var Dashboard = function (_React$Component) {
 }(React.Component);
 
 window.onload = function () {
-
-  // Create a wrapper div in which react component will be loaded
-  var dashboardDOM = document.createElement('div');
-  dashboardDOM.id = 'dashboard-area';
-
-  // Append wrapper div to page content
-  var rootDOM = document.getElementById("page");
-  rootDOM.appendChild(dashboardDOM);
-
-  ReactDOM.render(React.createElement(Dashboard, null), document.getElementById("dashboard-area"));
+  ReactDOM.render(React.createElement(Dashboard, null), document.getElementById("page"));
 };

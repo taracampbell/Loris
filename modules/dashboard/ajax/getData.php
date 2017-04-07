@@ -50,15 +50,28 @@ function getCohorts() {
 
 function getSites() {
     global $DB;
-    $sites = $DB->pselect(
-        "SELECT DISTINCT p.Name, p.Alias
-         FROM psc p
-         INNER JOIN candidate c ON c.CenterID = p.CenterID
-         WHERE c.Entity_type='human'",
-        array()
-    );
 
-    return $sites;
+    $user = User::singleton();
+
+    if ($user->hasPermission('access_all_profiles')) {
+        $sites = $DB->pselect(
+            "SELECT DISTINCT p.Name, p.Alias
+             FROM psc p
+             INNER JOIN candidate c ON c.CenterID = p.CenterID
+             WHERE c.Entity_type='human'",
+            array()
+        );
+        return $sites;
+    } else {
+        $sites = $DB->pselect(
+            "SELECT DISTINCT p.Name, p.Alias
+             FROM psc p
+             INNER JOIN candidate c ON c.CenterID = p.CenterID
+             WHERE c.Entity_type='human' AND p.CenterID=:CID",
+            array('CID' => $user->getCenterID())
+        );
+        return $sites;
+    }
 }
 
 function getVisitLabels() {
@@ -221,17 +234,29 @@ function screeningDone($candID) {
 
 function getCandidates() {
     global $DB;
+    $user = User::singleton();
 
-    $candidates = $DB->pselect(
-        "SELECT c.PSCID, c.CandID, psc.Name, psc.Alias, ps.participant_status
-         FROM candidate c
-         LEFT JOIN psc ON psc.CenterID=c.CenterID
-         LEFT JOIN participant_status ps on ps.CandID=c.CandID
-         WHERE c.Active='Y' AND c.Entity_type='human' AND c.CenterID <> 1",
-        array()
-    );
-
-    return $candidates;
+    if ($user->hasPermission('access_all_profiles')) {
+        $candidates = $DB->pselect(
+            "SELECT c.PSCID, c.CandID, psc.Name, psc.Alias, ps.participant_status
+             FROM candidate c
+             LEFT JOIN psc ON psc.CenterID=c.CenterID
+             LEFT JOIN participant_status ps on ps.CandID=c.CandID
+             WHERE c.Active='Y' AND c.Entity_type='human' AND c.CenterID <> 1",
+            array()
+        );
+        return $candidates;
+    } else {
+        $candidates = $DB->pselect(
+            "SELECT c.PSCID, c.CandID, psc.Name, psc.Alias, ps.participant_status
+             FROM candidate c
+             LEFT JOIN psc ON psc.CenterID=c.CenterID
+             LEFT JOIN participant_status ps on ps.CandID=c.CandID
+             WHERE c.Active='Y' AND c.Entity_type='human' AND c.CenterID=:CID",
+            array('CID' => $user->getCenterID())
+        );
+        return $candidates;
+    }
 }
 
 function dateAdd($date, $days) {

@@ -47,13 +47,8 @@ class SideNav extends React.Component {
       />
     );
     return (
-      <div>
-        <div className="sidenav">
-          {sideNavButtons}
-        </div>
-        <div id="content">
-          <Home />
-        </div>
+      <div className="sidenav">
+        {sideNavButtons}
       </div>
     );
   }

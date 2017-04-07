@@ -255,3 +255,7 @@ body {
 .StudyTrackerRow td {
     vertical-align: middle !important;
 }
+
+#dashboard {
+    padding-top: 70px;
+}

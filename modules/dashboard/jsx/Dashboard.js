@@ -10,20 +10,16 @@ class Dashboard extends React.Component {
     ];
 
     return (
-        <SideNav buttons={buttons} />
+        <div id="dashboard">
+          <SideNav buttons={buttons} />
+          <div id="content">
+            <Home />
+          </div>
+        </div>
     );
   }
 }
 
 window.onload = function() {
-
-  // Create a wrapper div in which react component will be loaded
-  const dashboardDOM = document.createElement('div');
-  dashboardDOM.id = 'dashboard-area';
-
-  // Append wrapper div to page content
-  const rootDOM = document.getElementById("page");
-  rootDOM.appendChild(dashboardDOM);
-
-  ReactDOM.render(<Dashboard />, document.getElementById("dashboard-area"));
+  ReactDOM.render(<Dashboard />, document.getElementById("page"));
 };

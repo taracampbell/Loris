@@ -6,7 +6,6 @@ const GET_DATA_URL = loris.BaseURL + "/dashboard/ajax/getData.php";
 
 function SiteFilter(props) {
     let options = [];
-    console.log(props.sites.length);
     if (props.sites.length) {
         options.push(<option value="all">Show All Sites</option>);
     }

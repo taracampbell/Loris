@@ -16,7 +16,6 @@ var GET_DATA_URL = loris.BaseURL + "/dashboard/ajax/getData.php";
 
 function SiteFilter(props) {
     var options = [];
-    console.log(props.sites.length);
     if (props.sites.length) {
         options.push(React.createElement(
             "option",

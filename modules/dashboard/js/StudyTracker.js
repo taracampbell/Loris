@@ -1,5 +1,7 @@
 "use strict";
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -16,7 +18,8 @@ var GET_DATA_URL = loris.BaseURL + "/dashboard/ajax/getData.php";
 
 function SiteFilter(props) {
     var options = [];
-    if (props.sites.length) {
+
+    if (props.sites.size > 1) {
         options.push(React.createElement(
             "option",
             { value: "all" },
@@ -197,7 +200,7 @@ var SideBarCandInstContent = function (_React$Component3) {
                 content.push(React.createElement(
                     "h4",
                     { style: bold },
-                    " ",
+                    "\xA0",
                     sg
                 ));
                 for (var t in data[sg]) {
@@ -211,7 +214,7 @@ var SideBarCandInstContent = function (_React$Component3) {
                                 className: "complete left-align",
                                 style: bold
                             },
-                            "✓✓"
+                            "\u2713\u2713"
                         );
                     } else if (inst.completion === "Complete") {
                         flagCompletion = React.createElement(
@@ -220,7 +223,7 @@ var SideBarCandInstContent = function (_React$Component3) {
                                 className: "complete left-align",
                                 style: bold
                             },
-                            "✓"
+                            "\u2713"
                         );
                     } else {
                         flagCompletion = React.createElement(
@@ -229,7 +232,7 @@ var SideBarCandInstContent = function (_React$Component3) {
                                 className: "deadline-past left-align",
                                 style: bold
                             },
-                            "!  "
+                            "! \xA0"
                         );
                     }
                     content.push(React.createElement(
@@ -312,11 +315,11 @@ var SideBarCandContent = function (_React$Component4) {
                             React.createElement(
                                 "p",
                                 { style: fontSize },
-                                " ",
+                                "\xA0",
                                 React.createElement(
                                     "a",
                                     { href: url, target: "_blank" },
-                                    " ",
+                                    "\xA0",
                                     v.visitLabel,
                                     ":"
                                 ),
@@ -328,7 +331,7 @@ var SideBarCandContent = function (_React$Component4) {
                         visitContent.push(React.createElement(
                             "div",
                             null,
-                            " ",
+                            "\xA0",
                             React.createElement(
                                 "a",
                                 { href: url, target: "_blank", style: fontSize },
@@ -353,7 +356,7 @@ var SideBarCandContent = function (_React$Component4) {
                         visitContent.push(React.createElement(
                             "div",
                             null,
-                            " ",
+                            "\xA0",
                             React.createElement(
                                 "a",
                                 { href: url, target: "_blank", style: fontSize },
@@ -432,12 +435,12 @@ var SideBarVisitContent = function (_React$Component5) {
             var visitDeadlines = [React.createElement(
                 "h4",
                 null,
-                " Upcoming Visit Deadlines"
+                "\xA0Upcoming Visit Deadlines"
             )];
             var dataDeadlines = [React.createElement(
                 "h4",
                 null,
-                " Upcoming Data Entry Deadlines"
+                "\xA0Upcoming Data Entry Deadlines"
             )];
 
             var visitsSortable = [];
@@ -647,7 +650,7 @@ var SideBar = function (_React$Component6) {
                         className: "closebtn",
                         onClick: this.props.closeSideBar
                     },
-                    "×"
+                    "\xD7"
                 ),
                 this.props.sideBarContent
             );
@@ -678,112 +681,118 @@ var VisitCell = function (_React$Component7) {
                 bgColor = { backgroundColor: HIGHLIGHT_COLOR };
             }
             if (visit.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
-                var tooltipContent = [];
-                var vr = prettyStatus(visit.visitRegStatus, visit.visitRegDueDate);
-                tooltipContent.push(React.createElement(
-                    "p",
-                    null,
-                    "Visit Registration: ",
-                    vr.html
-                ));
-                var innerCircleInfo = null;
-                if (visit.dataEntryStatus) {
-                    var de = prettyStatus(visit.dataEntryStatus, visit.dataEntryDueDate);
+                var _ret = function () {
+                    var tooltipContent = [];
+                    var vr = prettyStatus(visit.visitRegStatus, visit.visitRegDueDate);
                     tooltipContent.push(React.createElement(
                         "p",
                         null,
-                        "Data Entry: ",
-                        de.html
-                    ), React.createElement(
-                        "p",
-                        { className: "center" },
-                        React.createElement(
-                            "i",
-                            null,
-                            visit.instrCompleted,
-                            "/",
-                            visit.totalInstrs,
-                            " instruments entered"
-                        )
+                        "Visit Registration: ",
+                        vr.html
                     ));
-                    tooltipContent.push(React.createElement(
-                        "p",
-                        null,
-                        "Double Data Entry:"
-                    ), React.createElement(
-                        "p",
-                        { className: "center" },
-                        React.createElement(
-                            "i",
-                            null,
-                            visit.ddeInstCompleted,
-                            "/",
-                            visit.totalInstrs,
-                            " instruments entered"
-                        )
-                    ));
-                    var innerCircleStyle = {
-                        fontWeight: "bold",
-                        color: "white",
-                        position: "inherit",
-                        fontSize: "110%"
-                    };
-                    if (visit.sentToDCC) {
-                        innerCircleInfo = React.createElement(
-                            "div",
-                            { className: "center", style: innerCircleStyle },
-                            "✓"
-                        );
+                    var innerCircleInfo = null;
+                    if (visit.dataEntryStatus) {
+                        var de = prettyStatus(visit.dataEntryStatus, visit.dataEntryDueDate);
                         tooltipContent.push(React.createElement(
                             "p",
-                            { className: "complete" },
-                            "Data sent to DCC"
+                            null,
+                            "Data Entry: ",
+                            de.html
+                        ), React.createElement(
+                            "p",
+                            { className: "center" },
+                            React.createElement(
+                                "i",
+                                null,
+                                visit.instrCompleted,
+                                "/",
+                                visit.totalInstrs,
+                                " instruments entered"
+                            )
                         ));
-                    } else if (visit.ddeCompleted) {
-                        innerCircleInfo = React.createElement(
-                            "div",
-                            { className: "center", style: innerCircleStyle },
-                            "D"
-                        );
                         tooltipContent.push(React.createElement(
                             "p",
-                            { className: "deadline-approaching" },
-                            "Data not yet sent to DCC"
+                            null,
+                            "Double Data Entry:"
+                        ), React.createElement(
+                            "p",
+                            { className: "center" },
+                            React.createElement(
+                                "i",
+                                null,
+                                visit.ddeInstCompleted,
+                                "/",
+                                visit.totalInstrs,
+                                " instruments entered"
+                            )
                         ));
+                        var innerCircleStyle = {
+                            fontWeight: "bold",
+                            color: "white",
+                            position: "inherit",
+                            fontSize: "110%"
+                        };
+                        if (visit.sentToDCC) {
+                            innerCircleInfo = React.createElement(
+                                "div",
+                                { className: "center", style: innerCircleStyle },
+                                "\u2713"
+                            );
+                            tooltipContent.push(React.createElement(
+                                "p",
+                                { className: "complete" },
+                                "Data sent to DCC"
+                            ));
+                        } else if (visit.ddeCompleted) {
+                            innerCircleInfo = React.createElement(
+                                "div",
+                                { className: "center", style: innerCircleStyle },
+                                "D"
+                            );
+                            tooltipContent.push(React.createElement(
+                                "p",
+                                { className: "deadline-approaching" },
+                                "Data not yet sent to DCC"
+                            ));
+                        }
                     }
-                }
 
-                var visitClass = "circle " + visit.dataEntryStatus + " " + visit.visitRegStatus;
+                    var visitClass = "circle " + visit.dataEntryStatus + " " + visit.visitRegStatus;
 
-                var sidebarArgs = {
-                    sessionID: visit.sessionID,
-                    pscid: this.props.pscid,
-                    candid: this.props.candid
-                };
+                    var sidebarArgs = {
+                        sessionID: visit.sessionID,
+                        pscid: _this8.props.pscid,
+                        candid: _this8.props.candid
+                    };
 
-                return React.createElement(
-                    "td",
-                    { className: visit.visitLabel, style: bgColor },
-                    React.createElement(
-                        "div",
-                        { onClick: function onClick() {
-                                return _this8.props.showCandInstFocus(sidebarArgs);
-                            },
-                            "data-tip": true, "data-for": visit.sessionID,
-                            className: visitClass
-                        },
-                        innerCircleInfo,
-                        React.createElement(
-                            ReactTooltip,
-                            { id: visit.sessionID, place: "top", type: "dark", effect: "solid" },
+                    return {
+                        v: React.createElement(
+                            "td",
+                            { className: visit.visitLabel, style: bgColor },
                             React.createElement(
                                 "div",
-                                { className: "ReactTooltipContent" },
-                                tooltipContent
+                                { onClick: function onClick() {
+                                        return _this8.props.showCandInstFocus(sidebarArgs);
+                                    },
+                                    "data-tip": true, "data-for": visit.sessionID,
+                                    className: visitClass
+                                },
+                                innerCircleInfo,
+                                React.createElement(
+                                    ReactTooltip,
+                                    { id: visit.sessionID, place: "top", type: "dark", effect: "solid" },
+                                    React.createElement(
+                                        "div",
+                                        { className: "ReactTooltipContent" },
+                                        tooltipContent
+                                    )
+                                )
                             )
                         )
-                    )
-                );
+                    };
+                }();
+
+                if ((typeof _ret === "undefined" ? "undefined" : _typeof(_ret)) === "object") return _ret.v;
             } else {
                 return React.createElement("td", { className: visit.visitLabel, style: bgColor });
             }

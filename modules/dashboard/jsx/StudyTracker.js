@@ -6,6 +6,7 @@ const GET_DATA_URL = loris.BaseURL + "/dashboard/ajax/getData.php";
 
 function SiteFilter(props) {
     let options = [];
+    console.log(props.sites.length);
     if (props.sites.length) {
         options.push(<option value="all">Show All Sites</option>);
     }
@@ -65,7 +66,7 @@ class Filters extends React.Component {
     // pass sites, teams, and cohort data once available
     render() {
         return(
-            <div>
+            <div class="row">
                 <div className="col-md-3">
                     <CandidateFilter
                         filterCand={this.props.filterCand}
@@ -645,7 +646,9 @@ class StudyTracker extends React.Component {
         this.filterCohorts = this.filterCohorts.bind(this);
         this.renderRow = this.renderRow.bind(this);
         this.rowHasCurrentCohortVisit = this.rowHasCurrentCohortVisit.bind(this);
+    }
 
+    loadDataFromServer() {
         $.get(GET_DATA_URL, {data: "all"}, function(data, status) {
            if (status === "success") {
                let cohorts = [], visitLabels = [], rows = [];
@@ -670,7 +673,10 @@ class StudyTracker extends React.Component {
                this.setState({visitLabels: visitLabels});
            }
         }.bind(this));
+    }
 
+    componentDidMount() {
+        this.loadDataFromServer();
     }
 
     showCandInstFocus(sidebarArgs) {

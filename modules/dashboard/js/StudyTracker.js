@@ -16,6 +16,7 @@ var GET_DATA_URL = loris.BaseURL + "/dashboard/ajax/getData.php";
 
 function SiteFilter(props) {
     var options = [];
+    console.log(props.sites.length);
     if (props.sites.length) {
         options.push(React.createElement(
             "option",
@@ -118,7 +119,7 @@ var Filters = function (_React$Component2) {
         value: function render() {
             return React.createElement(
                 "div",
-                null,
+                { "class": "row" },
                 React.createElement(
                     "div",
                     { className: "col-md-3" },
@@ -1019,38 +1020,45 @@ var StudyTracker = function (_React$Component11) {
         _this12.filterCohorts = _this12.filterCohorts.bind(_this12);
         _this12.renderRow = _this12.renderRow.bind(_this12);
         _this12.rowHasCurrentCohortVisit = _this12.rowHasCurrentCohortVisit.bind(_this12);
-
-        $.get(GET_DATA_URL, { data: "all" }, function (data, status) {
-            if (status === "success") {
-                var cohorts = [],
-                    visitLabels = [],
-                    rows = [];
-                var sites = new Map();
-
-                for (var r in data.tableData) {
-                    rows.push(data.tableData[r]);
-                }
-                this.setState({ rows: rows });
-
-                for (var c in data.cohorts) {
-                    cohorts.push(data.cohorts[c]);
-                }
-                this.setState({ cohorts: cohorts });
-                for (var s in data.sites) {
-                    sites.set(data.sites[s].Alias, data.sites[s].Name);
-                }
-                this.setState({ sites: sites });
-                for (var v in data.visitLabels) {
-                    visitLabels.push(data.visitLabels[v]);
-                }
-                this.setState({ visitLabels: visitLabels });
-            }
-        }.bind(_this12));
-
         return _this12;
     }
 
     _createClass(StudyTracker, [{
+        key: "loadDataFromServer",
+        value: function loadDataFromServer() {
+            $.get(GET_DATA_URL, { data: "all" }, function (data, status) {
+                if (status === "success") {
+                    var cohorts = [],
+                        visitLabels = [],
+                        rows = [];
+                    var sites = new Map();
+
+                    for (var r in data.tableData) {
+                        rows.push(data.tableData[r]);
+                    }
+                    this.setState({ rows: rows });
+
+                    for (var c in data.cohorts) {
+                        cohorts.push(data.cohorts[c]);
+                    }
+                    this.setState({ cohorts: cohorts });
+                    for (var s in data.sites) {
+                        sites.set(data.sites[s].Alias, data.sites[s].Name);
+                    }
+                    this.setState({ sites: sites });
+                    for (var v in data.visitLabels) {
+                        visitLabels.push(data.visitLabels[v]);
+                    }
+                    this.setState({ visitLabels: visitLabels });
+                }
+            }.bind(this));
+        }
+    }, {
+        key: "componentDidMount",
+        value: function componentDidMount() {
+            this.loadDataFromServer();
+        }
+    }, {
         key: "showCandInstFocus",
         value: function showCandInstFocus(sidebarArgs) {
             this.setState({

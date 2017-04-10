@@ -242,7 +242,8 @@ function getCandidates() {
              FROM candidate c
              LEFT JOIN psc ON psc.CenterID=c.CenterID
              LEFT JOIN participant_status ps on ps.CandID=c.CandID
-             WHERE c.Active='Y' AND c.Entity_type='human' AND c.CenterID <> 1",
+             WHERE c.Active='Y' AND c.Entity_type='human' AND c.CenterID <> 1
+             ORDER BY Date_registered",
             array()
         );
         return $candidates;
@@ -420,6 +421,7 @@ function getInstruments($sessionID) {
                  WHERE Test_name=:t",
                 array("t" => $t["Test_name"])
         );
+        $ddeComplete = null;
 
         if ($t["Data_entry"] === "Complete") {
             $ddeComplete = $DB->pselectOne(

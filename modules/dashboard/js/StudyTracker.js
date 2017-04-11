@@ -738,7 +738,8 @@ var VisitCell = function (_React$Component7) {
                             fontWeight: "bold",
                             color: "white",
                             position: "inherit",
-                            fontSize: "110%"
+                            fontSize: "120%",
+                            lineHeight: "120%"
                         };
                         if (visit.sentToDCC) {
                             innerCircleInfo = React.createElement(
@@ -762,8 +763,16 @@ var VisitCell = function (_React$Component7) {
                                 { className: "deadline-approaching" },
                                 "Data not yet sent to DCC"
                             ));
+                        } else if (visit.visitRegStatus === "cancelled-visit") {
+                            innerCircleStyle.color = "#AAAAAA";
+                            innerCircleStyle.fontSize = "200%";
+                            innerCircleStyle.lineHeight = "60%";
+                            innerCircleInfo = React.createElement(
+                                "div",
+                                { className: "center", style: innerCircleStyle },
+                                "x"
+                            );
                         }
-                        // ADD SIGNIFIER FOR CANCELLED VISIT
                     }
 
                     var visitClass = "circle " + visit.dataEntryStatus + " " + visit.visitRegStatus;

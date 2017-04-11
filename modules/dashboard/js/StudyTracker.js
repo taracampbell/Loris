@@ -271,7 +271,7 @@ var SideBarCandContent = function (_React$Component4) {
         key: "render",
         value: function render() {
             var content = [];
-            content.push(React.createElement(
+            content[0] = React.createElement(
                 "h3",
                 { className: "center" },
                 React.createElement(
@@ -280,7 +280,7 @@ var SideBarCandContent = function (_React$Component4) {
                     "Participant ",
                     this.props.pscid
                 )
-            ));
+            );
             if (this.props.currentCohort !== "all") {
                 content = content.concat(React.createElement(
                     "h4",
@@ -291,13 +291,11 @@ var SideBarCandContent = function (_React$Component4) {
             }
             var visits = void 0;
             var candid = void 0;
-            var dateReg = void 0;
             for (var i = 0; i < this.props.rows.length; i++) {
                 var r = this.props.rows[i];
                 if (r.pscid === this.props.pscid) {
                     candid = r.candid;
                     visits = r.visits;
-                    dateReg = formatDate(new Date(r.dateReg));
                     break;
                 }
             }
@@ -384,13 +382,7 @@ var SideBarCandContent = function (_React$Component4) {
                 );
             }
             content.push(visitContent);
-            content.push(React.createElement(
-                "p",
-                { className: "right-align" },
-                "Candidate was registered on ",
-                dateReg,
-                " \xA0"
-            ));
+
             return React.createElement(
                 "div",
                 { className: "SideBarCandContent" },
@@ -763,7 +755,6 @@ var VisitCell = function (_React$Component7) {
                                 "Data not yet sent to DCC"
                             ));
                         }
-                        // ADD SIGNIFIER FOR CANCELLED VISIT
                     }
 
                     var visitClass = "circle " + visit.dataEntryStatus + " " + visit.visitRegStatus;
@@ -932,7 +923,6 @@ var StudyTrackerHeader = function (_React$Component10) {
         };
         _this11.highlightColumns = _this11.highlightColumns.bind(_this11);
         _this11.unhighlightColumns = _this11.unhighlightColumns.bind(_this11);
-        _this11.switchOrder = _this11.switchOrder.bind(_this11);
         _this11.keepHighlightedShowVisitFocus = _this11.keepHighlightedShowVisitFocus.bind(_this11);
         return _this11;
     }
@@ -970,18 +960,6 @@ var StudyTrackerHeader = function (_React$Component10) {
             this.props.showVisitFocus(event);
         }
     }, {
-        key: "switchOrder",
-        value: function switchOrder() {
-            if (document.getElementById("order-toggle").classList.contains("glyphicon-chevron-down")) {
-                document.getElementById("order-toggle").classList.remove("glyphicon-chevron-down");
-                document.getElementById("order-toggle").classList.add("glyphicon-chevron-up");
-            } else {
-                document.getElementById("order-toggle").classList.remove("glyphicon-chevron-up");
-                document.getElementById("order-toggle").classList.add("glyphicon-chevron-down");
-            }
-            this.props.switchOrder();
-        }
-    }, {
         key: "render",
         value: function render() {
             var colWidth = 91.6666 / this.props.visitLabels.length;
@@ -1006,11 +984,7 @@ var StudyTrackerHeader = function (_React$Component10) {
                 React.createElement(
                     "tr",
                     null,
-                    React.createElement("th", { id: "order-toggle",
-                        className: "col-md-1 center glyphicon glyphicon-chevron-down",
-                        style: { color: "#444444" },
-                        onClick: this.switchOrder
-                    }),
+                    React.createElement("th", { className: "col-md-1" }),
                     visitLabelHeaders
                 )
             );
@@ -1052,7 +1026,6 @@ var StudyTracker = function (_React$Component11) {
         _this12.filterSites = _this12.filterSites.bind(_this12);
         _this12.filterTeams = _this12.filterTeams.bind(_this12);
         _this12.filterCohorts = _this12.filterCohorts.bind(_this12);
-        _this12.switchOrder = _this12.switchOrder.bind(_this12);
         _this12.renderRow = _this12.renderRow.bind(_this12);
         _this12.rowHasCurrentCohortVisit = _this12.rowHasCurrentCohortVisit.bind(_this12);
         return _this12;
@@ -1287,12 +1260,6 @@ var StudyTracker = function (_React$Component11) {
                 filterCandText: filterCandText
             });
         }
-    }, {
-        key: "switchOrder",
-        value: function switchOrder() {
-            var rows = this.state.rows.reverse();
-            this.setState({ rows: rows });
-        }
 
         //Checks to see if a row has a visit with the selected cohort
 
@@ -1333,7 +1300,6 @@ var StudyTracker = function (_React$Component11) {
                         pscid: row.pscid,
                         candid: row.candid,
                         visits: row.visits,
-                        dateReg: row.dateReg,
                         currentCohort: this.state.currentCohort,
                         currentVisit: this.state.currentVisit,
                         currentPSCID: this.state.currentPSCID,
@@ -1377,8 +1343,7 @@ var StudyTracker = function (_React$Component11) {
                     React.createElement(StudyTrackerHeader, {
                         visitLabels: this.state.visitLabels,
                         currentVisit: this.state.currentVisit,
-                        showVisitFocus: this.showVisitFocus,
-                        switchOrder: this.switchOrder
+                        showVisitFocus: this.showVisitFocus
                     }),
                     React.createElement(
                         "tbody",
@@ -1476,14 +1441,4 @@ function prettyStatus(status, dueDate) {
     }
 
     return toReturn;
-}
-
-function formatDate(date) {
-    var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-
-    var day = date.getDate();
-    var monthIndex = date.getMonth();
-    var year = date.getFullYear();
-
-    return monthNames[monthIndex] + ' ' + day + ', ' + year;
 }

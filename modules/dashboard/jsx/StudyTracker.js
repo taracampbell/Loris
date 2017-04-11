@@ -173,25 +173,22 @@ class SideBarCandInstContent extends React.Component {
 class SideBarCandContent extends React.Component {
     render () {
         let content = [];
-        content.push(
-            <h3 className="center">
+        content[0]
+            = <h3 className="center">
                 <a href={loris.BaseURL + "/" + this.props.candid} target="_blank">
                     Participant {this.props.pscid}
                 </a>
-            </h3>
-        );
+            </h3>;
         if (this.props.currentCohort !== "all") {
             content = content.concat(<h4 className="center">{this.props.currentCohort} Visits</h4>);
         }
         let visits;
         let candid;
-        let dateReg;
         for(let i = 0; i < this.props.rows.length; i++) {
             let r = this.props.rows[i];
             if (r.pscid === this.props.pscid) {
                 candid = r.candid;
                 visits = r.visits;
-                dateReg = formatDate(new Date(r.dateReg));
                 break;
             }
         }
@@ -248,11 +245,7 @@ class SideBarCandContent extends React.Component {
                 </p>
         }
         content.push(visitContent);
-        content.push(
-            <p className="right-align">
-                Candidate was registered on {dateReg} &nbsp;
-            </p>
-        );
+
         return (
             <div className="SideBarCandContent">
                 {content}
@@ -442,7 +435,6 @@ class VisitCell extends React.Component {
                         </p>
                     );
                 }
-                // ADD SIGNIFIER FOR CANCELLED VISIT
             }
 
             let visitClass = "circle "
@@ -569,7 +561,6 @@ class StudyTrackerHeader extends React.Component {
         };
         this.highlightColumns = this.highlightColumns.bind(this);
         this.unhighlightColumns = this.unhighlightColumns.bind(this);
-        this.switchOrder = this.switchOrder.bind(this);
         this.keepHighlightedShowVisitFocus = this.keepHighlightedShowVisitFocus.bind(this);
     }
 
@@ -598,18 +589,6 @@ class StudyTrackerHeader extends React.Component {
         this.props.showVisitFocus(event);
 
     }
-
-    switchOrder() {
-        if (document.getElementById("order-toggle").classList.contains("glyphicon-chevron-down")) {
-            document.getElementById("order-toggle").classList.remove("glyphicon-chevron-down");
-            document.getElementById("order-toggle").classList.add("glyphicon-chevron-up");
-        } else {
-            document.getElementById("order-toggle").classList.remove("glyphicon-chevron-up");
-            document.getElementById("order-toggle").classList.add("glyphicon-chevron-down");
-        }
-        this.props.switchOrder();
-    }
-
   render() {
     let colWidth = 91.6666/this.props.visitLabels.length;
     let colStyle = {width: colWidth + '%'}
@@ -630,11 +609,7 @@ class StudyTrackerHeader extends React.Component {
     return (
         <thead className="StudyTrackerHeader">
             <tr>
-                <th id="order-toggle"
-                    className="col-md-1 center glyphicon glyphicon-chevron-down"
-                    style={{color: "#444444"}}
-                    onClick={this.switchOrder}
-                />
+                <th className="col-md-1"/>
                 {visitLabelHeaders}
             </tr>
         </thead>
@@ -669,7 +644,6 @@ class StudyTracker extends React.Component {
         this.filterSites = this.filterSites.bind(this);
         this.filterTeams = this.filterTeams.bind(this);
         this.filterCohorts = this.filterCohorts.bind(this);
-        this.switchOrder = this.switchOrder.bind(this);
         this.renderRow = this.renderRow.bind(this);
         this.rowHasCurrentCohortVisit = this.rowHasCurrentCohortVisit.bind(this);
     }
@@ -861,13 +835,6 @@ class StudyTracker extends React.Component {
         });
     }
 
-    switchOrder() {
-        let rows = this.state.rows.reverse();
-        this.setState(
-            {rows: rows}
-        );
-    }
-
     //Checks to see if a row has a visit with the selected cohort
     rowHasCurrentCohortVisit(row) {
         if (this.state.currentCohort === "all") {
@@ -907,7 +874,6 @@ class StudyTracker extends React.Component {
                             pscid={row.pscid}
                             candid={row.candid}
                             visits={row.visits}
-                            dateReg={row.dateReg}
                             currentCohort={this.state.currentCohort}
                             currentVisit={this.state.currentVisit}
                             currentPSCID={this.state.currentPSCID}
@@ -941,7 +907,6 @@ class StudyTracker extends React.Component {
                         visitLabels={this.state.visitLabels}
                         currentVisit={this.state.currentVisit}
                         showVisitFocus={this.showVisitFocus}
-                        switchOrder={this.switchOrder}
                     />
                     <tbody>
                     {dataRows}
@@ -1012,19 +977,4 @@ function prettyStatus(status, dueDate) {
     }
 
     return toReturn;
-}
-
-function formatDate(date) {
-    var monthNames = [
-        "January", "February", "March",
-        "April", "May", "June", "July",
-        "August", "September", "October",
-        "November", "December"
-    ];
-
-    var day = date.getDate();
-    var monthIndex = date.getMonth();
-    var year = date.getFullYear();
-
-    return monthNames[monthIndex] + ' ' + day + ', ' + year;
 }

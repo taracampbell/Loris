@@ -874,6 +874,7 @@ class StudyTracker extends React.Component {
                             pscid={row.pscid}
                             candid={row.candid}
                             visits={row.visits}
+                            dateReg={row.dateReg}
                             currentCohort={this.state.currentCohort}
                             currentVisit={this.state.currentVisit}
                             currentPSCID={this.state.currentPSCID}

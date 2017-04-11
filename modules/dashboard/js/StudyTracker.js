@@ -1300,6 +1300,7 @@ var StudyTracker = function (_React$Component11) {
                         pscid: row.pscid,
                         candid: row.candid,
                         visits: row.visits,
+                        dateReg: row.dateReg,
                         currentCohort: this.state.currentCohort,
                         currentVisit: this.state.currentVisit,
                         currentPSCID: this.state.currentPSCID,

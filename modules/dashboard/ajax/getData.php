@@ -98,10 +98,11 @@ function getTableData() {
     $sessIDPlaceHold = -1;
 
     foreach ($candidates as $candidate) {
-        $pscid  = $candidate['PSCID'];
-        $candID = $candidate['CandID'];
-        $psc    = $candidate['Alias'];
-        $status = $candidate['participant_status'];
+        $pscid   = $candidate['PSCID'];
+        $candID  = $candidate['CandID'];
+        $psc     = $candidate['Alias'];
+        $status  = $candidate['participant_status'];
+        $dateReg = $candidate['Date_registered'];
         $visits = array();
         $screeningDone = screeningDone($candID);
 
@@ -183,10 +184,11 @@ function getTableData() {
         array_push(
             $tableData,
             array(
-                'pscid' => $pscid,
-                'psc' => $psc,
-                'candid' => $candID,
-                'visits' => $visits
+                'pscid'   => $pscid,
+                'psc'     => $psc,
+                'candid'  => $candID,
+                'visits'  => $visits,
+                'dateReg' => $dateReg
             )
         );
     }
@@ -238,7 +240,7 @@ function getCandidates() {
 
     if ($user->hasPermission('access_all_profiles')) {
         $candidates = $DB->pselect(
-            "SELECT c.PSCID, c.CandID, psc.Name, psc.Alias, ps.participant_status
+            "SELECT c.PSCID, c.CandID, psc.Name, psc.Alias, ps.participant_status, Date_registered
              FROM candidate c
              LEFT JOIN psc ON psc.CenterID=c.CenterID
              LEFT JOIN participant_status ps on ps.CandID=c.CandID

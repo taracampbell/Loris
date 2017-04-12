@@ -436,7 +436,8 @@ class VisitCell extends React.Component {
                     fontWeight: "bold",
                     color: "white",
                     position: "inherit",
-                    fontSize: "110%"
+                    fontSize: "120%",
+                    lineHeight: "120%"
                 };
                 if (visit.sentToDCC) {
                     innerCircleInfo = <div className="center" style={innerCircleStyle}>&#10003;</div>;
@@ -452,8 +453,12 @@ class VisitCell extends React.Component {
                             Data not yet sent to DCC
                         </p>
                     );
+                } else if (visit.visitRegStatus === "cancelled-visit") {
+                    innerCircleStyle.color = "#AAAAAA";
+                    innerCircleStyle.fontSize = "200%";
+                    innerCircleStyle.lineHeight = "60%";
+                    innerCircleInfo = <div className="center" style={innerCircleStyle}>x</div>;
                 }
-                // ADD SIGNIFIER FOR CANCELLED VISIT
             }
 
             let visitClass = "circle "

@@ -223,7 +223,7 @@ var SideBarCandInstContent = function (_React$Component3) {
                                 className: "complete left-align",
                                 style: bold
                             },
-                            "\u2713"
+                            "\xA0 \u2713"
                         );
                     } else {
                         flagCompletion = React.createElement(
@@ -261,35 +261,29 @@ var SideBarCandInstContent = function (_React$Component3) {
 var SideBarCandContent = function (_React$Component4) {
     _inherits(SideBarCandContent, _React$Component4);
 
-    function SideBarCandContent(props) {
+    function SideBarCandContent() {
         _classCallCheck(this, SideBarCandContent);
 
-        var _this4 = _possibleConstructorReturn(this, (SideBarCandContent.__proto__ || Object.getPrototypeOf(SideBarCandContent)).call(this, props));
-
-        _this4.openBVLFeedback = _this4.openBVLFeedback.bind(_this4);
-        return _this4;
+        return _possibleConstructorReturn(this, (SideBarCandContent.__proto__ || Object.getPrototypeOf(SideBarCandContent)).apply(this, arguments));
     }
 
     _createClass(SideBarCandContent, [{
-        key: "openBVLFeedback",
-        value: function openBVLFeedback() {
-            var win = window.open(loris.BaseURL + "/" + this.props.candid, "_blank");
-            win.onload = function () {
-                win.document.querySelector("a.navbar-toggle").dispatchEvent(new MouseEvent("click"));
-            };
-        }
-    }, {
         key: "render",
         value: function render() {
             var content = [];
+            var visits = this.props.row.visits;
+            var pscid = this.props.row.pscid;
+            var candid = this.props.row.candid;
+            var dateReg = formatDate(new Date(this.props.row.dateReg));
+
             content.push(React.createElement(
                 "h3",
                 { className: "center" },
                 React.createElement(
                     "a",
-                    { href: loris.BaseURL + "/" + this.props.candid, target: "_blank" },
+                    { href: loris.BaseURL + "/" + candid, target: "_blank" },
                     "Participant ",
-                    this.props.pscid
+                    pscid
                 )
             ));
             if (this.props.currentCohort !== "all") {
@@ -300,18 +294,6 @@ var SideBarCandContent = function (_React$Component4) {
                     " Visits"
                 ));
             }
-            var visits = void 0;
-            var candid = void 0;
-            var dateReg = void 0;
-            for (var i = 0; i < this.props.rows.length; i++) {
-                var r = this.props.rows[i];
-                if (r.pscid === this.props.pscid) {
-                    candid = r.candid;
-                    visits = r.visits;
-                    dateReg = formatDate(new Date(r.dateReg));
-                    break;
-                }
-            }
 
             var visitContent = [];
             var fontSize = { fontSize: "1.10em" };
@@ -320,6 +302,11 @@ var SideBarCandContent = function (_React$Component4) {
                     var url = loris.BaseURL + "/";
                     var vr = prettyStatus(v.visitRegStatus, v.visitRegDueDate);
                     var de = prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
+                    var feedBackIcon = [];
+                    var style = { color: "#444444" };
+                    if (v.hasVisitFeedback) {
+                        feedBackIcon.push(React.createElement("span", { className: "glyphicon glyphicon-edit", style: style }));
+                    }
                     if (vr.status === "complete" && de.status === "complete") {
                         url += "instrument_list/?candID=" + candid + "&sessionID=" + v.sessionID;
                         visitContent.push(React.createElement(
@@ -332,10 +319,10 @@ var SideBarCandContent = function (_React$Component4) {
                                 React.createElement(
                                     "a",
                                     { href: url, target: "_blank" },
-                                    "\xA0",
                                     v.visitLabel,
                                     ":"
                                 ),
+                                feedBackIcon,
                                 vr.html
                             )
                         ));
@@ -351,6 +338,7 @@ var SideBarCandContent = function (_React$Component4) {
                                 v.visitLabel,
                                 ":"
                             ),
+                            feedBackIcon,
                             React.createElement(
                                 "p",
                                 { className: "left-indent" },
@@ -376,6 +364,7 @@ var SideBarCandContent = function (_React$Component4) {
                                 v.visitLabel,
                                 ":"
                             ),
+                            feedBackIcon,
                             React.createElement(
                                 "p",
                                 { className: "left-indent" },
@@ -843,12 +832,20 @@ var PSCIDCell = function (_React$Component8) {
     _createClass(PSCIDCell, [{
         key: "render",
         value: function render() {
+            var feedBackIcon = [];
+
+            if (this.props.hasFeedback) {
+                var style = { color: "#444444" };
+                feedBackIcon.push(React.createElement("span", { className: "glyphicon glyphicon-edit", style: style }));
+            }
             return React.createElement(
                 "td",
                 {
                     className: "PSCIDCell",
                     onClick: this.props.clickHandler },
-                this.props.pscid
+                this.props.pscid,
+                "\xA0",
+                feedBackIcon
             );
         }
     }]);
@@ -929,6 +926,7 @@ var StudyTrackerRow = function (_React$Component9) {
                 },
                 React.createElement(PSCIDCell, {
                     pscid: this.props.pscid,
+                    hasFeedback: this.props.hasFeedback,
                     clickHandler: this.keepHighlightedShowCandFocus
                 }),
                 visits
@@ -1158,7 +1156,7 @@ var StudyTracker = function (_React$Component11) {
                 pscid = this.state.currentPSCID;
             }
 
-            var candid = void 0;
+            var row = void 0;
 
             var _iteratorNormalCompletion5 = true;
             var _didIteratorError5 = false;
@@ -1169,7 +1167,7 @@ var StudyTracker = function (_React$Component11) {
                     var r = _step5.value;
 
                     if (r.pscid === pscid) {
-                        candid = r.candid;
+                        row = r;
                     }
                 }
             } catch (err) {
@@ -1188,10 +1186,8 @@ var StudyTracker = function (_React$Component11) {
             }
 
             var sideBarContent = React.createElement(SideBarCandContent, {
-                pscid: pscid,
-                candid: candid,
                 currentCohort: this.state.currentCohort,
-                rows: this.state.rows
+                row: row
             });
 
             this.setState({
@@ -1354,6 +1350,7 @@ var StudyTracker = function (_React$Component11) {
                         candid: row.candid,
                         visits: row.visits,
                         dateReg: row.dateReg,
+                        hasFeedback: row.hasFeedback,
                         currentCohort: this.state.currentCohort,
                         currentVisit: this.state.currentVisit,
                         currentPSCID: this.state.currentPSCID,
@@ -1506,4 +1503,11 @@ function formatDate(date) {
     var year = date.getFullYear();
 
     return monthNames[monthIndex] + ' ' + day + ', ' + year;
+}
+
+function openBVLFeedback(candID, sessionID, commentID) {
+    var win = window.open(loris.BaseURL + "/" + candID, "_blank");
+    win.onload = function () {
+        win.document.querySelector("a.navbar-toggle").dispatchEvent(new MouseEvent("click"));
+    };
 }

@@ -106,6 +106,18 @@ function getTableData() {
         $visits = array();
         $screeningDone = screeningDone($candID);
 
+        $hasFeedback = false;
+        $feedbackRaw = getFeedback($candID);
+        $visitFeedback = array();
+        if ($feedbackRaw) {
+            $hasFeedback = true;
+            foreach ($feedbackRaw as $fb) {
+                if($fb['SessionID']) {
+                    $sid = $fb['SessionID'];
+                    $visitFeedback[$sid] = true;
+                }
+            }
+        }
         foreach ($visitLabels as $visitLabel) {
             $session = $DB->pselectRow(
                 "SELECT ID, SubprojectID, Date_visit, Current_stage
@@ -125,6 +137,7 @@ function getTableData() {
             $sentToDCC           = null;
             $instrCompleted      = 0;
             $ddeInstCompleted    = 0;
+            $hasVisitFeedback    = false;
 
             if (!empty($session) && $session['Current_stage'] != 'Not Started') {
                 $sessionID        = $session['ID'];
@@ -133,6 +146,7 @@ function getTableData() {
                 $visitRegStatus   = 'complete-visit';
                 $sentToDCC        = sentToDCC($sessionID);
                 $totalInstrs      = getTotalInstruments($visitLabel, $subproject);
+                $hasVisitFeedback = $visitFeedback[$sessionID];
                 if (!$sentToDCC) {
 
                     $ddeInstCompleted = getDDEInstrumentsCompleted($sessionID);
@@ -178,22 +192,46 @@ function getTableData() {
             $visit['ddeCompleted']     = $ddeCompleted;
             $visit['ddeInstCompleted'] = $ddeInstCompleted;
             $visit['sentToDCC']        = $sentToDCC;
+            $visit['hasVisitFeedback'] = $hasVisitFeedback;
             array_push($visits, $visit);
         }
 
         array_push(
             $tableData,
             array(
-                'pscid'   => $pscid,
-                'psc'     => $psc,
-                'candid'  => $candID,
-                'visits'  => $visits,
-                'dateReg' => $dateReg
+                'pscid'       => $pscid,
+                'psc'         => $psc,
+                'candid'      => $candID,
+                'visits'      => $visits,
+                'dateReg'     => $dateReg,
+                'hasFeedback' => $hasFeedback
             )
         );
     }
 
     return $tableData;
+}
+
+function getFeedback($candID, $commentID = null) {
+    global $DB;
+
+    $query =
+        "SELECT Feedback_level, SessionID 
+         FROM feedback_bvl_thread 
+         WHERE Status <> 'closed' AND CandID=:cid";
+    $queryArgs = array(
+        "cid" => $candID
+    );
+    if ($commentID) {
+        $query .= " AND CommentID=:cmid";
+        $queryArgs["cmid"] = $commentID;
+    }
+    $feedback = $DB->pselect(
+        $query,
+        $queryArgs
+    );
+
+    return $feedback;
 }
 
 function sentToDCC($sessionID) {

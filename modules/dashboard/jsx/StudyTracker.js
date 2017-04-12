@@ -142,7 +142,7 @@ class SideBarCandInstContent extends React.Component {
                         className="complete left-align"
                         style={bold}
                     >
-                        &#10003;
+                        &nbsp; &#10003;
                     </span>
                 } else {
                     flagCompletion = <span
@@ -171,40 +171,22 @@ class SideBarCandInstContent extends React.Component {
 }
 
 class SideBarCandContent extends React.Component {
-    constructor(props) {
-        super(props);
-        this.openBVLFeedback = this.openBVLFeedback.bind(this);
-    }
-    openBVLFeedback() {
-        let win = window.open(loris.BaseURL + "/" + this.props.candid, "_blank");
-        win.onload = function() {
-            win.document.querySelector("a.navbar-toggle").dispatchEvent(new MouseEvent("click"));
-        }
-    }
-
     render () {
         let content = [];
+        let visits  = this.props.row.visits;
+        let pscid   = this.props.row.pscid;
+        let candid  = this.props.row.candid;
+        let dateReg = formatDate(new Date(this.props.row.dateReg));
+
         content.push(
             <h3 className="center">
-                <a href={loris.BaseURL + "/" + this.props.candid} target="_blank">
-                    Participant {this.props.pscid}
+                <a href={loris.BaseURL + "/" + candid} target="_blank">
+                    Participant {pscid}
                 </a>
             </h3>
         );
         if (this.props.currentCohort !== "all") {
             content = content.concat(<h4 className="center">{this.props.currentCohort} Visits</h4>);
-        }
-        let visits;
-        let candid;
-        let dateReg;
-        for(let i = 0; i < this.props.rows.length; i++) {
-            let r = this.props.rows[i];
-            if (r.pscid === this.props.pscid) {
-                candid = r.candid;
-                visits = r.visits;
-                dateReg = formatDate(new Date(r.dateReg));
-                break;
-            }
         }
 
         let visitContent = [];
@@ -215,13 +197,21 @@ class SideBarCandContent extends React.Component {
                     let url = loris.BaseURL + "/";
                     let vr = prettyStatus(v.visitRegStatus, v.visitRegDueDate);
                     let de = prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
+                    let feedBackIcon = [];
+                    let style = {color: "#444444"};
+                    if (v.hasVisitFeedback) {
+                        feedBackIcon.push(
+                            <span className="glyphicon glyphicon-edit" style={style}/>
+                        );
+                    }
                     if (vr.status === "complete" && de.status === "complete") {
                         url += "instrument_list/?candID="+candid+"&sessionID="+v.sessionID;
                         visitContent.push(
                             <div>
                                 <p style={fontSize}>
                                     &nbsp;
-                                    <a href={url} target="_blank">&nbsp;{v.visitLabel}:</a>
+                                    <a href={url} target="_blank">{v.visitLabel}:</a>
+                                    {feedBackIcon}
                                     {vr.html}
                                 </p>
                             </div>
@@ -234,6 +224,7 @@ class SideBarCandContent extends React.Component {
                                 <a href={url} target="_blank" style={fontSize}>
                                 {v.visitLabel}:
                                 </a>
+                                {feedBackIcon}
                                 <p className="left-indent">Visit Registration: {vr.html}</p>
                                 <p className="left-indent">Data Entry: {de.html}</p>
                             </div>
@@ -246,6 +237,7 @@ class SideBarCandContent extends React.Component {
                                 <a href={url} target="_blank" style={fontSize}>
                                     {v.visitLabel}:
                                 </a>
+                                {feedBackIcon}
                                 <p className="left-indent">Visit Registration: {vr.html}</p>
                             </div>
                         );
@@ -495,11 +487,21 @@ class VisitCell extends React.Component {
 class PSCIDCell extends React.Component {
 
     render() {
+        let feedBackIcon = [];
+
+        if (this.props.hasFeedback) {
+            let style = {color: "#444444"};
+            feedBackIcon.push(
+                <span className="glyphicon glyphicon-edit" style={style}/>
+            );
+        }
         return (
             <td
                 className='PSCIDCell'
                 onClick={this.props.clickHandler}>
                 {this.props.pscid}
+                &nbsp;
+                {feedBackIcon}
             </td>
         );
     }
@@ -569,6 +571,7 @@ class StudyTrackerRow extends React.Component {
             >
                 <PSCIDCell
                     pscid={this.props.pscid}
+                    hasFeedback={this.props.hasFeedback}
                     clickHandler={this.keepHighlightedShowCandFocus}
                 />
                 {visits}
@@ -761,19 +764,17 @@ class StudyTracker extends React.Component {
             pscid = this.state.currentPSCID;
         }
 
-        let candid;
+        let row;
 
         for (let r of this.state.rows) {
             if (r.pscid === pscid) {
-                candid = r.candid;
+                row = r;
             }
         }
 
         let sideBarContent = <SideBarCandContent
-                pscid={pscid}
-                candid={candid}
                 currentCohort={this.state.currentCohort}
-                rows={this.state.rows}
+                row={row}
             />;
 
         this.setState({
@@ -924,6 +925,7 @@ class StudyTracker extends React.Component {
                             candid={row.candid}
                             visits={row.visits}
                             dateReg={row.dateReg}
+                            hasFeedback={row.hasFeedback}
                             currentCohort={this.state.currentCohort}
                             currentVisit={this.state.currentVisit}
                             currentPSCID={this.state.currentPSCID}
@@ -1043,4 +1045,11 @@ function formatDate(date) {
     var year = date.getFullYear();
 
     return monthNames[monthIndex] + ' ' + day + ', ' + year;
+}
+
+function openBVLFeedback(candID, sessionID, commentID) {
+    let win = window.open(loris.BaseURL + "/" + candID, "_blank");
+    win.onload = function() {
+        win.document.querySelector("a.navbar-toggle").dispatchEvent(new MouseEvent("click"));
+    }
 }

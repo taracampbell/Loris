@@ -261,13 +261,24 @@ var SideBarCandInstContent = function (_React$Component3) {
 var SideBarCandContent = function (_React$Component4) {
     _inherits(SideBarCandContent, _React$Component4);
 
-    function SideBarCandContent() {
+    function SideBarCandContent(props) {
         _classCallCheck(this, SideBarCandContent);
 
-        return _possibleConstructorReturn(this, (SideBarCandContent.__proto__ || Object.getPrototypeOf(SideBarCandContent)).apply(this, arguments));
+        var _this4 = _possibleConstructorReturn(this, (SideBarCandContent.__proto__ || Object.getPrototypeOf(SideBarCandContent)).call(this, props));
+
+        _this4.openBVLFeedback = _this4.openBVLFeedback.bind(_this4);
+        return _this4;
     }
 
     _createClass(SideBarCandContent, [{
+        key: "openBVLFeedback",
+        value: function openBVLFeedback() {
+            var win = window.open(loris.BaseURL + "/" + this.props.candid, "_blank");
+            win.onload = function () {
+                win.document.querySelector("a.navbar-toggle").dispatchEvent(new MouseEvent("click"));
+            };
+        }
+    }, {
         key: "render",
         value: function render() {
             var content = [];

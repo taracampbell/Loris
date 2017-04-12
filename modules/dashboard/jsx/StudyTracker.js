@@ -171,6 +171,17 @@ class SideBarCandInstContent extends React.Component {
 }
 
 class SideBarCandContent extends React.Component {
+    constructor(props) {
+        super(props);
+        this.openBVLFeedback = this.openBVLFeedback.bind(this);
+    }
+    openBVLFeedback() {
+        let win = window.open(loris.BaseURL + "/" + this.props.candid, "_blank");
+        win.onload = function() {
+            win.document.querySelector("a.navbar-toggle").dispatchEvent(new MouseEvent("click"));
+        }
+    }
+
     render () {
         let content = [];
         content.push(

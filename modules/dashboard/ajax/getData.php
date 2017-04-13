@@ -106,15 +106,20 @@ function getTableData() {
         $visits = array();
         $screeningDone = screeningDone($candID);
 
-        $hasFeedback = false;
         $feedbackRaw = getFeedback($candID);
-        $visitFeedback = array();
+        $feedback = array();
         if ($feedbackRaw) {
-            $hasFeedback = true;
             foreach ($feedbackRaw as $fb) {
-                if($fb['SessionID']) {
-                    $sid = $fb['SessionID'];
-                    $visitFeedback[$sid] = true;
+                if ($fb['Feedback_level'] === "profile") {
+                    $feedback['profile'] = true;
+                } else if ($fb['Feedback_level'] === "visit") {
+                    $feedback['visits'][$fb["SessionID"]] = true;
+                } else if ($fb['Feedback_level'] === "instrument") {
+                    $feedback['instruments'][$fb['SessionID']] = array(
+                        "commentID" => $fb['CommentID'],
+                        "testName" => $fb['Test_name'],
+                        "fullName" => $fb['Full_name']
+                    );
                 }
             }
         }
@@ -137,7 +142,6 @@ function getTableData() {
             $sentToDCC           = null;
             $instrCompleted      = 0;
             $ddeInstCompleted    = 0;
-            $hasVisitFeedback    = false;
 
             if (!empty($session) && $session['Current_stage'] != 'Not Started') {
                 $sessionID        = $session['ID'];
@@ -146,9 +150,8 @@ function getTableData() {
                 $visitRegStatus   = 'complete-visit';
                 $sentToDCC        = sentToDCC($sessionID);
                 $totalInstrs      = getTotalInstruments($visitLabel, $subproject);
-                $hasVisitFeedback = $visitFeedback[$sessionID];
-                if (!$sentToDCC) {
 
+                if (!$sentToDCC) {
                     $ddeInstCompleted = getDDEInstrumentsCompleted($sessionID);
                     $instrCompleted = getTotalInstrumentsCompleted($sessionID);
 
@@ -192,19 +195,18 @@ function getTableData() {
             $visit['ddeCompleted']     = $ddeCompleted;
             $visit['ddeInstCompleted'] = $ddeInstCompleted;
             $visit['sentToDCC']        = $sentToDCC;
-            $visit['hasVisitFeedback'] = $hasVisitFeedback;
             array_push($visits, $visit);
         }
 
         array_push(
             $tableData,
             array(
-                'pscid'       => $pscid,
-                'psc'         => $psc,
-                'candid'      => $candID,
-                'visits'      => $visits,
-                'dateReg'     => $dateReg,
-                'hasFeedback' => $hasFeedback
+                'pscid'    => $pscid,
+                'psc'      => $psc,
+                'candid'   => $candID,
+                'visits'   => $visits,
+                'dateReg'  => $dateReg,
+                'feedback' => $feedback
             )
         );
     }
@@ -212,20 +214,19 @@ function getTableData() {
     return $tableData;
 }
 
-function getFeedback($candID, $commentID = null) {
+function getFeedback($candID) {
     global $DB;
 
     $query =
-        "SELECT Feedback_level, SessionID 
-         FROM feedback_bvl_thread 
+        "SELECT fbt.Feedback_level, fbt.SessionID, fbt.CommentID, fl.Test_name, tn.Full_name 
+         FROM feedback_bvl_thread AS fbt
+         LEFT JOIN flag AS fl ON (fbt.CommentID=fl.CommentID)
+         LEFT JOIN test_names AS tn ON (fl.Test_name=tn.Test_name)
          WHERE Status <> 'closed' AND CandID=:cid";
     $queryArgs = array(
         "cid" => $candID
     );
-    if ($commentID) {
-        $query .= " AND CommentID=:cmid";
-        $queryArgs["cmid"] = $commentID;
-    }
+
     $feedback = $DB->pselect(
         $query,
         $queryArgs

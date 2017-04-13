@@ -271,23 +271,52 @@ var SideBarCandContent = function (_React$Component4) {
         key: "render",
         value: function render() {
             var content = [];
+            // use local variables for less typing
             var visits = this.props.row.visits;
             var pscid = this.props.row.pscid;
             var candid = this.props.row.candid;
+            var feedback = this.props.row.feedback;
             var dateReg = formatDate(new Date(this.props.row.dateReg));
+            var iconColor = { color: "#444444" };
+            // determine if participant has profile level feedback and add appropriate
+            // links and display as such
+            var profileURL = loris.BaseURL + "/" + candid;
+            var feedbackIcon = [];
+            if (feedback.profile) {
 
-            content.push(React.createElement(
-                "h3",
-                { className: "center" },
-                React.createElement(
-                    "a",
-                    { href: loris.BaseURL + "/" + candid, target: "_blank" },
-                    "Participant ",
-                    pscid
-                )
-            ));
+                feedbackIcon.push(React.createElement("span", {
+                    className: "glyphicon glyphicon-edit",
+                    style: iconColor
+                }));
+                content.push(React.createElement(
+                    "h3",
+                    { className: "center" },
+                    React.createElement(
+                        "a",
+                        { href: "#", target: "_blank", onClick: function onClick() {
+                                return openBVLFeedback(candid);
+                            } },
+                        "Participant ",
+                        pscid
+                    ),
+                    feedbackIcon
+                ));
+            } else {
+                content.push(React.createElement(
+                    "h3",
+                    { className: "center" },
+                    React.createElement(
+                        "a",
+                        { href: profileURL, target: "_blank" },
+                        "Participant ",
+                        pscid
+                    )
+                ));
+            }
+
+            // add a subheader if looking at specific cohort
             if (this.props.currentCohort !== "all") {
-                content = content.concat(React.createElement(
+                content.push(React.createElement(
                     "h4",
                     { className: "center" },
                     this.props.currentCohort,
@@ -298,40 +327,84 @@ var SideBarCandContent = function (_React$Component4) {
             var visitContent = [];
             var fontSize = { fontSize: "1.10em" };
             visits.forEach(function (v) {
+                // make sure visit is part of current cohort
                 if (v.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
                     var url = loris.BaseURL + "/";
                     var vr = prettyStatus(v.visitRegStatus, v.visitRegDueDate);
                     var de = prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
-                    var feedBackIcon = [];
-                    var style = { color: "#444444" };
-                    if (v.hasVisitFeedback) {
-                        feedBackIcon.push(React.createElement("a", {
-                            className: "left-indent glyphicon glyphicon-edit",
-                            style: style,
-                            onClick: function onClick() {
-                                return openBVLFeedback(candid, v.sessionID);
+                    var visitLink = [];
+                    var instrumentFeedback = [];
+
+                    // determine if participant has visit level feedback and display as such
+                    if (feedback.visits && feedback.visits.hasOwnProperty(v.sessionID)) {
+                        visitLink.push(React.createElement(
+                            "a",
+                            { href: "#",
+                                target: "_blank",
+                                style: fontSize,
+                                onClick: function onClick() {
+                                    return openBVLFeedback(candid, v.sessionID);
+                                }
                             },
-                            href: "#"
-                        }));
+                            React.createElement("span", { className: "glyphicon glyphicon-edit", style: iconColor }),
+                            v.visitLabel,
+                            ":"
+                        ));
+                    } else {
+                        url += "instrument_list/?candID=" + candid + "&sessionID=" + v.sessionID;
+                        visitLink.push(React.createElement(
+                            "a",
+                            { href: url,
+                                target: "_blank",
+                                style: fontSize
+                            },
+                            v.visitLabel,
+                            ":"
+                        ));
+                    }
+
+                    if (feedback.instruments && feedback.instruments.hasOwnProperty(v.sessionID)) {
+                        var _iconColor = { color: "#444444" };
+                        instrumentFeedback.push(React.createElement(
+                            "p",
+                            { className: "center" },
+                            "Instrument Behavioral Feedback"
+                        ));
+                        console.log(feedback.instruments);
+
+                        var _loop = function _loop(f) {
+                            if (!feedback.instruments[f].commentID) {
+                                return "continue";
+                            }
+                            var fb = feedback.instruments[f];
+                            instrumentFeedback.push(React.createElement(
+                                "a",
+                                { className: "left-indent",
+                                    href: "#",
+                                    onClick: function onClick() {
+                                        return openBVLFeedback(candid, v.sessionID, fb.commentID, fb.testName);
+                                    }
+                                },
+                                React.createElement("span", { className: "glyphicon glyphicon-edit", style: _iconColor }),
+                                fb.fullName
+                            ));
+                        };
+
+                        for (var f in feedback.instruments) {
+                            var _ret = _loop(f);
+
+                            if (_ret === "continue") continue;
+                        }
                     }
                     if (vr.status === "complete" && de.status === "complete") {
-                        url += "instrument_list/?candID=" + candid + "&sessionID=" + v.sessionID;
+
                         visitContent.push(React.createElement(
                             "div",
                             null,
-                            React.createElement(
-                                "p",
-                                { style: fontSize },
-                                "\xA0",
-                                React.createElement(
-                                    "a",
-                                    { href: url, target: "_blank" },
-                                    v.visitLabel,
-                                    ":"
-                                ),
-                                vr.html
-                            ),
-                            feedBackIcon
+                            "\xA0",
+                            visitLink,
+                            vr.html,
+                            instrumentFeedback
                         ));
                     } else if (de.html) {
                         url += "instrument_list/?candID=" + candid + "&sessionID=" + v.sessionID;
@@ -339,12 +412,7 @@ var SideBarCandContent = function (_React$Component4) {
                             "div",
                             null,
                             "\xA0",
-                            React.createElement(
-                                "a",
-                                { href: url, target: "_blank", style: fontSize },
-                                v.visitLabel,
-                                ":"
-                            ),
+                            visitLink,
                             React.createElement(
                                 "p",
                                 { className: "left-indent" },
@@ -356,8 +424,7 @@ var SideBarCandContent = function (_React$Component4) {
                                 { className: "left-indent" },
                                 "Data Entry: ",
                                 de.html
-                            ),
-                            feedBackIcon
+                            )
                         ));
                     } else {
                         url += candid;
@@ -371,14 +438,12 @@ var SideBarCandContent = function (_React$Component4) {
                                 v.visitLabel,
                                 ":"
                             ),
-                            feedBackIcon,
                             React.createElement(
                                 "p",
                                 { className: "left-indent" },
                                 "Visit Registration: ",
                                 vr.html
-                            ),
-                            feedBackIcon
+                            )
                         ));
                     }
                 }
@@ -697,7 +762,7 @@ var VisitCell = function (_React$Component7) {
                 bgColor = { backgroundColor: HIGHLIGHT_COLOR };
             }
             if (visit.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
-                var _ret = function () {
+                var _ret2 = function () {
                     var tooltipContent = [];
                     var vr = prettyStatus(visit.visitRegStatus, visit.visitRegDueDate);
                     tooltipContent.push(React.createElement(
@@ -772,7 +837,7 @@ var VisitCell = function (_React$Component7) {
                                 "Data not yet sent to DCC"
                             ));
                         } else if (visit.visitRegStatus === "cancelled-visit") {
-                            innerCircleStyle.color = "#AAAAAA";
+                            innerCircleStyle.color = "#444444";
                             innerCircleStyle.fontSize = "200%";
                             innerCircleStyle.lineHeight = "60%";
                             innerCircleInfo = React.createElement(
@@ -818,7 +883,7 @@ var VisitCell = function (_React$Component7) {
                     };
                 }();
 
-                if ((typeof _ret === "undefined" ? "undefined" : _typeof(_ret)) === "object") return _ret.v;
+                if ((typeof _ret2 === "undefined" ? "undefined" : _typeof(_ret2)) === "object") return _ret2.v;
             } else {
                 return React.createElement("td", { className: visit.visitLabel, style: bgColor });
             }
@@ -842,7 +907,7 @@ var PSCIDCell = function (_React$Component8) {
         value: function render() {
             var feedBackIcon = [];
 
-            if (this.props.hasFeedback) {
+            if (Object.keys(this.props.feedback).length) {
                 var style = { color: "#444444" };
                 feedBackIcon.push(React.createElement("span", { className: "glyphicon glyphicon-edit", style: style }));
             }
@@ -934,7 +999,7 @@ var StudyTrackerRow = function (_React$Component9) {
                 },
                 React.createElement(PSCIDCell, {
                     pscid: this.props.pscid,
-                    hasFeedback: this.props.hasFeedback,
+                    feedback: this.props.feedback,
                     clickHandler: this.keepHighlightedShowCandFocus
                 }),
                 visits
@@ -1358,7 +1423,7 @@ var StudyTracker = function (_React$Component11) {
                         candid: row.candid,
                         visits: row.visits,
                         dateReg: row.dateReg,
-                        hasFeedback: row.hasFeedback,
+                        feedback: row.feedback,
                         currentCohort: this.state.currentCohort,
                         currentVisit: this.state.currentVisit,
                         currentPSCID: this.state.currentPSCID,

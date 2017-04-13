@@ -173,52 +173,118 @@ class SideBarCandInstContent extends React.Component {
 class SideBarCandContent extends React.Component {
     render () {
         let content = [];
-        let visits  = this.props.row.visits;
-        let pscid   = this.props.row.pscid;
-        let candid  = this.props.row.candid;
+        // use local variables for less typing
+        let visits   = this.props.row.visits;
+        let pscid    = this.props.row.pscid;
+        let candid   = this.props.row.candid;
+        let feedback = this.props.row.feedback;
         let dateReg = formatDate(new Date(this.props.row.dateReg));
+        let iconColor = {color: "#444444"};
+        // determine if participant has profile level feedback and add appropriate
+        // links and display as such
+        let profileURL = loris.BaseURL + "/" + candid;
+        let feedbackIcon = [];
+        if (feedback.profile) {
 
-        content.push(
-            <h3 className="center">
-                <a href={loris.BaseURL + "/" + candid} target="_blank">
-                    Participant {pscid}
-                </a>
-            </h3>
-        );
+            feedbackIcon.push(
+                <span
+                    className="glyphicon glyphicon-edit"
+                    style={iconColor}
+                />
+            );
+            content.push(
+                <h3 className="center">
+                    <a href="#" target="_blank" onClick={() => openBVLFeedback(candid)}>
+                        Participant {pscid}
+                    </a>
+                    {feedbackIcon}
+                </h3>
+            );
+        } else {
+            content.push(
+                <h3 className="center">
+                    <a href={profileURL} target="_blank">
+                        Participant {pscid}
+                    </a>
+                </h3>
+            );
+        }
+
+        // add a subheader if looking at specific cohort
         if (this.props.currentCohort !== "all") {
-            content = content.concat(<h4 className="center">{this.props.currentCohort} Visits</h4>);
+            content.push(
+                <h4 className="center">
+                    {this.props.currentCohort} Visits
+                </h4>
+            );
         }
 
         let visitContent = [];
         let fontSize = {fontSize: "1.10em"};
         visits.forEach(
             function(v) {
+                // make sure visit is part of current cohort
                 if (v.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
                     let url = loris.BaseURL + "/";
                     let vr = prettyStatus(v.visitRegStatus, v.visitRegDueDate);
                     let de = prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
-                    let feedBackIcon = [];
-                    let style = {color: "#444444"};
-                    if (v.hasVisitFeedback) {
-                        feedBackIcon.push(
-                            <a
-                                className="left-indent glyphicon glyphicon-edit"
-                                style={style}
-                                onClick={() => openBVLFeedback(candid, v.sessionID)}
-                                href="#"
-                            />
+                    let visitLink = [];
+                    let instrumentFeedback = [];
+
+                    // determine if participant has visit level feedback and display as such
+                    if (feedback.visits && feedback.visits.hasOwnProperty(v.sessionID)) {
+                        visitLink.push(
+                            <a href="#"
+                               target="_blank"
+                               style={fontSize}
+                               onClick={() => openBVLFeedback(candid, v.sessionID)}
+                            >
+                                <span className="glyphicon glyphicon-edit" style={iconColor}/>
+                                {v.visitLabel}:
+                            </a>
+                        );
+                    } else {
+                        url += "instrument_list/?candID="+candid+"&sessionID="+v.sessionID;
+                        visitLink.push(
+                            <a href={url}
+                               target="_blank"
+                               style={fontSize}
+                            >
+                                {v.visitLabel}:
+                            </a>
                         );
                     }
+
+                    if (feedback.instruments && feedback.instruments.hasOwnProperty(v.sessionID)) {
+                        let iconColor = {color: "#444444"};
+                        instrumentFeedback.push(
+                            <p className="center">Instrument Behavioral Feedback</p>
+                        );
+                        console.log(feedback.instruments);
+                        for (let f in feedback.instruments) {
+                            if (!feedback.instruments[f].commentID) {
+                                continue;
+                            }
+                            let fb = feedback.instruments[f];
+                            instrumentFeedback.push(
+                                <a className="left-indent"
+                                   href="#"
+                                   onClick={() => openBVLFeedback(candid, v.sessionID, fb.commentID, fb.testName)}
+                                >
+                                    <span className="glyphicon glyphicon-edit" style={iconColor} />
+                                    {fb.fullName}
+                                </a>
+                            );
+                        }
+                    }
                     if (vr.status === "complete" && de.status === "complete") {
-                        url += "instrument_list/?candID="+candid+"&sessionID="+v.sessionID;
+
                         visitContent.push(
                             <div>
-                                <p style={fontSize}>
-                                    &nbsp;
-                                    <a href={url} target="_blank">{v.visitLabel}:</a>
-                                    {vr.html}
-                                </p>
-                                {feedBackIcon}
+                                &nbsp;
+                                {visitLink}
+                                {vr.html}
+                                {instrumentFeedback}
                             </div>
                         );
                     } else if(de.html){
@@ -226,12 +292,9 @@ class SideBarCandContent extends React.Component {
                         visitContent.push(
                             <div>
                                 &nbsp;
-                                <a href={url} target="_blank" style={fontSize}>
-                                {v.visitLabel}:
-                                </a>
+                                {visitLink}
                                 <p className="left-indent">Visit Registration: {vr.html}</p>
                                 <p className="left-indent">Data Entry: {de.html}</p>
-                                {feedBackIcon}
                             </div>
                         );
                     } else {
@@ -242,9 +305,7 @@ class SideBarCandContent extends React.Component {
                                 <a href={url} target="_blank" style={fontSize}>
                                     {v.visitLabel}:
                                 </a>
-                                {feedBackIcon}
                                 <p className="left-indent">Visit Registration: {vr.html}</p>
-                                {feedBackIcon}
                             </div>
                         );
                     }
@@ -452,7 +513,7 @@ class VisitCell extends React.Component {
                         </p>
                     );
                 } else if (visit.visitRegStatus === "cancelled-visit") {
-                    innerCircleStyle.color = "#AAAAAA";
+                    innerCircleStyle.color = "#444444";
                     innerCircleStyle.fontSize = "200%";
                     innerCircleStyle.lineHeight = "60%";
                     innerCircleInfo = <div className="center" style={innerCircleStyle}>x</div>;
@@ -495,7 +556,7 @@ class PSCIDCell extends React.Component {
     render() {
         let feedBackIcon = [];
 
-        if (this.props.hasFeedback) {
+        if (Object.keys(this.props.feedback).length) {
             let style = {color: "#444444"};
             feedBackIcon.push(
                 <span className="glyphicon glyphicon-edit" style={style}/>
@@ -577,7 +638,7 @@ class StudyTrackerRow extends React.Component {
             >
                 <PSCIDCell
                     pscid={this.props.pscid}
-                    hasFeedback={this.props.hasFeedback}
+                    feedback={this.props.feedback}
                     clickHandler={this.keepHighlightedShowCandFocus}
                 />
                 {visits}
@@ -931,7 +992,7 @@ class StudyTracker extends React.Component {
                             candid={row.candid}
                             visits={row.visits}
                             dateReg={row.dateReg}
-                            hasFeedback={row.hasFeedback}
+                            feedback={row.feedback}
                             currentCohort={this.state.currentCohort}
                             currentVisit={this.state.currentVisit}
                             currentPSCID={this.state.currentPSCID}

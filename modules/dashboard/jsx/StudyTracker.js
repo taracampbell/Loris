@@ -201,7 +201,12 @@ class SideBarCandContent extends React.Component {
                     let style = {color: "#444444"};
                     if (v.hasVisitFeedback) {
                         feedBackIcon.push(
-                            <span className="glyphicon glyphicon-edit" style={style}/>
+                            <a
+                                className="left-indent glyphicon glyphicon-edit"
+                                style={style}
+                                onClick={() => openBVLFeedback(candid, v.sessionID)}
+                                href="#"
+                            />
                         );
                     }
                     if (vr.status === "complete" && de.status === "complete") {
@@ -211,9 +216,9 @@ class SideBarCandContent extends React.Component {
                                 <p style={fontSize}>
                                     &nbsp;
                                     <a href={url} target="_blank">{v.visitLabel}:</a>
-                                    {feedBackIcon}
                                     {vr.html}
                                 </p>
+                                {feedBackIcon}
                             </div>
                         );
                     } else if(de.html){
@@ -224,9 +229,9 @@ class SideBarCandContent extends React.Component {
                                 <a href={url} target="_blank" style={fontSize}>
                                 {v.visitLabel}:
                                 </a>
-                                {feedBackIcon}
                                 <p className="left-indent">Visit Registration: {vr.html}</p>
                                 <p className="left-indent">Data Entry: {de.html}</p>
+                                {feedBackIcon}
                             </div>
                         );
                     } else {
@@ -239,6 +244,7 @@ class SideBarCandContent extends React.Component {
                                 </a>
                                 {feedBackIcon}
                                 <p className="left-indent">Visit Registration: {vr.html}</p>
+                                {feedBackIcon}
                             </div>
                         );
                     }
@@ -1047,8 +1053,23 @@ function formatDate(date) {
     return monthNames[monthIndex] + ' ' + day + ', ' + year;
 }
 
-function openBVLFeedback(candID, sessionID, commentID) {
-    let win = window.open(loris.BaseURL + "/" + candID, "_blank");
+function openBVLFeedback(candID, sessionID, commentID, testName) {
+    let url = loris.BaseURL + "/";
+    if (candID && sessionID && commentID && testName) {
+        url += testName
+            + "/?commentID=" + commentID
+            + "&sessionID=" + sessionID
+            + "&candID=" +candID;
+    }
+    else if (candID && sessionID) {
+        url += "instrument_list/?candID=" + candID + "&sessionID=" + sessionID;
+    }
+    else if (candID) {
+        url += candID;
+    } else {
+        return;
+    }
+    let win = window.open(url, "_blank");
     win.onload = function() {
         win.document.querySelector("a.navbar-toggle").dispatchEvent(new MouseEvent("click"));
     }

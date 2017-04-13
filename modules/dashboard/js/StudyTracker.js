@@ -305,7 +305,14 @@ var SideBarCandContent = function (_React$Component4) {
                     var feedBackIcon = [];
                     var style = { color: "#444444" };
                     if (v.hasVisitFeedback) {
-                        feedBackIcon.push(React.createElement("span", { className: "glyphicon glyphicon-edit", style: style }));
+                        feedBackIcon.push(React.createElement("a", {
+                            className: "left-indent glyphicon glyphicon-edit",
+                            style: style,
+                            onClick: function onClick() {
+                                return openBVLFeedback(candid, v.sessionID);
+                            },
+                            href: "#"
+                        }));
                     }
                     if (vr.status === "complete" && de.status === "complete") {
                         url += "instrument_list/?candID=" + candid + "&sessionID=" + v.sessionID;
@@ -322,9 +329,9 @@ var SideBarCandContent = function (_React$Component4) {
                                     v.visitLabel,
                                     ":"
                                 ),
-                                feedBackIcon,
                                 vr.html
-                            )
+                            ),
+                            feedBackIcon
                         ));
                     } else if (de.html) {
                         url += "instrument_list/?candID=" + candid + "&sessionID=" + v.sessionID;
@@ -338,7 +345,6 @@ var SideBarCandContent = function (_React$Component4) {
                                 v.visitLabel,
                                 ":"
                             ),
-                            feedBackIcon,
                             React.createElement(
                                 "p",
                                 { className: "left-indent" },
@@ -350,7 +356,8 @@ var SideBarCandContent = function (_React$Component4) {
                                 { className: "left-indent" },
                                 "Data Entry: ",
                                 de.html
-                            )
+                            ),
+                            feedBackIcon
                         ));
                     } else {
                         url += candid;
@@ -370,7 +377,8 @@ var SideBarCandContent = function (_React$Component4) {
                                 { className: "left-indent" },
                                 "Visit Registration: ",
                                 vr.html
-                            )
+                            ),
+                            feedBackIcon
                         ));
                     }
                 }
@@ -1505,8 +1513,18 @@ function formatDate(date) {
     return monthNames[monthIndex] + ' ' + day + ', ' + year;
 }
 
-function openBVLFeedback(candID, sessionID, commentID) {
-    var win = window.open(loris.BaseURL + "/" + candID, "_blank");
+function openBVLFeedback(candID, sessionID, commentID, testName) {
+    var url = loris.BaseURL + "/";
+    if (candID && sessionID && commentID && testName) {
+        url += testName + "/?commentID=" + commentID + "&sessionID=" + sessionID + "&candID=" + candID;
+    } else if (candID && sessionID) {
+        url += "instrument_list/?candID=" + candID + "&sessionID=" + sessionID;
+    } else if (candID) {
+        url += candID;
+    } else {
+        return;
+    }
+    var win = window.open(url, "_blank");
     win.onload = function () {
         win.document.querySelector("a.navbar-toggle").dispatchEvent(new MouseEvent("click"));
     };

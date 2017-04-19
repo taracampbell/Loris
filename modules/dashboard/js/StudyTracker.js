@@ -283,7 +283,6 @@ var SideBarCandContent = function (_React$Component4) {
             var profileURL = loris.BaseURL + "/" + candid;
             var feedbackIcon = [];
             if (feedback.profile) {
-
                 feedbackIcon.push(React.createElement("span", {
                     className: "glyphicon glyphicon-edit",
                     style: iconColor
@@ -291,6 +290,7 @@ var SideBarCandContent = function (_React$Component4) {
                 content.push(React.createElement(
                     "h3",
                     { className: "center" },
+                    feedbackIcon,
                     React.createElement(
                         "a",
                         { href: "#", target: "_blank", onClick: function onClick() {
@@ -298,8 +298,7 @@ var SideBarCandContent = function (_React$Component4) {
                             } },
                         "Participant ",
                         pscid
-                    ),
-                    feedbackIcon
+                    )
                 ));
             } else {
                 content.push(React.createElement(
@@ -362,14 +361,17 @@ var SideBarCandContent = function (_React$Component4) {
                             ":"
                         ));
                     }
-
+                    // Check if there is instrument feedback and whether this
+                    // particular visit
                     if (feedback.instruments && feedback.instruments.hasOwnProperty(v.sessionID)) {
                         var _iconColor = { color: "#444444" };
-                        instrumentFeedback.push(React.createElement(
-                            "p",
-                            { className: "center" },
-                            "Instrument Behavioral Feedback"
-                        ));
+                        var instLinkStyle = {
+                            whiteSpace: "nowrap",
+                            textOverflow: "ellipsis",
+                            overflow: "hidden",
+                            display: "block",
+                            margin: "5px"
+                        };
                         console.log(feedback.instruments);
 
                         var _loop = function _loop(f) {
@@ -379,11 +381,11 @@ var SideBarCandContent = function (_React$Component4) {
                             var fb = feedback.instruments[f];
                             instrumentFeedback.push(React.createElement(
                                 "a",
-                                { className: "left-indent",
-                                    href: "#",
+                                { href: "#",
                                     onClick: function onClick() {
                                         return openBVLFeedback(candid, v.sessionID, fb.commentID, fb.testName);
-                                    }
+                                    },
+                                    style: instLinkStyle
                                 },
                                 React.createElement("span", { className: "glyphicon glyphicon-edit", style: _iconColor }),
                                 fb.fullName

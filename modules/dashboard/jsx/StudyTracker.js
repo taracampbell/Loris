@@ -185,7 +185,6 @@ class SideBarCandContent extends React.Component {
         let profileURL = loris.BaseURL + "/" + candid;
         let feedbackIcon = [];
         if (feedback.profile) {
-
             feedbackIcon.push(
                 <span
                     className="glyphicon glyphicon-edit"
@@ -194,10 +193,10 @@ class SideBarCandContent extends React.Component {
             );
             content.push(
                 <h3 className="center">
+                    {feedbackIcon}
                     <a href="#" target="_blank" onClick={() => openBVLFeedback(candid)}>
                         Participant {pscid}
                     </a>
-                    {feedbackIcon}
                 </h3>
             );
         } else {
@@ -254,12 +253,18 @@ class SideBarCandContent extends React.Component {
                             </a>
                         );
                     }
-
+                    // Check if there is instrument feedback and whether this
+                    // particular visit
                     if (feedback.instruments && feedback.instruments.hasOwnProperty(v.sessionID)) {
                         let iconColor = {color: "#444444"};
-                        instrumentFeedback.push(
-                            <p className="center">Instrument Behavioral Feedback</p>
-                        );
+                        let instLinkStyle =
+                            {
+                                whiteSpace: "nowrap",
+                                textOverflow: "ellipsis",
+                                overflow: "hidden",
+                                display: "block",
+                                margin: "5px"
+                            };
                         console.log(feedback.instruments);
                         for (let f in feedback.instruments) {
                             if (!feedback.instruments[f].commentID) {
@@ -267,9 +272,9 @@ class SideBarCandContent extends React.Component {
                             }
                             let fb = feedback.instruments[f];
                             instrumentFeedback.push(
-                                <a className="left-indent"
-                                   href="#"
+                                <a href="#"
                                    onClick={() => openBVLFeedback(candid, v.sessionID, fb.commentID, fb.testName)}
+                                   style={instLinkStyle}
                                 >
                                     <span className="glyphicon glyphicon-edit" style={iconColor} />
                                     {fb.fullName}

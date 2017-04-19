@@ -106,14 +106,26 @@ function getTableData() {
         $visits = array();
         $screeningDone = screeningDone($candID);
 
+        // Create feedback object
         $feedbackRaw = getFeedback($candID);
         $feedback = array();
         if ($feedbackRaw) {
             foreach ($feedbackRaw as $fb) {
+                // Check if candidate has feedback at profile level
+                // only need to know whether or not it exists
                 if ($fb['Feedback_level'] === "profile") {
                     $feedback['profile'] = true;
+
+                    // If there is visit level feedback, create subobject
+                    // and map sessionID to true
                 } else if ($fb['Feedback_level'] === "visit") {
                     $feedback['visits'][$fb["SessionID"]] = true;
+
+                    // For instrument feedback, create instrument subobject
+                    // mapping sessionID to CommentID, test_name and full_name.
+                    // (Uses sessionID as key because instrument needs to be
+                    // associated with its appropriate visit as it will be displayed
+                    // beneath it in SideBarCandContent)
                 } else if ($fb['Feedback_level'] === "instrument") {
                     $feedback['instruments'][$fb['SessionID']] = array(
                         "commentID" => $fb['CommentID'],

@@ -142,7 +142,7 @@ class SideBarCandInstContent extends React.Component {
                         className="complete left-align"
                         style={bold}
                     >
-                        &#10003;
+                        &nbsp; &#10003;
                     </span>
                 } else {
                     flagCompletion = <span
@@ -173,46 +173,122 @@ class SideBarCandInstContent extends React.Component {
 class SideBarCandContent extends React.Component {
     render () {
         let content = [];
-        content.push(
-            <h3 className="center">
-                <a href={loris.BaseURL + "/" + this.props.candid} target="_blank">
-                    Participant {this.props.pscid}
-                </a>
-            </h3>
-        );
-        if (this.props.currentCohort !== "all") {
-            content = content.concat(<h4 className="center">{this.props.currentCohort} Visits</h4>);
+        // use local variables for less typing
+        let visits   = this.props.row.visits;
+        let pscid    = this.props.row.pscid;
+        let candid   = this.props.row.candid;
+        let feedback = this.props.row.feedback;
+        let dateReg = formatDate(new Date(this.props.row.dateReg));
+        let iconColor = {color: "#444444"};
+        // determine if participant has profile level feedback and add appropriate
+        // links and display as such
+        let profileURL = loris.BaseURL + "/" + candid;
+        let feedbackIcon = [];
+        if (feedback.profile) {
+            feedbackIcon.push(
+                <span
+                    className="glyphicon glyphicon-edit"
+                    style={iconColor}
+                />
+            );
+            content.push(
+                <h3 className="center">
+                    {feedbackIcon}
+                    <a href="#" target="_blank" onClick={() => openBVLFeedback(candid)}>
+                        Participant {pscid}
+                    </a>
+                </h3>
+            );
+        } else {
+            content.push(
+                <h3 className="center">
+                    <a href={profileURL} target="_blank">
+                        Participant {pscid}
+                    </a>
+                </h3>
+            );
         }
-        let visits;
-        let candid;
-        let dateReg;
-        for(let i = 0; i < this.props.rows.length; i++) {
-            let r = this.props.rows[i];
-            if (r.pscid === this.props.pscid) {
-                candid = r.candid;
-                visits = r.visits;
-                dateReg = formatDate(new Date(r.dateReg));
-                break;
-            }
+
+        // add a subheader if looking at specific cohort
+        if (this.props.currentCohort !== "all") {
+            content.push(
+                <h4 className="center">
+                    {this.props.currentCohort} Visits
+                </h4>
+            );
         }
 
         let visitContent = [];
         let fontSize = {fontSize: "1.10em"};
         visits.forEach(
             function(v) {
+                // make sure visit is part of current cohort
                 if (v.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
                     let url = loris.BaseURL + "/";
                     let vr = prettyStatus(v.visitRegStatus, v.visitRegDueDate);
                     let de = prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
-                    if (vr.status === "complete" && de.status === "complete") {
+                    let visitLink = [];
+                    let instrumentFeedback = [];
+
+                    // determine if participant has visit level feedback and display as such
+                    if (feedback.visits && feedback.visits.hasOwnProperty(v.sessionID)) {
+                        visitLink.push(
+                            <a href="#"
+                               target="_blank"
+                               style={fontSize}
+                               onClick={() => openBVLFeedback(candid, v.sessionID)}
+                            >
+                                <span className="glyphicon glyphicon-edit" style={iconColor}/>
+                                {v.visitLabel}:
+                            </a>
+                        );
+                    } else {
                         url += "instrument_list/?candID="+candid+"&sessionID="+v.sessionID;
+                        visitLink.push(
+                            <a href={url}
+                               target="_blank"
+                               style={fontSize}
+                            >
+                                {v.visitLabel}:
+                            </a>
+                        );
+                    }
+                    // Check if there is instrument feedback and whether this
+                    // particular visit
+                    if (feedback.instruments && feedback.instruments.hasOwnProperty(v.sessionID)) {
+                        let iconColor = {color: "#444444"};
+                        let instLinkStyle =
+                            {
+                                whiteSpace: "nowrap",
+                                textOverflow: "ellipsis",
+                                overflow: "hidden",
+                                display: "block",
+                                margin: "5px"
+                            };
+                        for (let f in feedback.instruments) {
+                            if (!feedback.instruments[f].commentID) {
+                                continue;
+                            }
+                            let fb = feedback.instruments[f];
+                            instrumentFeedback.push(
+                                <a href="#"
+                                   onClick={() => openBVLFeedback(candid, v.sessionID, fb.commentID, fb.testName)}
+                                   style={instLinkStyle}
+                                >
+                                    <span className="glyphicon glyphicon-edit" style={iconColor} />
+                                    {fb.fullName}
+                                </a>
+                            );
+                        }
+                    }
+                    if (vr.status === "complete" && de.status === "complete") {
+
                         visitContent.push(
                             <div>
-                                <p style={fontSize}>
-                                    &nbsp;
-                                    <a href={url} target="_blank">&nbsp;{v.visitLabel}:</a>
-                                    {vr.html}
-                                </p>
+                                &nbsp;
+                                {visitLink}
+                                {vr.html}
+                                {instrumentFeedback}
                             </div>
                         );
                     } else if(de.html){
@@ -220,9 +296,7 @@ class SideBarCandContent extends React.Component {
                         visitContent.push(
                             <div>
                                 &nbsp;
-                                <a href={url} target="_blank" style={fontSize}>
-                                {v.visitLabel}:
-                                </a>
+                                {visitLink}
                                 <p className="left-indent">Visit Registration: {vr.html}</p>
                                 <p className="left-indent">Data Entry: {de.html}</p>
                             </div>
@@ -443,7 +517,7 @@ class VisitCell extends React.Component {
                         </p>
                     );
                 } else if (visit.visitRegStatus === "cancelled-visit") {
-                    innerCircleStyle.color = "#AAAAAA";
+                    innerCircleStyle.color = "#888888";
                     innerCircleStyle.fontSize = "200%";
                     innerCircleStyle.lineHeight = "60%";
                     innerCircleInfo = <div className="center" style={innerCircleStyle}>x</div>;
@@ -484,11 +558,21 @@ class VisitCell extends React.Component {
 class PSCIDCell extends React.Component {
 
     render() {
+        let feedBackIcon = [];
+
+        if (Object.keys(this.props.feedback).length) {
+            let style = {color: "#444444"};
+            feedBackIcon.push(
+                <span className="glyphicon glyphicon-edit" style={style}/>
+            );
+        }
         return (
             <td
                 className='PSCIDCell'
                 onClick={this.props.clickHandler}>
                 {this.props.pscid}
+                &nbsp;
+                {feedBackIcon}
             </td>
         );
     }
@@ -558,6 +642,7 @@ class StudyTrackerRow extends React.Component {
             >
                 <PSCIDCell
                     pscid={this.props.pscid}
+                    feedback={this.props.feedback}
                     clickHandler={this.keepHighlightedShowCandFocus}
                 />
                 {visits}
@@ -750,19 +835,17 @@ class StudyTracker extends React.Component {
             pscid = this.state.currentPSCID;
         }
 
-        let candid;
+        let row;
 
         for (let r of this.state.rows) {
             if (r.pscid === pscid) {
-                candid = r.candid;
+                row = r;
             }
         }
 
         let sideBarContent = <SideBarCandContent
-                pscid={pscid}
-                candid={candid}
                 currentCohort={this.state.currentCohort}
-                rows={this.state.rows}
+                row={row}
             />;
 
         this.setState({
@@ -896,7 +979,6 @@ class StudyTracker extends React.Component {
         ) {
             return true;
         }
-        //console.log(~row.pscid.indexOf(this.state.filterCandText));
         return false;
     }
 
@@ -913,6 +995,7 @@ class StudyTracker extends React.Component {
                             candid={row.candid}
                             visits={row.visits}
                             dateReg={row.dateReg}
+                            feedback={row.feedback}
                             currentCohort={this.state.currentCohort}
                             currentVisit={this.state.currentVisit}
                             currentPSCID={this.state.currentPSCID}
@@ -1032,4 +1115,26 @@ function formatDate(date) {
     var year = date.getFullYear();
 
     return monthNames[monthIndex] + ' ' + day + ', ' + year;
+}
+
+function openBVLFeedback(candID, sessionID, commentID, testName) {
+    let url = loris.BaseURL + "/";
+    if (candID && sessionID && commentID && testName) {
+        url += testName
+            + "/?commentID=" + commentID
+            + "&sessionID=" + sessionID
+            + "&candID=" +candID;
+    }
+    else if (candID && sessionID) {
+        url += "instrument_list/?candID=" + candID + "&sessionID=" + sessionID;
+    }
+    else if (candID) {
+        url += candID;
+    } else {
+        return;
+    }
+    let win = window.open(url, "_blank");
+    win.onload = function() {
+        win.document.querySelector("a.navbar-toggle").dispatchEvent(new MouseEvent("click"));
+    }
 }

@@ -372,7 +372,6 @@ class Home extends React.Component {
   componentDidMount() {
     $.get(loris.BaseURL + '/dashboard/ajax/getDashboardHomeData.php', function(data, status) {
       if (status === "success") {
-        console.log(data);
         this.setState({
           username: data.username,
           lastlogin: data.lastlogin,

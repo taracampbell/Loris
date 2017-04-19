@@ -838,7 +838,7 @@ var VisitCell = function (_React$Component7) {
                                 "Data not yet sent to DCC"
                             ));
                         } else if (visit.visitRegStatus === "cancelled-visit") {
-                            innerCircleStyle.color = "#444444";
+                            innerCircleStyle.color = "#888888";
                             innerCircleStyle.fontSize = "200%";
                             innerCircleStyle.lineHeight = "60%";
                             innerCircleInfo = React.createElement(

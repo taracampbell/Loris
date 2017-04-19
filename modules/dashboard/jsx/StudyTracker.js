@@ -265,7 +265,6 @@ class SideBarCandContent extends React.Component {
                                 display: "block",
                                 margin: "5px"
                             };
-                        console.log(feedback.instruments);
                         for (let f in feedback.instruments) {
                             if (!feedback.instruments[f].commentID) {
                                 continue;
@@ -980,7 +979,6 @@ class StudyTracker extends React.Component {
         ) {
             return true;
         }
-        //console.log(~row.pscid.indexOf(this.state.filterCandText));
         return false;
     }
 

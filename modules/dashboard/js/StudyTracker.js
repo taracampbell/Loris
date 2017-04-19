@@ -372,7 +372,6 @@ var SideBarCandContent = function (_React$Component4) {
                             display: "block",
                             margin: "5px"
                         };
-                        console.log(feedback.instruments);
 
                         var _loop = function _loop(f) {
                             if (!feedback.instruments[f].commentID) {
@@ -1408,7 +1407,6 @@ var StudyTracker = function (_React$Component11) {
             if (this.rowHasCurrentCohortVisit(row) && (row.psc === this.state.currentSite || this.state.currentSite === "all") && row.pscid.startsWith(this.state.filterCandText)) {
                 return true;
             }
-            //console.log(~row.pscid.indexOf(this.state.filterCandText));
             return false;
         }
     }, {

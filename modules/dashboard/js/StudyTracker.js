@@ -203,7 +203,8 @@ var SideBarCandInstContent = function (_React$Component3) {
                     "\xA0",
                     sg
                 ));
-                for (var t in data[sg]) {
+
+                var _loop = function _loop(t) {
                     var inst = data[sg][t];
                     var url = loris.BaseURL + "/" + inst.testName + "/?commentID=" + inst.commentID + "&sessionID=" + sessionID + "&candID=" + candid;
                     var flagCompletion = void 0;
@@ -235,6 +236,19 @@ var SideBarCandInstContent = function (_React$Component3) {
                             "! \xA0"
                         );
                     }
+                    var conflicts = [];
+                    if (inst.conflicts) {
+                        conflicts.push(React.createElement(
+                            "a",
+                            { className: "center-block",
+                                href: "#",
+                                onClick: function onClick() {
+                                    return openConflictResolver(candid, inst.testName);
+                                }
+                            },
+                            "This instrument has conflicts"
+                        ));
+                    }
                     content.push(React.createElement(
                         "div",
                         null,
@@ -243,8 +257,13 @@ var SideBarCandInstContent = function (_React$Component3) {
                             { href: url, target: "_blank", className: "left-indent", style: style },
                             flagCompletion,
                             inst.fullName
-                        )
+                        ),
+                        conflicts
                     ));
+                };
+
+                for (var t in data[sg]) {
+                    _loop(t);
                 }
             }
             return React.createElement(
@@ -373,7 +392,7 @@ var SideBarCandContent = function (_React$Component4) {
                             margin: "5px"
                         };
 
-                        var _loop = function _loop(f) {
+                        var _loop2 = function _loop2(f) {
                             if (!feedback.instruments[f].commentID) {
                                 return "continue";
                             }
@@ -392,9 +411,9 @@ var SideBarCandContent = function (_React$Component4) {
                         };
 
                         for (var f in feedback.instruments) {
-                            var _ret = _loop(f);
+                            var _ret2 = _loop2(f);
 
-                            if (_ret === "continue") continue;
+                            if (_ret2 === "continue") continue;
                         }
                     }
                     if (vr.status === "complete" && de.status === "complete") {
@@ -763,7 +782,7 @@ var VisitCell = function (_React$Component7) {
                 bgColor = { backgroundColor: HIGHLIGHT_COLOR };
             }
             if (visit.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
-                var _ret2 = function () {
+                var _ret3 = function () {
                     var tooltipContent = [];
                     var vr = prettyStatus(visit.visitRegStatus, visit.visitRegDueDate);
                     tooltipContent.push(React.createElement(
@@ -884,7 +903,7 @@ var VisitCell = function (_React$Component7) {
                     };
                 }();
 
-                if ((typeof _ret2 === "undefined" ? "undefined" : _typeof(_ret2)) === "object") return _ret2.v;
+                if ((typeof _ret3 === "undefined" ? "undefined" : _typeof(_ret3)) === "object") return _ret3.v;
             } else {
                 return React.createElement("td", { className: visit.visitLabel, style: bgColor });
             }
@@ -1592,5 +1611,15 @@ function openBVLFeedback(candID, sessionID, commentID, testName) {
     var win = window.open(url, "_blank");
     win.onload = function () {
         win.document.querySelector("a.navbar-toggle").dispatchEvent(new MouseEvent("click"));
+    };
+}
+
+function openConflictResolver(candID, testName) {
+    var url = loris.BaseURL + "/conflict_resolver";
+    var win = window.open(url, "_blank");
+    win.onload = function () {
+        win.document.querySelector("input[name=CandID]").value = candID;
+        win.document.querySelector("select[name=Instrument]").value = testName;
+        win.document.querySelector("#testShowData1").dispatchEvent(new MouseEvent("click"));
     };
 }

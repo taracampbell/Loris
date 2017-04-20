@@ -152,12 +152,25 @@ class SideBarCandInstContent extends React.Component {
                         ! &nbsp;
                     </span>
                 }
+                let conflicts = [];
+                if (inst.conflicts) {
+                    conflicts.push(
+                        <a className="left-indent2"
+                           href="#"
+                           onClick={() => openConflictResolver(candid, inst.testName)}
+                        >
+                            <span className="glyphicon glyphicon-remove-circle"/>
+                            Conflicts
+                        </a>
+                    );
+                }
                 content.push(
                     <div>
                         <a href={url} target="_blank" className="left-indent" style={style}>
                             {flagCompletion}
                             {inst.fullName}
                         </a>
+                        {conflicts}
                     </div>
                 );
             }
@@ -1136,5 +1149,15 @@ function openBVLFeedback(candID, sessionID, commentID, testName) {
     let win = window.open(url, "_blank");
     win.onload = function() {
         win.document.querySelector("a.navbar-toggle").dispatchEvent(new MouseEvent("click"));
+    }
+}
+
+function openConflictResolver(candID, testName){
+    let url = loris.BaseURL + "/conflict_resolver";
+    let win = window.open(url, "_blank");
+    win.onload = function() {
+        win.document.querySelector("input[name=CandID]").value = candID;
+        win.document.querySelector("select[name=Instrument]").value = testName;
+        win.document.querySelector("#testShowData1").dispatchEvent(new MouseEvent("click"));
     }
 }

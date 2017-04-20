@@ -475,7 +475,7 @@ function getInstruments($sessionID) {
                 array("t" => $t["Test_name"])
         );
         $ddeComplete = null;
-
+        $conflicts = false;
         if ($t["Data_entry"] === "Complete") {
             $ddeComplete = $DB->pselectOne(
                 "SELECT Data_entry 
@@ -483,6 +483,17 @@ function getInstruments($sessionID) {
                  WHERE CommentID=:cid",
                 array("cid" => "DDE_".$t["CommentID"])
             );
+            if ($ddeComplete) {
+                $conflictsExist = $DB->pselect(
+                    "SELECT ConflictID 
+                     FROM conflicts_unresolved 
+                     WHERE CommentID1=:cmid",
+                    array("cmid" => $t['CommentID'])
+                );
+                if ($conflictsExist) {
+                    $conflicts = true;
+                }
+            }
         }
 
         $result[$sg][] = array(
@@ -490,7 +501,8 @@ function getInstruments($sessionID) {
             "testName" => $t["Test_name"],
             "completion" => $t["Data_entry"],
             "ddeCompletion" => $ddeComplete,
-            "commentID" => $t["CommentID"]
+            "commentID" => $t["CommentID"],
+            "conflicts" => $conflicts
         );
     }
     return $result;

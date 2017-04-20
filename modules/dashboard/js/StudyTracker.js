@@ -240,13 +240,14 @@ var SideBarCandInstContent = function (_React$Component3) {
                     if (inst.conflicts) {
                         conflicts.push(React.createElement(
                             "a",
-                            { className: "center-block",
+                            { className: "left-indent2",
                                 href: "#",
                                 onClick: function onClick() {
                                     return openConflictResolver(candid, inst.testName);
                                 }
                             },
-                            "This instrument has conflicts"
+                            React.createElement("span", { className: "glyphicon glyphicon-remove-circle" }),
+                            "Conflicts"
                         ));
                     }
                     content.push(React.createElement(

@@ -155,11 +155,12 @@ class SideBarCandInstContent extends React.Component {
                 let conflicts = [];
                 if (inst.conflicts) {
                     conflicts.push(
-                        <a className="center-block"
+                        <a className="left-indent2"
                            href="#"
                            onClick={() => openConflictResolver(candid, inst.testName)}
                         >
-                            This instrument has conflicts
+                            <span className="glyphicon glyphicon-remove-circle"/>
+                            Conflicts
                         </a>
                     );
                 }

@@ -397,6 +397,7 @@ class Home extends React.Component {
       this.setState({
         active: nextProps.active
       });
+      dashboardHomeLoad();
     }
   }
 

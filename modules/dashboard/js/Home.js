@@ -741,6 +741,7 @@ var Home = function (_React$Component11) {
         this.setState({
           active: nextProps.active
         });
+        dashboardHomeLoad();
       }
     }
   }, {

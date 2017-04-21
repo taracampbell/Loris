@@ -135,6 +135,27 @@ function getTableData() {
                 }
             }
         }
+
+        // Get descriptive participant status
+        if ($status > 1) {
+            $statusDesc = $DB->pselectOne(
+                "SELECT Description
+                     FROM participant_status_options
+                     WHERE ID=:s",
+                array("s" => $status)
+            );
+            if ($candidate['participant_suboptions']) {
+                $statusDesc .= " - " .
+                    $DB->pselectOne(
+                        "SELECT Description
+                             FROM participant_status_options
+                             WHERE ID=:s",
+                        array("s" => $candidate['participant_suboptions'])
+                    );
+            }
+        } else {
+            $statusDesc = "Active";
+        }
         foreach ($visitLabels as $visitLabel) {
             $session = $DB->pselectRow(
                 "SELECT ID, SubprojectID, Date_visit, Current_stage
@@ -215,12 +236,13 @@ function getTableData() {
         array_push(
             $tableData,
             array(
-                'pscid'    => $pscid,
-                'psc'      => $psc,
-                'candid'   => $candID,
-                'visits'   => $visits,
-                'dateReg'  => $dateReg,
-                'feedback' => $feedback
+                'pscid'      => $pscid,
+                'psc'        => $psc,
+                'candid'     => $candID,
+                'visits'     => $visits,
+                'dateReg'    => $dateReg,
+                'feedback'   => $feedback,
+                'statusDesc' => $statusDesc
             )
         );
     }
@@ -293,7 +315,7 @@ function getCandidates() {
 
     if ($user->hasPermission('access_all_profiles')) {
         $candidates = $DB->pselect(
-            "SELECT c.PSCID, c.CandID, psc.Name, psc.Alias, ps.participant_status, Date_registered
+            "SELECT c.PSCID, c.CandID, psc.Name, psc.Alias, ps.participant_status, ps.participant_suboptions, Date_registered
              FROM candidate c
              LEFT JOIN psc ON psc.CenterID=c.CenterID
              LEFT JOIN participant_status ps on ps.CandID=c.CandID

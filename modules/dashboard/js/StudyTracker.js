@@ -283,6 +283,7 @@ var SideBarCandContent = function (_React$Component4) {
             var pscid = this.props.row.pscid;
             var candid = this.props.row.candid;
             var feedback = this.props.row.feedback;
+            var statusDesc = this.props.row.statusDesc;
             var dateReg = formatDate(new Date(this.props.row.dateReg));
             var iconColor = { color: "#444444" };
             // determine if participant has profile level feedback and add appropriate
@@ -463,13 +464,24 @@ var SideBarCandContent = function (_React$Component4) {
                 );
             }
             content.push(visitContent);
+            var display = { display: "block" };
             content.push(React.createElement(
                 "p",
-                { className: "right-align small" },
+                { className: "right-align small", style: display },
                 React.createElement(
                     "em",
                     null,
-                    "Candidate was registered on ",
+                    "Status: ",
+                    statusDesc
+                )
+            ));
+            content.push(React.createElement(
+                "p",
+                { className: "right-align small", style: display },
+                React.createElement(
+                    "em",
+                    null,
+                    "Participant was registered on ",
                     dateReg
                 )
             ));

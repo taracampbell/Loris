@@ -178,6 +178,7 @@ class SideBarCandContent extends React.Component {
         let pscid    = this.props.row.pscid;
         let candid   = this.props.row.candid;
         let feedback = this.props.row.feedback;
+        let statusDesc   = this.props.row.statusDesc;
         let dateReg = formatDate(new Date(this.props.row.dateReg));
         let iconColor = {color: "#444444"};
         // determine if participant has profile level feedback and add appropriate
@@ -317,9 +318,15 @@ class SideBarCandContent extends React.Component {
                 </p>
         }
         content.push(visitContent);
+        let display = {display: "block"};
         content.push(
-            <p className="right-align small">
-                <em>Candidate was registered on {dateReg}</em>
+            <p className="right-align small" style={display}>
+                <em>Status: {statusDesc}</em>
+            </p>
+        );
+        content.push(
+            <p className="right-align small" style={display}>
+                <em>Participant was registered on {dateReg}</em>
             </p>
         );
         return (

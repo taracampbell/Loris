@@ -1499,7 +1499,8 @@ var StudyTracker = function (_React$Component11) {
                         React.createElement(StudyTrackerHeader, {
                             visitLabels: this.state.visitLabels,
                             currentVisit: this.state.currentVisit,
-                            showVisitFocus: this.showVisitFocus
+                            showVisitFocus: this.showVisitFocus,
+                            switchOrder: this.switchOrder
                         }),
                         React.createElement(
                             "tbody",

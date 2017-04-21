@@ -29,9 +29,13 @@ var SideNavItem = function (_React$Component) {
     key: "render",
     value: function render() {
       var glyphName = "glyphicon glyphicon-" + this.props.glyph;
+      var buttonClass = "sidenav-item";
+      if (this.props.active) {
+        buttonClass = "sidenav-item active";
+      }
       return React.createElement(
         "div",
-        { className: "sidenav-item", alt: this.props.name, onClick: this.handleClick },
+        { className: buttonClass, alt: this.props.name, onClick: this.handleClick },
         React.createElement("span", { className: glyphName })
       );
     }
@@ -48,6 +52,9 @@ var SideNav = function (_React$Component2) {
 
     var _this2 = _possibleConstructorReturn(this, (SideNav.__proto__ || Object.getPrototypeOf(SideNav)).call(this, props));
 
+    _this2.state = {
+      buttons: props.buttons
+    };
     _this2.handleClick = _this2.handleClick.bind(_this2);
     return _this2;
   }
@@ -56,27 +63,46 @@ var SideNav = function (_React$Component2) {
     key: "handleClick",
     value: function handleClick(name) {
       var components = {
-        "Study Tracker": StudyTracker,
-        "Home": Home
+        "Study Tracker": 'studyTracker',
+        "Home": 'home'
       };
 
-      var Content = components[name];
-      ReactDOM.render(React.createElement(Content), document.getElementById("content"));
-      // delete active on all other buttons, add active to current id
-      // complete action
+      // Update Active Class
+      this.updateActive(name);
+
+      // Change the visible screen
+      this.props.changeScreen(components[name]);
+    }
+  }, {
+    key: "updateActive",
+    value: function updateActive(name) {
+      var buttonUpdate = this.state.buttons;
+
+      for (var i = 0; i < buttonUpdate.length; i++) {
+        if (buttonUpdate[i].name == name) {
+          buttonUpdate[i].active = true;
+        } else {
+          buttonUpdate[i].active = false;
+        }
+      }
+
+      this.setState({
+        buttons: buttonUpdate
+      });
     }
   }, {
     key: "render",
     value: function render() {
       var _this3 = this;
 
-      var sideNavButtons = this.props.buttons.map(function (button) {
+      var sideNavButtons = this.state.buttons.map(function (button) {
         return React.createElement(SideNavItem, {
           key: button.name,
           name: button.name,
           glyph: button.glyph,
           component: button.component,
-          handleClick: _this3.handleClick
+          handleClick: _this3.handleClick,
+          active: button.active
         });
       });
       return React.createElement(

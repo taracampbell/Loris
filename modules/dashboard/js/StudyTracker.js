@@ -1,7 +1,5 @@
 "use strict";
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -200,7 +198,7 @@ var SideBarCandInstContent = function (_React$Component3) {
                 content.push(React.createElement(
                     "h4",
                     { style: bold },
-                    "\xA0",
+                    " ",
                     sg
                 ));
                 for (var t in data[sg]) {
@@ -214,7 +212,7 @@ var SideBarCandInstContent = function (_React$Component3) {
                                 className: "complete left-align",
                                 style: bold
                             },
-                            "\u2713\u2713"
+                            "✓✓"
                         );
                     } else if (inst.completion === "Complete") {
                         flagCompletion = React.createElement(
@@ -223,7 +221,7 @@ var SideBarCandInstContent = function (_React$Component3) {
                                 className: "complete left-align",
                                 style: bold
                             },
-                            "\u2713"
+                            "✓"
                         );
                     } else {
                         flagCompletion = React.createElement(
@@ -232,7 +230,7 @@ var SideBarCandInstContent = function (_React$Component3) {
                                 className: "deadline-past left-align",
                                 style: bold
                             },
-                            "! \xA0"
+                            "!  "
                         );
                     }
                     content.push(React.createElement(
@@ -315,11 +313,11 @@ var SideBarCandContent = function (_React$Component4) {
                             React.createElement(
                                 "p",
                                 { style: fontSize },
-                                "\xA0",
+                                " ",
                                 React.createElement(
                                     "a",
                                     { href: url, target: "_blank" },
-                                    "\xA0",
+                                    " ",
                                     v.visitLabel,
                                     ":"
                                 ),
@@ -331,7 +329,7 @@ var SideBarCandContent = function (_React$Component4) {
                         visitContent.push(React.createElement(
                             "div",
                             null,
-                            "\xA0",
+                            " ",
                             React.createElement(
                                 "a",
                                 { href: url, target: "_blank", style: fontSize },
@@ -356,7 +354,7 @@ var SideBarCandContent = function (_React$Component4) {
                         visitContent.push(React.createElement(
                             "div",
                             null,
-                            "\xA0",
+                            " ",
                             React.createElement(
                                 "a",
                                 { href: url, target: "_blank", style: fontSize },
@@ -407,15 +405,18 @@ var SideBarVisitContent = function (_React$Component5) {
         key: "render",
         value: function render() {
             var content = [];
-            var headerSize = { fontSize: "1.5em" };
             content = content.concat(React.createElement(
-                "p",
-                { className: "center", style: headerSize },
-                this.props.visit,
-                " Visits"
+                "div",
+                { className: "SideBarHeader" },
+                React.createElement(
+                    "h5",
+                    null,
+                    this.props.visit,
+                    " Visit"
+                )
             ));
 
-            var subheader = void 0; // Displays which cohort and visit is in focus
+            /*let subheader; // Displays which cohort and visit is in focus
             if (this.props.currentSite !== "all" && this.props.currentCohort !== "all") {
                 subheader = "Visits for " + this.props.currentCohort + " at " + this.props.currentSite;
             } else if (this.props.currentSite !== "all") {
@@ -423,24 +424,19 @@ var SideBarVisitContent = function (_React$Component5) {
             } else if (this.props.currentCohort !== "all") {
                 subheader = "Visits for " + this.props.currentCohort;
             }
-
-            if (subheader) {
-                content = content.concat(React.createElement(
-                    "h4",
-                    { className: "center" },
-                    subheader
-                ));
-            }
+             if (subheader) {
+                content = content.concat(<h4 className="center">{subheader}</h4>)
+            }*/
 
             var visitDeadlines = [React.createElement(
-                "h4",
+                "h5",
                 null,
-                "\xA0Upcoming Visit Deadlines"
+                "Upcoming Visit Deadlines"
             )];
             var dataDeadlines = [React.createElement(
-                "h4",
+                "h5",
                 null,
-                "\xA0Upcoming Data Entry Deadlines"
+                "Upcoming Data Entry Deadlines"
             )];
 
             var visitsSortable = [];
@@ -644,15 +640,19 @@ var SideBar = function (_React$Component6) {
                 "div",
                 { className: "SideBar" },
                 React.createElement(
-                    "a",
-                    {
-                        href: "#",
-                        className: "closebtn",
-                        onClick: this.props.closeSideBar
-                    },
-                    "\xD7"
-                ),
-                this.props.sideBarContent
+                    "div",
+                    { className: "SideBarContent" },
+                    React.createElement(
+                        "a",
+                        {
+                            href: "#",
+                            className: "closebtn",
+                            onClick: this.props.closeSideBar
+                        },
+                        "×"
+                    ),
+                    this.props.sideBarContent
+                )
             );
         }
     }]);
@@ -681,118 +681,112 @@ var VisitCell = function (_React$Component7) {
                 bgColor = { backgroundColor: HIGHLIGHT_COLOR };
             }
             if (visit.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
-                var _ret = function () {
-                    var tooltipContent = [];
-                    var vr = prettyStatus(visit.visitRegStatus, visit.visitRegDueDate);
+                var tooltipContent = [];
+                var vr = prettyStatus(visit.visitRegStatus, visit.visitRegDueDate);
+                tooltipContent.push(React.createElement(
+                    "p",
+                    null,
+                    "Visit Registration: ",
+                    vr.html
+                ));
+                var innerCircleInfo = null;
+                if (visit.dataEntryStatus) {
+                    var de = prettyStatus(visit.dataEntryStatus, visit.dataEntryDueDate);
                     tooltipContent.push(React.createElement(
                         "p",
                         null,
-                        "Visit Registration: ",
-                        vr.html
+                        "Data Entry: ",
+                        de.html
+                    ), React.createElement(
+                        "p",
+                        { className: "center" },
+                        React.createElement(
+                            "i",
+                            null,
+                            visit.instrCompleted,
+                            "/",
+                            visit.totalInstrs,
+                            " instruments entered"
+                        )
                     ));
-                    var innerCircleInfo = null;
-                    if (visit.dataEntryStatus) {
-                        var de = prettyStatus(visit.dataEntryStatus, visit.dataEntryDueDate);
-                        tooltipContent.push(React.createElement(
-                            "p",
+                    tooltipContent.push(React.createElement(
+                        "p",
+                        null,
+                        "Double Data Entry:"
+                    ), React.createElement(
+                        "p",
+                        { className: "center" },
+                        React.createElement(
+                            "i",
                             null,
-                            "Data Entry: ",
-                            de.html
-                        ), React.createElement(
-                            "p",
-                            { className: "center" },
-                            React.createElement(
-                                "i",
-                                null,
-                                visit.instrCompleted,
-                                "/",
-                                visit.totalInstrs,
-                                " instruments entered"
-                            )
-                        ));
-                        tooltipContent.push(React.createElement(
-                            "p",
-                            null,
-                            "Double Data Entry:"
-                        ), React.createElement(
-                            "p",
-                            { className: "center" },
-                            React.createElement(
-                                "i",
-                                null,
-                                visit.ddeInstCompleted,
-                                "/",
-                                visit.totalInstrs,
-                                " instruments entered"
-                            )
-                        ));
-                        var innerCircleStyle = {
-                            fontWeight: "bold",
-                            color: "white",
-                            position: "inherit",
-                            fontSize: "110%"
-                        };
-                        if (visit.sentToDCC) {
-                            innerCircleInfo = React.createElement(
-                                "div",
-                                { className: "center", style: innerCircleStyle },
-                                "\u2713"
-                            );
-                            tooltipContent.push(React.createElement(
-                                "p",
-                                { className: "complete" },
-                                "Data sent to DCC"
-                            ));
-                        } else if (visit.ddeCompleted) {
-                            innerCircleInfo = React.createElement(
-                                "div",
-                                { className: "center", style: innerCircleStyle },
-                                "D"
-                            );
-                            tooltipContent.push(React.createElement(
-                                "p",
-                                { className: "deadline-approaching" },
-                                "Data not yet sent to DCC"
-                            ));
-                        }
-                    }
-
-                    var visitClass = "circle " + visit.dataEntryStatus + " " + visit.visitRegStatus;
-
-                    var sidebarArgs = {
-                        sessionID: visit.sessionID,
-                        pscid: _this8.props.pscid,
-                        candid: _this8.props.candid
+                            visit.ddeInstCompleted,
+                            "/",
+                            visit.totalInstrs,
+                            " instruments entered"
+                        )
+                    ));
+                    var innerCircleStyle = {
+                        fontWeight: "bold",
+                        color: "white",
+                        position: "inherit",
+                        fontSize: "110%"
                     };
+                    if (visit.sentToDCC) {
+                        innerCircleInfo = React.createElement(
+                            "div",
+                            { className: "center", style: innerCircleStyle },
+                            "✓"
+                        );
+                        tooltipContent.push(React.createElement(
+                            "p",
+                            { className: "complete" },
+                            "Data sent to DCC"
+                        ));
+                    } else if (visit.ddeCompleted) {
+                        innerCircleInfo = React.createElement(
+                            "div",
+                            { className: "center", style: innerCircleStyle },
+                            "D"
+                        );
+                        tooltipContent.push(React.createElement(
+                            "p",
+                            { className: "deadline-approaching" },
+                            "Data not yet sent to DCC"
+                        ));
+                    }
+                }
 
-                    return {
-                        v: React.createElement(
-                            "td",
-                            { className: visit.visitLabel, style: bgColor },
+                var visitClass = "circle " + visit.dataEntryStatus + " " + visit.visitRegStatus;
+
+                var sidebarArgs = {
+                    sessionID: visit.sessionID,
+                    pscid: this.props.pscid,
+                    candid: this.props.candid
+                };
+
+                return React.createElement(
+                    "td",
+                    { className: visit.visitLabel, style: bgColor },
+                    React.createElement(
+                        "div",
+                        { onClick: function onClick() {
+                                return _this8.props.showCandInstFocus(sidebarArgs);
+                            },
+                            "data-tip": true, "data-for": visit.sessionID,
+                            className: visitClass
+                        },
+                        innerCircleInfo,
+                        React.createElement(
+                            ReactTooltip,
+                            { id: visit.sessionID, place: "top", type: "dark", effect: "solid" },
                             React.createElement(
                                 "div",
-                                { onClick: function onClick() {
-                                        return _this8.props.showCandInstFocus(sidebarArgs);
-                                    },
-                                    "data-tip": true, "data-for": visit.sessionID,
-                                    className: visitClass
-                                },
-                                innerCircleInfo,
-                                React.createElement(
-                                    ReactTooltip,
-                                    { id: visit.sessionID, place: "top", type: "dark", effect: "solid" },
-                                    React.createElement(
-                                        "div",
-                                        { className: "ReactTooltipContent" },
-                                        tooltipContent
-                                    )
-                                )
+                                { className: "ReactTooltipContent" },
+                                tooltipContent
                             )
                         )
-                    };
-                }();
-
-                if ((typeof _ret === "undefined" ? "undefined" : _typeof(_ret)) === "object") return _ret.v;
+                    )
+                );
             } else {
                 return React.createElement("td", { className: visit.visitLabel, style: bgColor });
             }
@@ -997,10 +991,10 @@ var StudyTrackerHeader = function (_React$Component10) {
 var StudyTracker = function (_React$Component11) {
     _inherits(StudyTracker, _React$Component11);
 
-    function StudyTracker() {
+    function StudyTracker(props) {
         _classCallCheck(this, StudyTracker);
 
-        var _this12 = _possibleConstructorReturn(this, (StudyTracker.__proto__ || Object.getPrototypeOf(StudyTracker)).call(this));
+        var _this12 = _possibleConstructorReturn(this, (StudyTracker.__proto__ || Object.getPrototypeOf(StudyTracker)).call(this, props));
 
         _this12.state = {
             rows: [],
@@ -1015,7 +1009,8 @@ var StudyTracker = function (_React$Component11) {
             currentPSCID: null,
             currentVisit: null,
             currentSideBarFocus: null,
-            filterCandText: ""
+            filterCandText: "",
+            active: _this12.props.active
         };
         _this12.showCandInstFocus = _this12.showCandInstFocus.bind(_this12);
         _this12.showCandFocus = _this12.showCandFocus.bind(_this12);
@@ -1065,6 +1060,15 @@ var StudyTracker = function (_React$Component11) {
         key: "componentDidMount",
         value: function componentDidMount() {
             this.loadDataFromServer();
+        }
+    }, {
+        key: "componentWillReceiveProps",
+        value: function componentWillReceiveProps(nextProps) {
+            if (nextProps.active != this.state.active) {
+                this.setState({
+                    active: nextProps.active
+                });
+            }
         }
     }, {
         key: "showCandInstFocus",
@@ -1290,6 +1294,9 @@ var StudyTracker = function (_React$Component11) {
     }, {
         key: "render",
         value: function render() {
+            if (this.state.active == false) {
+                return null;
+            }
             // Filter out the entire row for candidates at sites other than
             // the currently selected one or if the candidate has no visits for
             // the currently selected cohort
@@ -1338,24 +1345,28 @@ var StudyTracker = function (_React$Component11) {
                     )
                 ),
                 React.createElement(
-                    "table",
-                    { className: "table study-tracker-table" },
-                    React.createElement(StudyTrackerHeader, {
-                        visitLabels: this.state.visitLabels,
-                        currentVisit: this.state.currentVisit,
-                        showVisitFocus: this.showVisitFocus
-                    }),
+                    "div",
+                    { className: "study-tracker-table" },
                     React.createElement(
-                        "tbody",
-                        null,
-                        dataRows
-                    )
-                ),
-                React.createElement(SideBar, {
-                    closeSideBar: this.closeSideBar,
-                    sideBarContent: this.state.sideBarContent,
-                    currentCohort: this.state.currentCohort
-                })
+                        "table",
+                        { className: "table study-tracker-table" },
+                        React.createElement(StudyTrackerHeader, {
+                            visitLabels: this.state.visitLabels,
+                            currentVisit: this.state.currentVisit,
+                            showVisitFocus: this.showVisitFocus
+                        }),
+                        React.createElement(
+                            "tbody",
+                            null,
+                            dataRows
+                        )
+                    ),
+                    React.createElement(SideBar, {
+                        closeSideBar: this.closeSideBar,
+                        sideBarContent: this.state.sideBarContent,
+                        currentCohort: this.state.currentCohort
+                    })
+                )
             );
         }
     }]);
@@ -1382,7 +1393,7 @@ function prettyStatus(status, dueDate) {
         html = React.createElement(
             "span",
             { className: "complete right-align right-indent" },
-            "Complete"
+            "complete"
         );
         toReturn = {
             "status": "complete",
@@ -1395,7 +1406,7 @@ function prettyStatus(status, dueDate) {
         html = React.createElement(
             "span",
             { className: "deadline-approaching right-align right-indent" },
-            "Due in ",
+            "due in ",
             strDaysLeft
         );
         toReturn = {
@@ -1422,7 +1433,7 @@ function prettyStatus(status, dueDate) {
         html = React.createElement(
             "span",
             { className: "cancelled right-align right-indent" },
-            "Visit cancelled"
+            "visit cancelled"
         );
         toReturn = {
             "status": "cancelled",
@@ -1432,7 +1443,7 @@ function prettyStatus(status, dueDate) {
         html = React.createElement(
             "span",
             { className: "no-deadline right-align right-indent" },
-            "No deadline specified"
+            "no deadline specified"
         );
         toReturn = {
             "status": "no-deadline",

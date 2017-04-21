@@ -26,9 +26,17 @@
     color:#fff;
 }
 
-.sidenav-item:active {
+.sidenav-item:hover .glyphicon {
+    color:#ffffff;
+}
+
+.active.sidenav-item {
     background-color:#8B94AF;
     color:#fff;
+}
+
+.active.sidenav-item .glyphicon {
+    color:#ffffff;
 }
 
 #content {

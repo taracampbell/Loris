@@ -474,6 +474,7 @@ var TasksPanel = function (_React$Component6) {
       var tasks = this.props.tasks.map(function (task) {
         return React.createElement(Task, {
           URL: task.URL,
+          key: task.label,
           count: task.count,
           label: task.label,
           site: task.site });
@@ -650,9 +651,10 @@ var BVLFeedbackPanel = function (_React$Component10) {
   _createClass(BVLFeedbackPanel, [{
     key: "render",
     value: function render() {
-      var BVLFeedbackItems = this.props.notifications.map(function (notification) {
+      var BVLFeedbackItems = this.props.notifications.map(function (notification, i) {
         return React.createElement(BVLFeedbackItem, {
           URL: notification.URL,
+          key: i,
           "new": notification.new,
           testDate: notification.testDate,
           name: notification.name,
@@ -690,10 +692,10 @@ var BVLFeedbackPanel = function (_React$Component10) {
 var Home = function (_React$Component11) {
   _inherits(Home, _React$Component11);
 
-  function Home() {
+  function Home(props) {
     _classCallCheck(this, Home);
 
-    var _this11 = _possibleConstructorReturn(this, (Home.__proto__ || Object.getPrototypeOf(Home)).call(this));
+    var _this11 = _possibleConstructorReturn(this, (Home.__proto__ || Object.getPrototypeOf(Home)).call(this, props));
 
     _this11.state = {
       username: "",
@@ -705,7 +707,8 @@ var Home = function (_React$Component11) {
       totalScans: 0,
       tasks: null,
       docRepoNotifications: null,
-      bvlFeedbackNotifications: null
+      bvlFeedbackNotifications: null,
+      active: props.active
     };
     return _this11;
   }
@@ -715,7 +718,6 @@ var Home = function (_React$Component11) {
     value: function componentDidMount() {
       $.get(loris.BaseURL + '/dashboard/ajax/getDashboardHomeData.php', function (data, status) {
         if (status === "success") {
-          console.log(data);
           this.setState({
             username: data.username,
             lastlogin: data.lastlogin,
@@ -733,8 +735,20 @@ var Home = function (_React$Component11) {
       }.bind(this));
     }
   }, {
+    key: "componentWillReceiveProps",
+    value: function componentWillReceiveProps(nextProps) {
+      if (nextProps.active != this.state.active) {
+        this.setState({
+          active: nextProps.active
+        });
+      }
+    }
+  }, {
     key: "render",
     value: function render() {
+      if (this.state.active == false) {
+        return null;
+      }
       return React.createElement(
         "div",
         { className: "row" },

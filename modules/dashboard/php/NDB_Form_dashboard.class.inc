@@ -52,6 +52,7 @@ class NDB_Form_Dashboard extends NDB_Form
             array(
              $baseurl . '/dashboard/css/dashboard.css',
              $baseurl . '/dashboard/css/SideNav.css',
+             $baseurl . '/dashboard/css/StudyTracker.css',
              $baseurl . '/css/c3.css',
             )
         );

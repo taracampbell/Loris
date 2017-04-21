@@ -229,6 +229,7 @@ class TasksPanel extends React.Component {
       return (
         <Task
           URL={task.URL}
+          key={task.label}
           count={task.count}
           label={task.label}
           site={task.site} />
@@ -326,10 +327,11 @@ class BVLFeedbackItem extends React.Component {
 
 class BVLFeedbackPanel extends React.Component {
   render() {
-    let BVLFeedbackItems = this.props.notifications.map(function(notification) {
+    let BVLFeedbackItems = this.props.notifications.map(function(notification, i) {
       return (
         <BVLFeedbackItem
           URL={notification.URL}
+          key={i}
           new={notification.new}
           testDate={notification.testDate}
           name={notification.name}
@@ -353,8 +355,8 @@ class BVLFeedbackPanel extends React.Component {
 }
 
 class Home extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       username: "",
       lastlogin: "",
@@ -366,13 +368,13 @@ class Home extends React.Component {
       tasks: null,
       docRepoNotifications: null,
       bvlFeedbackNotifications: null,
-    }
+      active: props.active
+    };
   }
 
   componentDidMount() {
     $.get(loris.BaseURL + '/dashboard/ajax/getDashboardHomeData.php', function(data, status) {
       if (status === "success") {
-        console.log(data);
         this.setState({
           username: data.username,
           lastlogin: data.lastlogin,
@@ -390,7 +392,18 @@ class Home extends React.Component {
     }.bind(this));
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.active != this.state.active) {
+      this.setState({
+        active: nextProps.active
+      });
+    }
+  }
+
   render() {
+    if (this.state.active == false) {
+      return null;
+    }
     return (
       <div className="row">
         <div className="col-lg-8">

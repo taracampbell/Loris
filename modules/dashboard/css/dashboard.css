@@ -74,7 +74,8 @@ body {
     margin: 0;
 }
 
-.study-tracker-table {
+.study-tracker-table table {
+    position: relative;
     margin-top: 20px;
     transition: 0.3s;
 }
@@ -106,15 +107,15 @@ body {
 .SideBar {
     height: 100%;
     width: 0;
-    position: fixed;
+    position: absolute;
     z-index: 1;
     top: 0;
     right: 0;
     background-color: #fff;
     overflow-x: hidden;
-    padding-top: 60px;
+    padding-top: 50px;
     transition: 0.3s;
-    border: 1px solid #ccc;
+    border-left: 1px solid #ccc;
 }
 
 
@@ -126,7 +127,7 @@ body {
 .SideBar .closebtn {
     text-align: right;
     text-decoration: none;
-    font-size: 25px;
+    font-size: 22px;
     color: #818181;
     display: inline-block;
     transition: 0.3s;

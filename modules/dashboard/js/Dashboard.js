@@ -14,22 +14,51 @@ var Dashboard = function (_React$Component) {
   function Dashboard(props) {
     _classCallCheck(this, Dashboard);
 
-    return _possibleConstructorReturn(this, (Dashboard.__proto__ || Object.getPrototypeOf(Dashboard)).call(this, props));
+    var _this = _possibleConstructorReturn(this, (Dashboard.__proto__ || Object.getPrototypeOf(Dashboard)).call(this, props));
+
+    var buttons = [{ name: "Home", glyph: "home", component: "home", active: true }, { name: "Study Tracker", glyph: "object-align-left", component: "studyTracker", active: false }];
+
+    _this.state = {
+      home: true,
+      studyTracker: false,
+      buttons: buttons
+    };
+
+    _this.changeScreen = _this.changeScreen.bind(_this);
+    return _this;
   }
 
   _createClass(Dashboard, [{
+    key: "changeScreen",
+    value: function changeScreen(component) {
+      var homeUpdate = this.state.home;
+      var studyTrackerUpdate = this.state.studyTracker;
+
+      if (component == 'home') {
+        homeUpdate = true;
+        studyTrackerUpdate = false;
+      } else {
+        homeUpdate = false;
+        studyTrackerUpdate = true;
+      }
+
+      this.setState({
+        home: homeUpdate,
+        studyTracker: studyTrackerUpdate
+      });
+    }
+  }, {
     key: "render",
     value: function render() {
-      var buttons = [{ name: "Home", glyph: "home", component: "home" }, { name: "Study Tracker", glyph: "object-align-left", component: "studyTracker" }];
-
       return React.createElement(
         "div",
         { id: "dashboard" },
-        React.createElement(SideNav, { buttons: buttons }),
+        React.createElement(SideNav, { buttons: this.state.buttons, changeScreen: this.changeScreen }),
         React.createElement(
           "div",
           { id: "content" },
-          React.createElement(Home, null)
+          React.createElement(Home, { active: this.state.home }),
+          React.createElement(StudyTracker, { active: this.state.studyTracker })
         )
       );
     }

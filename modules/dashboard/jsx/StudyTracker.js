@@ -257,14 +257,15 @@ class SideBarCandContent extends React.Component {
 class SideBarVisitContent extends React.Component {
     render () {
         let content = [];
-        let headerSize = {fontSize: "1.5em"};
         content = content.concat(
-            <p className="center" style={headerSize}>
-                {this.props.visit} Visits
-            </p>
+            <div className="SideBarHeader">
+                <h5>
+                    {this.props.visit} Visit
+                </h5>
+            </div>
         );
 
-        let subheader; // Displays which cohort and visit is in focus
+        /*let subheader; // Displays which cohort and visit is in focus
         if (this.props.currentSite !== "all" && this.props.currentCohort !== "all") {
             subheader = "Visits for " + this.props.currentCohort + " at " + this.props.currentSite;
         } else if (this.props.currentSite !== "all") {
@@ -275,10 +276,10 @@ class SideBarVisitContent extends React.Component {
 
         if (subheader) {
             content = content.concat(<h4 className="center">{subheader}</h4>)
-        }
+        }*/
 
-        let visitDeadlines = [<h4>&nbsp;Upcoming Visit Deadlines</h4>];
-        let dataDeadlines = [<h4>&nbsp;Upcoming Data Entry Deadlines</h4>];
+        let visitDeadlines = [<h5>Upcoming Visit Deadlines</h5>];
+        let dataDeadlines = [<h5>Upcoming Data Entry Deadlines</h5>];
 
         let visitsSortable = [];
         let dataSortable = [];
@@ -370,14 +371,16 @@ class SideBar extends React.Component {
     render() {
         return (
             <div className="SideBar">
-                <a
-                    href="#"
-                    className="closebtn"
-                    onClick={this.props.closeSideBar}
-                >
-                    &times;
-                </a>
-                {this.props.sideBarContent}
+                <div className="SideBarContent">
+                    <a
+                        href="#"
+                        className="closebtn"
+                        onClick={this.props.closeSideBar}
+                        >
+                            &times;
+                    </a>
+                    {this.props.sideBarContent}
+                </div>
             </div>
         );
     }
@@ -618,8 +621,8 @@ class StudyTrackerHeader extends React.Component {
 }
 
 class StudyTracker extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
              rows: [],
              visitLabels: [],
@@ -633,7 +636,8 @@ class StudyTracker extends React.Component {
              currentPSCID: null,
              currentVisit: null,
              currentSideBarFocus: null,
-             filterCandText: ""
+             filterCandText: "",
+             active: this.props.active
         };
         this.showCandInstFocus = this.showCandInstFocus.bind(this);
         this.showCandFocus = this.showCandFocus.bind(this);
@@ -677,6 +681,14 @@ class StudyTracker extends React.Component {
 
     componentDidMount() {
         this.loadDataFromServer();
+    }
+
+    componentWillReceiveProps(nextProps) {
+      if (nextProps.active != this.state.active) {
+        this.setState({
+          active: nextProps.active
+        });
+      }
     }
 
     showCandInstFocus(sidebarArgs) {
@@ -863,6 +875,9 @@ class StudyTracker extends React.Component {
     }
 
     render() {
+        if (this.state.active == false) {
+            return null;
+        }
         // Filter out the entire row for candidates at sites other than
         // the currently selected one or if the candidate has no visits for
         // the currently selected cohort
@@ -902,21 +917,23 @@ class StudyTracker extends React.Component {
                         />
                     </div>
                 </div>
-                <table className='table study-tracker-table'>
-                    <StudyTrackerHeader
-                        visitLabels={this.state.visitLabels}
-                        currentVisit={this.state.currentVisit}
-                        showVisitFocus={this.showVisitFocus}
+                <div className="study-tracker-table">
+                    <table className='table study-tracker-table'>
+                        <StudyTrackerHeader
+                            visitLabels={this.state.visitLabels}
+                            currentVisit={this.state.currentVisit}
+                            showVisitFocus={this.showVisitFocus}
+                        />
+                        <tbody>
+                        {dataRows}
+                        </tbody>
+                    </table>
+                    <SideBar
+                        closeSideBar={this.closeSideBar}
+                        sideBarContent={this.state.sideBarContent}
+                        currentCohort={this.state.currentCohort}
                     />
-                    <tbody>
-                    {dataRows}
-                    </tbody>
-                </table>
-                <SideBar
-                    closeSideBar={this.closeSideBar}
-                    sideBarContent={this.state.sideBarContent}
-                    currentCohort={this.state.currentCohort}
-                />
+                </div>
             </div>
         );
     }
@@ -936,7 +953,7 @@ function prettyStatus(status, dueDate) {
     if (!status) return toReturn;
 
     if (~status.indexOf("complete")) {
-        html = <span className="complete right-align right-indent">Complete</span>;
+        html = <span className="complete right-align right-indent">complete</span>;
         toReturn = {
             "status":"complete",
             "html":html
@@ -945,7 +962,7 @@ function prettyStatus(status, dueDate) {
         let daysLeft = Math.ceil((new Date(dueDate) - new Date()) * MS_TO_DAYS);
         let strDaysLeft = daysLeft + "";
         strDaysLeft += daysLeft == 1 ? " day" : " days";
-        html = <span className="deadline-approaching right-align right-indent">Due in {strDaysLeft}</span>;
+        html = <span className="deadline-approaching right-align right-indent">due in {strDaysLeft}</span>;
         toReturn = {
             "status":"deadline-approaching",
             "html":html,
@@ -962,14 +979,14 @@ function prettyStatus(status, dueDate) {
             "daysLeft": -daysPast
         };
     } else if (~status.indexOf("cancelled")) {
-        html = <span className="cancelled right-align right-indent">Visit cancelled</span>;
+        html = <span className="cancelled right-align right-indent">visit cancelled</span>;
         toReturn = {
             "status":"cancelled",
             "html":html
         };
 
     } else if (~status.indexOf("no-deadline")) {
-        html = <span className="no-deadline right-align right-indent">No deadline specified</span>;
+        html = <span className="no-deadline right-align right-indent">no deadline specified</span>;
         toReturn = {
             "status":"no-deadline",
             "html":html

@@ -119,7 +119,7 @@ var Filters = function (_React$Component2) {
         value: function render() {
             return React.createElement(
                 "div",
-                { "class": "row" },
+                { className: "row" },
                 React.createElement(
                     "div",
                     { className: "col-md-3" },
@@ -176,13 +176,17 @@ var SideBarCandInstContent = function (_React$Component3) {
 
             var instListURL = loris.BaseURL + "/instrument_list/?candID=" + this.props.candid + "&sessionID=" + this.props.sessionID;
             content.push(React.createElement(
-                "h3",
-                { className: "center" },
+                "div",
+                { className: "SideBarHeader" },
                 React.createElement(
-                    "a",
-                    { href: instListURL, target: "_blank" },
-                    "Participant ",
-                    this.props.pscid
+                    "h5",
+                    null,
+                    React.createElement(
+                        "a",
+                        { href: instListURL },
+                        "Participant ",
+                        this.props.pscid
+                    )
                 )
             ));
             var data = this.props.data;
@@ -196,9 +200,8 @@ var SideBarCandInstContent = function (_React$Component3) {
             };
             for (var sg in data) {
                 content.push(React.createElement(
-                    "h4",
-                    { style: bold },
-                    " ",
+                    "h6",
+                    null,
                     sg
                 ));
 
@@ -209,30 +212,14 @@ var SideBarCandInstContent = function (_React$Component3) {
                     if (inst.ddeCompletion === "Complete") {
                         flagCompletion = React.createElement(
                             "span",
-                            {
-                                className: "complete left-align",
-                                style: bold
-                            },
-                            "✓✓"
+                            null,
+                            React.createElement("span", { className: "glyphicon glyphicon-ok complete" }),
+                            React.createElement("span", { className: "glyphicon glyphicon-ok complete" })
                         );
                     } else if (inst.completion === "Complete") {
-                        flagCompletion = React.createElement(
-                            "span",
-                            {
-                                className: "complete left-align",
-                                style: bold
-                            },
-                            "  ✓"
-                        );
+                        flagCompletion = React.createElement("span", { className: "glyphicon glyphicon-ok complete" });
                     } else {
-                        flagCompletion = React.createElement(
-                            "span",
-                            {
-                                className: "deadline-past left-align",
-                                style: bold
-                            },
-                            "!  "
-                        );
+                        flagCompletion = React.createElement("span", { className: "glyphicon glyphicon-alert deadline-past" });
                     }
                     var conflicts = [];
                     if (inst.conflicts) {
@@ -250,10 +237,10 @@ var SideBarCandInstContent = function (_React$Component3) {
                     }
                     content.push(React.createElement(
                         "div",
-                        null,
+                        { className: "SideBarInst" },
                         React.createElement(
                             "a",
-                            { href: url, target: "_blank", className: "left-indent", style: style },
+                            { href: url, style: style },
                             flagCompletion,
                             inst.fullName
                         ),
@@ -306,43 +293,49 @@ var SideBarCandContent = function (_React$Component4) {
                     style: iconColor
                 }));
                 content.push(React.createElement(
-                    "h3",
-                    { className: "center" },
-                    feedbackIcon,
+                    "div",
+                    { className: "SideBarHeader" },
                     React.createElement(
-                        "a",
-                        { href: "#", target: "_blank", onClick: function onClick() {
-                                return openBVLFeedback(candid);
-                            } },
-                        "Participant ",
-                        pscid
+                        "h5",
+                        null,
+                        feedbackIcon,
+                        React.createElement(
+                            "a",
+                            { href: "#", onClick: function onClick() {
+                                    return openBVLFeedback(candid);
+                                } },
+                            "Participant ",
+                            pscid
+                        )
                     )
                 ));
             } else {
                 content.push(React.createElement(
-                    "h3",
-                    { className: "center" },
+                    "div",
+                    { className: "SideBarHeader" },
                     React.createElement(
-                        "a",
-                        { href: profileURL, target: "_blank" },
-                        "Participant ",
-                        pscid
+                        "h5",
+                        null,
+                        React.createElement(
+                            "a",
+                            { href: profileURL },
+                            "Participant ",
+                            pscid
+                        )
                     )
                 ));
             }
 
             // add a subheader if looking at specific cohort
-            if (this.props.currentCohort !== "all") {
-                content.push(React.createElement(
-                    "h4",
-                    { className: "center" },
-                    this.props.currentCohort,
-                    " Visits"
-                ));
-            }
+            /*if (this.props.currentCohort !== "all") {
+                content.push(
+                    <h4 className="center">
+                        {this.props.currentCohort} Visits
+                    </h4>
+                );
+            }*/
 
             var visitContent = [];
-            var fontSize = { fontSize: "1.10em" };
             visits.forEach(function (v) {
                 // make sure visit is part of current cohort
                 if (v.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
@@ -357,8 +350,6 @@ var SideBarCandContent = function (_React$Component4) {
                         visitLink.push(React.createElement(
                             "a",
                             { href: "#",
-                                target: "_blank",
-                                style: fontSize,
                                 onClick: function onClick() {
                                     return openBVLFeedback(candid, v.sessionID);
                                 }
@@ -371,10 +362,7 @@ var SideBarCandContent = function (_React$Component4) {
                         url += "instrument_list/?candID=" + candid + "&sessionID=" + v.sessionID;
                         visitLink.push(React.createElement(
                             "a",
-                            { href: url,
-                                target: "_blank",
-                                style: fontSize
-                            },
+                            { href: url },
                             v.visitLabel,
                             ":"
                         ));
@@ -420,7 +408,6 @@ var SideBarCandContent = function (_React$Component4) {
                         visitContent.push(React.createElement(
                             "div",
                             null,
-                            " ",
                             visitLink,
                             vr.html,
                             instrumentFeedback
@@ -430,7 +417,6 @@ var SideBarCandContent = function (_React$Component4) {
                         visitContent.push(React.createElement(
                             "div",
                             null,
-                            " ",
                             visitLink,
                             React.createElement(
                                 "p",
@@ -450,7 +436,6 @@ var SideBarCandContent = function (_React$Component4) {
                         visitContent.push(React.createElement(
                             "div",
                             null,
-                            " ",
                             React.createElement(
                                 "a",
                                 { href: url, target: "_blank", style: fontSize },
@@ -470,7 +455,7 @@ var SideBarCandContent = function (_React$Component4) {
             if (visitContent.length === 0) {
                 visitContent = React.createElement(
                     "p",
-                    { className: "center" },
+                    null,
                     "No applicable visits for this participant for cohort ",
                     this.props.currentCohort
                 );
@@ -478,10 +463,13 @@ var SideBarCandContent = function (_React$Component4) {
             content.push(visitContent);
             content.push(React.createElement(
                 "p",
-                { className: "right-align" },
-                "Candidate was registered on ",
-                dateReg,
-                "  "
+                { className: "right-align small" },
+                React.createElement(
+                    "em",
+                    null,
+                    "Candidate was registered on ",
+                    dateReg
+                )
             ));
             return React.createElement(
                 "div",
@@ -506,40 +494,8 @@ var SideBarVisitContent = function (_React$Component5) {
     _createClass(SideBarVisitContent, [{
         key: "render",
         value: function render() {
-            var content = [];
-            content = content.concat(React.createElement(
-                "div",
-                { className: "SideBarHeader" },
-                React.createElement(
-                    "h5",
-                    null,
-                    this.props.visit,
-                    " Visit"
-                )
-            ));
-
-            /*let subheader; // Displays which cohort and visit is in focus
-            if (this.props.currentSite !== "all" && this.props.currentCohort !== "all") {
-                subheader = "Visits for " + this.props.currentCohort + " at " + this.props.currentSite;
-            } else if (this.props.currentSite !== "all") {
-                subheader = "Visits at " + this.props.currentSite;
-            } else if (this.props.currentCohort !== "all") {
-                subheader = "Visits for " + this.props.currentCohort;
-            }
-             if (subheader) {
-                content = content.concat(<h4 className="center">{subheader}</h4>)
-            }*/
-
-            var visitDeadlines = [React.createElement(
-                "h5",
-                null,
-                "Upcoming Visit Deadlines"
-            )];
-            var dataDeadlines = [React.createElement(
-                "h5",
-                null,
-                "Upcoming Data Entry Deadlines"
-            )];
+            var visitDeadlines = [];
+            var dataDeadlines = [];
 
             var visitsSortable = [];
             var dataSortable = [];
@@ -624,6 +580,7 @@ var SideBarVisitContent = function (_React$Component5) {
             visitsSortable = visitsSortable.sort(function (a, b) {
                 return a.prettyStatus.daysLeft - b.prettyStatus.daysLeft;
             });
+
             dataSortable = dataSortable.sort(function (a, b) {
                 return a.prettyStatus.daysLeft - b.prettyStatus.daysLeft;
             });
@@ -638,12 +595,11 @@ var SideBarVisitContent = function (_React$Component5) {
 
                     visitDeadlines.push(React.createElement(
                         "p",
-                        { className: "left-indent" },
+                        null,
                         React.createElement(
                             "a",
-                            { href: _vr.URL, target: "_blank" },
-                            _vr.pscid,
-                            ":"
+                            { href: _vr.URL },
+                            _vr.pscid
                         ),
                         _vr.prettyStatus.html
                     ));
@@ -673,12 +629,11 @@ var SideBarVisitContent = function (_React$Component5) {
 
                     dataDeadlines.push(React.createElement(
                         "p",
-                        { className: "left-indent" },
+                        null,
                         React.createElement(
                             "a",
-                            { href: _de.URL, target: "_blank" },
-                            _de.pscid,
-                            ":"
+                            { href: _de.URL },
+                            _de.pscid
                         ),
                         _de.prettyStatus.html
                     ));
@@ -701,24 +656,51 @@ var SideBarVisitContent = function (_React$Component5) {
             if (visitDeadlines.length <= 1) {
                 visitDeadlines = visitDeadlines.concat(React.createElement(
                     "p",
-                    { className: "complete left-indent" },
+                    { className: "complete" },
                     "No upcoming visit deadlines"
                 ));
             }
             if (dataDeadlines.length <= 1) {
                 dataDeadlines = dataDeadlines.concat(React.createElement(
                     "p",
-                    { className: "complete left-indent" },
+                    { className: "complete" },
                     "No upcoming data entry deadlines"
                 ));
             }
 
-            content = content.concat(visitDeadlines, dataDeadlines);
-
             return React.createElement(
                 "div",
                 { className: "SideBarVisitContent" },
-                content
+                React.createElement(
+                    "div",
+                    { className: "SideBarHeader" },
+                    React.createElement(
+                        "h5",
+                        null,
+                        this.props.visit,
+                        " Visit"
+                    )
+                ),
+                React.createElement(
+                    "div",
+                    { className: "SideBarSubContent" },
+                    React.createElement(
+                        "h5",
+                        { className: "SideBarSubheader" },
+                        "Upcoming Visit Deadlines"
+                    ),
+                    visitDeadlines
+                ),
+                React.createElement(
+                    "div",
+                    { className: "SideBarSubContent" },
+                    React.createElement(
+                        "h5",
+                        { className: "SideBarSubheader" },
+                        "Upcoming Data Entry Deadlines"
+                    ),
+                    dataDeadlines
+                )
             );
         }
     }]);
@@ -1331,13 +1313,13 @@ var StudyTracker = function (_React$Component11) {
         key: "showSideBar",
         value: function showSideBar() {
             $(".SideBar").css("width", SIDEBAR_WIDTH);
-            $(".table, .row").css("width", COMPRESS_TBL_WIDTH);
+            $(".study-tracker-table, .study-tracker-header").css("width", COMPRESS_TBL_WIDTH);
         }
     }, {
         key: "closeSideBar",
         value: function closeSideBar() {
             $(".SideBar").css("width", "0px");
-            $(".table, .row").css("width", "100%");
+            $(".study-tracker-table, .study-tracker-header").css("width", "100%");
 
             this.setState({
                 sideBarContent: null,
@@ -1464,7 +1446,7 @@ var StudyTracker = function (_React$Component11) {
                 { className: "StudyTracker" },
                 React.createElement(
                     "div",
-                    { className: "row" },
+                    { className: "row study-tracker-header" },
                     React.createElement(
                         "div",
                         { className: "col-md-6" },
@@ -1490,7 +1472,7 @@ var StudyTracker = function (_React$Component11) {
                 ),
                 React.createElement(
                     "div",
-                    { className: "study-tracker-table" },
+                    null,
                     React.createElement(
                         "table",
                         { className: "table study-tracker-table" },
@@ -1536,7 +1518,7 @@ function prettyStatus(status, dueDate) {
     if (~status.indexOf("complete")) {
         html = React.createElement(
             "span",
-            { className: "complete right-align right-indent" },
+            { className: "complete right-align" },
             "complete"
         );
         toReturn = {
@@ -1549,7 +1531,7 @@ function prettyStatus(status, dueDate) {
         strDaysLeft += daysLeft == 1 ? " day" : " days";
         html = React.createElement(
             "span",
-            { className: "deadline-approaching right-align right-indent" },
+            { className: "deadline-approaching right-align" },
             "due in ",
             strDaysLeft
         );
@@ -1564,7 +1546,7 @@ function prettyStatus(status, dueDate) {
         strDaysPast += daysPast == 1 ? " day" : " days";
         html = React.createElement(
             "span",
-            { className: "deadline-past right-align right-indent" },
+            { className: "deadline-past right-align" },
             strDaysPast,
             " late"
         );
@@ -1576,7 +1558,7 @@ function prettyStatus(status, dueDate) {
     } else if (~status.indexOf("cancelled")) {
         html = React.createElement(
             "span",
-            { className: "cancelled right-align right-indent" },
+            { className: "cancelled right-align" },
             "visit cancelled"
         );
         toReturn = {
@@ -1586,7 +1568,7 @@ function prettyStatus(status, dueDate) {
     } else if (~status.indexOf("no-deadline")) {
         html = React.createElement(
             "span",
-            { className: "no-deadline right-align right-indent" },
+            { className: "no-deadline right-align" },
             "no deadline specified"
         );
         toReturn = {

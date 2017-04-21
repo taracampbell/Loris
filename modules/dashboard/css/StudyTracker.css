@@ -1,0 +1,21 @@
+.SideBarHeader H5 {
+	font-weight: 600;
+}
+
+.SideBarSubheader {
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+.SideBarContent {
+	padding: 15px;
+}
+
+.SideBarSubContent {
+	margin-top: 30px;
+	margin-bottom: 30px;
+}
+
+.SideBarInstStatus {
+	width: 30px;
+}

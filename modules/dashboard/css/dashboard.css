@@ -74,7 +74,7 @@ body {
     margin: 0;
 }
 
-.study-tracker-table table {
+table.study-tracker-table {
     position: relative;
     margin-top: 20px;
     transition: 0.3s;
@@ -83,8 +83,8 @@ body {
 .ReactTooltipContent p {
     margin: 0;
 }
-
-.left-indent {
+{
+.left-indent 
     margin-left: 20px;
 }
 
@@ -107,7 +107,7 @@ body {
 .SideBar {
     height: 100%;
     width: 0;
-    position: absolute;
+    position: fixed;
     z-index: 1;
     top: 0;
     right: 0;
@@ -128,7 +128,7 @@ body {
     text-align: right;
     text-decoration: none;
     font-size: 22px;
-    color: #818181;
+    color: #333;
     display: inline-block;
     transition: 0.3s;
     float: right;

@@ -66,7 +66,7 @@ class Filters extends React.Component {
     // pass sites, teams, and cohort data once available
     render() {
         return(
-            <div class="row">
+            <div className="row">
                 <div className="col-md-3">
                     <CandidateFilter
                         filterCand={this.props.filterCand}
@@ -105,11 +105,13 @@ class SideBarCandInstContent extends React.Component {
             + "/instrument_list/?candID=" + this.props.candid
             + "&sessionID=" + this.props.sessionID;
         content.push(
-            <h3 className="center">
-                <a href={instListURL} target="_blank">
-                    Participant {this.props.pscid}
-                </a>
-            </h3>
+            <div className="SideBarHeader">
+                <h5>
+                    <a href={instListURL}>
+                        Participant {this.props.pscid}
+                    </a>
+                </h5>
+            </div>
         );
         let data = this.props.data;
         let sessionID = this.props.sessionID;
@@ -121,7 +123,7 @@ class SideBarCandInstContent extends React.Component {
             display: "block"
         };
         for (let sg in data) {
-            content.push(<h4 style={bold}>&nbsp;{sg}</h4>);
+            content.push(<h6>{sg}</h6>);
             for (let t in data[sg]) {
                 let inst = data[sg][t];
                 let url = loris.BaseURL +
@@ -131,26 +133,11 @@ class SideBarCandInstContent extends React.Component {
                     "&candID=" + candid;
                 let flagCompletion;
                 if (inst.ddeCompletion === "Complete") {
-                    flagCompletion = <span
-                        className="complete left-align"
-                        style={bold}
-                    >
-                        &#10003;&#10003;
-                    </span>
+                    flagCompletion = (<span><span className="glyphicon glyphicon-ok complete"></span><span className="glyphicon glyphicon-ok complete"></span></span>);
                 } else if (inst.completion === "Complete") {
-                    flagCompletion = <span
-                        className="complete left-align"
-                        style={bold}
-                    >
-                        &nbsp; &#10003;
-                    </span>
+                    flagCompletion = <span className="glyphicon glyphicon-ok complete"></span>
                 } else {
-                    flagCompletion = <span
-                        className="deadline-past left-align"
-                        style={bold}
-                    >
-                        ! &nbsp;
-                    </span>
+                    flagCompletion = <span className="glyphicon glyphicon-alert deadline-past"></span>
                 }
                 let conflicts = [];
                 if (inst.conflicts) {
@@ -165,12 +152,12 @@ class SideBarCandInstContent extends React.Component {
                     );
                 }
                 content.push(
-                    <div>
-                        <a href={url} target="_blank" className="left-indent" style={style}>
-                            {flagCompletion}
-                            {inst.fullName}
-                        </a>
-                        {conflicts}
+                    <div className="SideBarInst">
+                                <a href={url} style={style}>
+                                    {flagCompletion}
+                                    {inst.fullName}
+                                </a>
+                    {conflicts}
                     </div>
                 );
             }
@@ -205,34 +192,37 @@ class SideBarCandContent extends React.Component {
                 />
             );
             content.push(
-                <h3 className="center">
-                    {feedbackIcon}
-                    <a href="#" target="_blank" onClick={() => openBVLFeedback(candid)}>
-                        Participant {pscid}
-                    </a>
-                </h3>
+                <div className="SideBarHeader">
+                    <h5>
+                        {feedbackIcon}
+                        <a href="#" onClick={() => openBVLFeedback(candid)}>
+                            Participant {pscid}
+                        </a>
+                    </h5>
+                </div>
             );
         } else {
             content.push(
-                <h3 className="center">
-                    <a href={profileURL} target="_blank">
-                        Participant {pscid}
-                    </a>
-                </h3>
+                <div className="SideBarHeader">
+                    <h5>
+                        <a href={profileURL}>
+                            Participant {pscid}
+                        </a>
+                    </h5>
+                </div>
             );
         }
 
         // add a subheader if looking at specific cohort
-        if (this.props.currentCohort !== "all") {
+        /*if (this.props.currentCohort !== "all") {
             content.push(
                 <h4 className="center">
                     {this.props.currentCohort} Visits
                 </h4>
             );
-        }
+        }*/
 
         let visitContent = [];
-        let fontSize = {fontSize: "1.10em"};
         visits.forEach(
             function(v) {
                 // make sure visit is part of current cohort
@@ -247,8 +237,6 @@ class SideBarCandContent extends React.Component {
                     if (feedback.visits && feedback.visits.hasOwnProperty(v.sessionID)) {
                         visitLink.push(
                             <a href="#"
-                               target="_blank"
-                               style={fontSize}
                                onClick={() => openBVLFeedback(candid, v.sessionID)}
                             >
                                 <span className="glyphicon glyphicon-edit" style={iconColor}/>
@@ -258,10 +246,7 @@ class SideBarCandContent extends React.Component {
                     } else {
                         url += "instrument_list/?candID="+candid+"&sessionID="+v.sessionID;
                         visitLink.push(
-                            <a href={url}
-                               target="_blank"
-                               style={fontSize}
-                            >
+                            <a href={url}>
                                 {v.visitLabel}:
                             </a>
                         );
@@ -298,7 +283,6 @@ class SideBarCandContent extends React.Component {
 
                         visitContent.push(
                             <div>
-                                &nbsp;
                                 {visitLink}
                                 {vr.html}
                                 {instrumentFeedback}
@@ -308,7 +292,6 @@ class SideBarCandContent extends React.Component {
                         url += "instrument_list/?candID="+candid+"&sessionID="+v.sessionID;
                         visitContent.push(
                             <div>
-                                &nbsp;
                                 {visitLink}
                                 <p className="left-indent">Visit Registration: {vr.html}</p>
                                 <p className="left-indent">Data Entry: {de.html}</p>
@@ -318,7 +301,6 @@ class SideBarCandContent extends React.Component {
                         url += candid;
                         visitContent.push(
                             <div>
-                                &nbsp;
                                 <a href={url} target="_blank" style={fontSize}>
                                     {v.visitLabel}:
                                 </a>
@@ -330,14 +312,14 @@ class SideBarCandContent extends React.Component {
             }.bind(this)
         );
         if (visitContent.length === 0) {
-            visitContent = <p className="center">
+            visitContent = <p>
                     No applicable visits for this participant for cohort {this.props.currentCohort}
                 </p>
         }
         content.push(visitContent);
         content.push(
-            <p className="right-align">
-                Candidate was registered on {dateReg} &nbsp;
+            <p className="right-align small">
+                <em>Candidate was registered on {dateReg}</em>
             </p>
         );
         return (
@@ -350,30 +332,8 @@ class SideBarCandContent extends React.Component {
 
 class SideBarVisitContent extends React.Component {
     render () {
-        let content = [];
-        content = content.concat(
-            <div className="SideBarHeader">
-                <h5>
-                    {this.props.visit} Visit
-                </h5>
-            </div>
-        );
-
-        /*let subheader; // Displays which cohort and visit is in focus
-        if (this.props.currentSite !== "all" && this.props.currentCohort !== "all") {
-            subheader = "Visits for " + this.props.currentCohort + " at " + this.props.currentSite;
-        } else if (this.props.currentSite !== "all") {
-            subheader = "Visits at " + this.props.currentSite;
-        } else if (this.props.currentCohort !== "all") {
-            subheader = "Visits for " + this.props.currentCohort;
-        }
-
-        if (subheader) {
-            content = content.concat(<h4 className="center">{subheader}</h4>)
-        }*/
-
-        let visitDeadlines = [<h5>Upcoming Visit Deadlines</h5>];
-        let dataDeadlines = [<h5>Upcoming Data Entry Deadlines</h5>];
+        let visitDeadlines = [];
+        let dataDeadlines = [];
 
         let visitsSortable = [];
         let dataSortable = [];
@@ -420,42 +380,53 @@ class SideBarVisitContent extends React.Component {
         visitsSortable = visitsSortable.sort(function(a,b){
            return a.prettyStatus.daysLeft - b.prettyStatus.daysLeft;
         });
+
         dataSortable = dataSortable.sort(function(a,b) {
             return a.prettyStatus.daysLeft - b.prettyStatus.daysLeft;
         });
 
         for (let vr of visitsSortable) {
             visitDeadlines.push(
-                    <p className="left-indent">
-                        <a href={vr.URL} target="_blank">{vr.pscid}:</a>
-                        {vr.prettyStatus.html}
-                    </p>
+                <p>
+                    <a href={vr.URL}>{vr.pscid}</a>
+                    {vr.prettyStatus.html}
+                </p>
             );
         }
         for (let de of dataSortable) {
             dataDeadlines.push(
-                <p className="left-indent">
-                    <a href={de.URL} target="_blank">{de.pscid}:</a>
+                <p>
+                    <a href={de.URL}>{de.pscid}</a>
                     {de.prettyStatus.html}
                 </p>
             );
         }
         if (visitDeadlines.length <= 1) {
             visitDeadlines = visitDeadlines.concat(
-                <p className="complete left-indent">No upcoming visit deadlines</p>
+                <p className="complete">No upcoming visit deadlines</p>
             );
         }
         if (dataDeadlines.length <= 1) {
             dataDeadlines = dataDeadlines.concat(
-                <p className="complete left-indent">No upcoming data entry deadlines</p>
+                <p className="complete">No upcoming data entry deadlines</p>
             );
         }
 
-        content = content.concat(visitDeadlines, dataDeadlines);
-
         return (
             <div className="SideBarVisitContent">
-                {content}
+                <div className="SideBarHeader">
+                    <h5>
+                        {this.props.visit} Visit
+                    </h5>
+                </div>
+                <div className="SideBarSubContent">
+                    <h5 className="SideBarSubheader">Upcoming Visit Deadlines</h5>
+                    {visitDeadlines}
+                </div>
+                <div className="SideBarSubContent">
+                    <h5 className="SideBarSubheader">Upcoming Data Entry Deadlines</h5>
+                    {dataDeadlines}
+                </div>
             </div>
         );
     }
@@ -914,12 +885,12 @@ class StudyTracker extends React.Component {
 
     showSideBar() {
         $(".SideBar").css("width", SIDEBAR_WIDTH);
-        $(".table, .row").css("width", COMPRESS_TBL_WIDTH);
+        $(".study-tracker-table, .study-tracker-header").css("width", COMPRESS_TBL_WIDTH);
     }
 
     closeSideBar() {
         $(".SideBar").css("width", "0px");
-        $(".table, .row").css("width", "100%");
+        $(".study-tracker-table, .study-tracker-header").css("width", "100%");
 
         this.setState({
             sideBarContent: null,
@@ -1036,7 +1007,7 @@ class StudyTracker extends React.Component {
         );
         return (
             <div className="StudyTracker">
-                <div className="row">
+                <div className="row study-tracker-header">
                     <div className="col-md-6">
                         <h3 className="dashboard-header">Study Progression</h3>
                     </div>
@@ -1052,7 +1023,7 @@ class StudyTracker extends React.Component {
                         />
                     </div>
                 </div>
-                <div className="study-tracker-table">
+                <div>
                     <table className='table study-tracker-table'>
                         <StudyTrackerHeader
                             visitLabels={this.state.visitLabels}
@@ -1088,7 +1059,7 @@ function prettyStatus(status, dueDate) {
     if (!status) return toReturn;
 
     if (~status.indexOf("complete")) {
-        html = <span className="complete right-align right-indent">complete</span>;
+        html = <span className="complete right-align">complete</span>;
         toReturn = {
             "status":"complete",
             "html":html
@@ -1097,7 +1068,7 @@ function prettyStatus(status, dueDate) {
         let daysLeft = Math.ceil((new Date(dueDate) - new Date()) * MS_TO_DAYS);
         let strDaysLeft = daysLeft + "";
         strDaysLeft += daysLeft == 1 ? " day" : " days";
-        html = <span className="deadline-approaching right-align right-indent">due in {strDaysLeft}</span>;
+        html = <span className="deadline-approaching right-align">due in {strDaysLeft}</span>;
         toReturn = {
             "status":"deadline-approaching",
             "html":html,
@@ -1107,21 +1078,21 @@ function prettyStatus(status, dueDate) {
         let daysPast = Math.ceil((new Date() - new Date(dueDate)) * MS_TO_DAYS);
         let strDaysPast = daysPast + "";
         strDaysPast += daysPast == 1 ? " day" : " days";
-        html = <span className="deadline-past right-align right-indent">{strDaysPast} late</span>;
+        html = <span className="deadline-past right-align">{strDaysPast} late</span>;
         toReturn = {
             "status":"deadline-past",
             "html":html,
             "daysLeft": -daysPast
         };
     } else if (~status.indexOf("cancelled")) {
-        html = <span className="cancelled right-align right-indent">visit cancelled</span>;
+        html = <span className="cancelled right-align">visit cancelled</span>;
         toReturn = {
             "status":"cancelled",
             "html":html
         };
 
     } else if (~status.indexOf("no-deadline")) {
-        html = <span className="no-deadline right-align right-indent">no deadline specified</span>;
+        html = <span className="no-deadline right-align">no deadline specified</span>;
         toReturn = {
             "status":"no-deadline",
             "html":html

@@ -478,7 +478,7 @@ class VisitCell extends React.Component {
                     <p>Double Data Entry:</p>,
                     <p className="center">
                         <i>
-                            {visit.ddeInstCompleted}/{visit.totalInstrs} instruments entered
+                            {visit.ddeInstCompleted}/{visit.totalDDEInstrs} instruments entered
                         </i>
                     </p>
                 );

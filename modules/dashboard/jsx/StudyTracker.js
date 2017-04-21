@@ -1036,6 +1036,7 @@ class StudyTracker extends React.Component {
                             visitLabels={this.state.visitLabels}
                             currentVisit={this.state.currentVisit}
                             showVisitFocus={this.showVisitFocus}
+                            switchOrder={this.switchOrder}
                         />
                         <tbody>
                         {dataRows}

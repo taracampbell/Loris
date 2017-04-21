@@ -142,7 +142,7 @@ class SideBarCandInstContent extends React.Component {
                         className="complete left-align"
                         style={bold}
                     >
-                        &#10003;
+                        &nbsp; &#10003;
                     </span>
                 } else {
                     flagCompletion = <span
@@ -152,12 +152,25 @@ class SideBarCandInstContent extends React.Component {
                         ! &nbsp;
                     </span>
                 }
+                let conflicts = [];
+                if (inst.conflicts) {
+                    conflicts.push(
+                        <a className="left-indent2"
+                           href="#"
+                           onClick={() => openConflictResolver(candid, inst.testName)}
+                        >
+                            <span className="glyphicon glyphicon-remove-circle"/>
+                            Conflicts
+                        </a>
+                    );
+                }
                 content.push(
                     <div>
                         <a href={url} target="_blank" className="left-indent" style={style}>
                             {flagCompletion}
                             {inst.fullName}
                         </a>
+                        {conflicts}
                     </div>
                 );
             }
@@ -173,43 +186,122 @@ class SideBarCandInstContent extends React.Component {
 class SideBarCandContent extends React.Component {
     render () {
         let content = [];
-        content[0]
-            = <h3 className="center">
-                <a href={loris.BaseURL + "/" + this.props.candid} target="_blank">
-                    Participant {this.props.pscid}
-                </a>
-            </h3>;
-        if (this.props.currentCohort !== "all") {
-            content = content.concat(<h4 className="center">{this.props.currentCohort} Visits</h4>);
+        // use local variables for less typing
+        let visits   = this.props.row.visits;
+        let pscid    = this.props.row.pscid;
+        let candid   = this.props.row.candid;
+        let feedback = this.props.row.feedback;
+        let dateReg = formatDate(new Date(this.props.row.dateReg));
+        let iconColor = {color: "#444444"};
+        // determine if participant has profile level feedback and add appropriate
+        // links and display as such
+        let profileURL = loris.BaseURL + "/" + candid;
+        let feedbackIcon = [];
+        if (feedback.profile) {
+            feedbackIcon.push(
+                <span
+                    className="glyphicon glyphicon-edit"
+                    style={iconColor}
+                />
+            );
+            content.push(
+                <h3 className="center">
+                    {feedbackIcon}
+                    <a href="#" target="_blank" onClick={() => openBVLFeedback(candid)}>
+                        Participant {pscid}
+                    </a>
+                </h3>
+            );
+        } else {
+            content.push(
+                <h3 className="center">
+                    <a href={profileURL} target="_blank">
+                        Participant {pscid}
+                    </a>
+                </h3>
+            );
         }
-        let visits;
-        let candid;
-        for(let i = 0; i < this.props.rows.length; i++) {
-            let r = this.props.rows[i];
-            if (r.pscid === this.props.pscid) {
-                candid = r.candid;
-                visits = r.visits;
-                break;
-            }
+
+        // add a subheader if looking at specific cohort
+        if (this.props.currentCohort !== "all") {
+            content.push(
+                <h4 className="center">
+                    {this.props.currentCohort} Visits
+                </h4>
+            );
         }
 
         let visitContent = [];
         let fontSize = {fontSize: "1.10em"};
         visits.forEach(
             function(v) {
+                // make sure visit is part of current cohort
                 if (v.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
                     let url = loris.BaseURL + "/";
                     let vr = prettyStatus(v.visitRegStatus, v.visitRegDueDate);
                     let de = prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
-                    if (vr.status === "complete" && de.status === "complete") {
+                    let visitLink = [];
+                    let instrumentFeedback = [];
+
+                    // determine if participant has visit level feedback and display as such
+                    if (feedback.visits && feedback.visits.hasOwnProperty(v.sessionID)) {
+                        visitLink.push(
+                            <a href="#"
+                               target="_blank"
+                               style={fontSize}
+                               onClick={() => openBVLFeedback(candid, v.sessionID)}
+                            >
+                                <span className="glyphicon glyphicon-edit" style={iconColor}/>
+                                {v.visitLabel}:
+                            </a>
+                        );
+                    } else {
                         url += "instrument_list/?candID="+candid+"&sessionID="+v.sessionID;
+                        visitLink.push(
+                            <a href={url}
+                               target="_blank"
+                               style={fontSize}
+                            >
+                                {v.visitLabel}:
+                            </a>
+                        );
+                    }
+                    // Check if there is instrument feedback and whether this
+                    // particular visit
+                    if (feedback.instruments && feedback.instruments.hasOwnProperty(v.sessionID)) {
+                        let iconColor = {color: "#444444"};
+                        let instLinkStyle =
+                            {
+                                whiteSpace: "nowrap",
+                                textOverflow: "ellipsis",
+                                overflow: "hidden",
+                                display: "block",
+                                margin: "5px"
+                            };
+                        for (let f in feedback.instruments) {
+                            if (!feedback.instruments[f].commentID) {
+                                continue;
+                            }
+                            let fb = feedback.instruments[f];
+                            instrumentFeedback.push(
+                                <a href="#"
+                                   onClick={() => openBVLFeedback(candid, v.sessionID, fb.commentID, fb.testName)}
+                                   style={instLinkStyle}
+                                >
+                                    <span className="glyphicon glyphicon-edit" style={iconColor} />
+                                    {fb.fullName}
+                                </a>
+                            );
+                        }
+                    }
+                    if (vr.status === "complete" && de.status === "complete") {
+
                         visitContent.push(
                             <div>
-                                <p style={fontSize}>
-                                    &nbsp;
-                                    <a href={url} target="_blank">&nbsp;{v.visitLabel}:</a>
-                                    {vr.html}
-                                </p>
+                                &nbsp;
+                                {visitLink}
+                                {vr.html}
+                                {instrumentFeedback}
                             </div>
                         );
                     } else if(de.html){
@@ -217,9 +309,7 @@ class SideBarCandContent extends React.Component {
                         visitContent.push(
                             <div>
                                 &nbsp;
-                                <a href={url} target="_blank" style={fontSize}>
-                                {v.visitLabel}:
-                                </a>
+                                {visitLink}
                                 <p className="left-indent">Visit Registration: {vr.html}</p>
                                 <p className="left-indent">Data Entry: {de.html}</p>
                             </div>
@@ -245,7 +335,11 @@ class SideBarCandContent extends React.Component {
                 </p>
         }
         content.push(visitContent);
-
+        content.push(
+            <p className="right-align">
+                Candidate was registered on {dateReg} &nbsp;
+            </p>
+        );
         return (
             <div className="SideBarCandContent">
                 {content}
@@ -421,7 +515,8 @@ class VisitCell extends React.Component {
                     fontWeight: "bold",
                     color: "white",
                     position: "inherit",
-                    fontSize: "110%"
+                    fontSize: "120%",
+                    lineHeight: "120%"
                 };
                 if (visit.sentToDCC) {
                     innerCircleInfo = <div className="center" style={innerCircleStyle}>&#10003;</div>;
@@ -437,6 +532,11 @@ class VisitCell extends React.Component {
                             Data not yet sent to DCC
                         </p>
                     );
+                } else if (visit.visitRegStatus === "cancelled-visit") {
+                    innerCircleStyle.color = "#888888";
+                    innerCircleStyle.fontSize = "200%";
+                    innerCircleStyle.lineHeight = "60%";
+                    innerCircleInfo = <div className="center" style={innerCircleStyle}>x</div>;
                 }
             }
 
@@ -474,11 +574,21 @@ class VisitCell extends React.Component {
 class PSCIDCell extends React.Component {
 
     render() {
+        let feedBackIcon = [];
+
+        if (Object.keys(this.props.feedback).length) {
+            let style = {color: "#444444"};
+            feedBackIcon.push(
+                <span className="glyphicon glyphicon-edit" style={style}/>
+            );
+        }
         return (
             <td
                 className='PSCIDCell'
                 onClick={this.props.clickHandler}>
                 {this.props.pscid}
+                &nbsp;
+                {feedBackIcon}
             </td>
         );
     }
@@ -548,6 +658,7 @@ class StudyTrackerRow extends React.Component {
             >
                 <PSCIDCell
                     pscid={this.props.pscid}
+                    feedback={this.props.feedback}
                     clickHandler={this.keepHighlightedShowCandFocus}
                 />
                 {visits}
@@ -564,6 +675,7 @@ class StudyTrackerHeader extends React.Component {
         };
         this.highlightColumns = this.highlightColumns.bind(this);
         this.unhighlightColumns = this.unhighlightColumns.bind(this);
+        this.switchOrder = this.switchOrder.bind(this);
         this.keepHighlightedShowVisitFocus = this.keepHighlightedShowVisitFocus.bind(this);
     }
 
@@ -592,6 +704,18 @@ class StudyTrackerHeader extends React.Component {
         this.props.showVisitFocus(event);
 
     }
+
+    switchOrder() {
+        if (document.getElementById("order-toggle").classList.contains("glyphicon-chevron-down")) {
+            document.getElementById("order-toggle").classList.remove("glyphicon-chevron-down");
+            document.getElementById("order-toggle").classList.add("glyphicon-chevron-up");
+        } else {
+            document.getElementById("order-toggle").classList.remove("glyphicon-chevron-up");
+            document.getElementById("order-toggle").classList.add("glyphicon-chevron-down");
+        }
+        this.props.switchOrder();
+    }
+
   render() {
     let colWidth = 91.6666/this.props.visitLabels.length;
     let colStyle = {width: colWidth + '%'}
@@ -612,7 +736,11 @@ class StudyTrackerHeader extends React.Component {
     return (
         <thead className="StudyTrackerHeader">
             <tr>
-                <th className="col-md-1"/>
+                <th id="order-toggle"
+                    className="col-md-1 center glyphicon glyphicon-chevron-down"
+                    style={{color: "#444444"}}
+                    onClick={this.switchOrder}
+                />
                 {visitLabelHeaders}
             </tr>
         </thead>
@@ -648,6 +776,7 @@ class StudyTracker extends React.Component {
         this.filterSites = this.filterSites.bind(this);
         this.filterTeams = this.filterTeams.bind(this);
         this.filterCohorts = this.filterCohorts.bind(this);
+        this.switchOrder = this.switchOrder.bind(this);
         this.renderRow = this.renderRow.bind(this);
         this.rowHasCurrentCohortVisit = this.rowHasCurrentCohortVisit.bind(this);
     }
@@ -731,19 +860,17 @@ class StudyTracker extends React.Component {
             pscid = this.state.currentPSCID;
         }
 
-        let candid;
+        let row;
 
         for (let r of this.state.rows) {
             if (r.pscid === pscid) {
-                candid = r.candid;
+                row = r;
             }
         }
 
         let sideBarContent = <SideBarCandContent
-                pscid={pscid}
-                candid={candid}
                 currentCohort={this.state.currentCohort}
-                rows={this.state.rows}
+                row={row}
             />;
 
         this.setState({
@@ -847,6 +974,13 @@ class StudyTracker extends React.Component {
         });
     }
 
+    switchOrder() {
+        let rows = this.state.rows.reverse();
+        this.setState(
+            {rows: rows}
+        );
+    }
+
     //Checks to see if a row has a visit with the selected cohort
     rowHasCurrentCohortVisit(row) {
         if (this.state.currentCohort === "all") {
@@ -870,7 +1004,6 @@ class StudyTracker extends React.Component {
         ) {
             return true;
         }
-        //console.log(~row.pscid.indexOf(this.state.filterCandText));
         return false;
     }
 
@@ -889,6 +1022,8 @@ class StudyTracker extends React.Component {
                             pscid={row.pscid}
                             candid={row.candid}
                             visits={row.visits}
+                            dateReg={row.dateReg}
+                            feedback={row.feedback}
                             currentCohort={this.state.currentCohort}
                             currentVisit={this.state.currentVisit}
                             currentPSCID={this.state.currentPSCID}
@@ -994,4 +1129,51 @@ function prettyStatus(status, dueDate) {
     }
 
     return toReturn;
+}
+
+function formatDate(date) {
+    var monthNames = [
+        "January", "February", "March",
+        "April", "May", "June", "July",
+        "August", "September", "October",
+        "November", "December"
+    ];
+
+    var day = date.getDate();
+    var monthIndex = date.getMonth();
+    var year = date.getFullYear();
+
+    return monthNames[monthIndex] + ' ' + day + ', ' + year;
+}
+
+function openBVLFeedback(candID, sessionID, commentID, testName) {
+    let url = loris.BaseURL + "/";
+    if (candID && sessionID && commentID && testName) {
+        url += testName
+            + "/?commentID=" + commentID
+            + "&sessionID=" + sessionID
+            + "&candID=" +candID;
+    }
+    else if (candID && sessionID) {
+        url += "instrument_list/?candID=" + candID + "&sessionID=" + sessionID;
+    }
+    else if (candID) {
+        url += candID;
+    } else {
+        return;
+    }
+    let win = window.open(url, "_blank");
+    win.onload = function() {
+        win.document.querySelector("a.navbar-toggle").dispatchEvent(new MouseEvent("click"));
+    }
+}
+
+function openConflictResolver(candID, testName){
+    let url = loris.BaseURL + "/conflict_resolver";
+    let win = window.open(url, "_blank");
+    win.onload = function() {
+        win.document.querySelector("input[name=CandID]").value = candID;
+        win.document.querySelector("select[name=Instrument]").value = testName;
+        win.document.querySelector("#testShowData1").dispatchEvent(new MouseEvent("click"));
+    }
 }

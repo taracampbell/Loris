@@ -98,13 +98,43 @@ function getTableData() {
     $sessIDPlaceHold = -1;
 
     foreach ($candidates as $candidate) {
-        $pscid  = $candidate['PSCID'];
-        $candID = $candidate['CandID'];
-        $psc    = $candidate['Alias'];
-        $status = $candidate['participant_status'];
+        $pscid   = $candidate['PSCID'];
+        $candID  = $candidate['CandID'];
+        $psc     = $candidate['Alias'];
+        $status  = $candidate['participant_status'];
+        $dateReg = $candidate['Date_registered'];
         $visits = array();
         $screeningDone = screeningDone($candID);
 
+        // Create feedback object
+        $feedbackRaw = getFeedback($candID);
+        $feedback = array();
+        if ($feedbackRaw) {
+            foreach ($feedbackRaw as $fb) {
+                // Check if candidate has feedback at profile level
+                // only need to know whether or not it exists
+                if ($fb['Feedback_level'] === "profile") {
+                    $feedback['profile'] = true;
+
+                    // If there is visit level feedback, create subobject
+                    // and map sessionID to true
+                } else if ($fb['Feedback_level'] === "visit") {
+                    $feedback['visits'][$fb["SessionID"]] = true;
+
+                    // For instrument feedback, create instrument subobject
+                    // mapping sessionID to CommentID, test_name and full_name.
+                    // (Uses sessionID as key because instrument needs to be
+                    // associated with its appropriate visit as it will be displayed
+                    // beneath it in SideBarCandContent)
+                } else if ($fb['Feedback_level'] === "instrument") {
+                    $feedback['instruments'][$fb['SessionID']] = array(
+                        "commentID" => $fb['CommentID'],
+                        "testName" => $fb['Test_name'],
+                        "fullName" => $fb['Full_name']
+                    );
+                }
+            }
+        }
         foreach ($visitLabels as $visitLabel) {
             $session = $DB->pselectRow(
                 "SELECT ID, SubprojectID, Date_visit, Current_stage
@@ -132,8 +162,8 @@ function getTableData() {
                 $visitRegStatus   = 'complete-visit';
                 $sentToDCC        = sentToDCC($sessionID);
                 $totalInstrs      = getTotalInstruments($visitLabel, $subproject);
-                if (!$sentToDCC) {
 
+                if (!$sentToDCC) {
                     $ddeInstCompleted = getDDEInstrumentsCompleted($sessionID);
                     $instrCompleted = getTotalInstrumentsCompleted($sessionID);
 
@@ -183,15 +213,38 @@ function getTableData() {
         array_push(
             $tableData,
             array(
-                'pscid' => $pscid,
-                'psc' => $psc,
-                'candid' => $candID,
-                'visits' => $visits
+                'pscid'    => $pscid,
+                'psc'      => $psc,
+                'candid'   => $candID,
+                'visits'   => $visits,
+                'dateReg'  => $dateReg,
+                'feedback' => $feedback
             )
         );
     }
 
     return $tableData;
+}
+
+function getFeedback($candID) {
+    global $DB;
+
+    $query =
+        "SELECT fbt.Feedback_level, fbt.SessionID, fbt.CommentID, fl.Test_name, tn.Full_name 
+         FROM feedback_bvl_thread AS fbt
+         LEFT JOIN flag AS fl ON (fbt.CommentID=fl.CommentID)
+         LEFT JOIN test_names AS tn ON (fl.Test_name=tn.Test_name)
+         WHERE Status <> 'closed' AND CandID=:cid";
+    $queryArgs = array(
+        "cid" => $candID
+    );
+
+    $feedback = $DB->pselect(
+        $query,
+        $queryArgs
+    );
+
+    return $feedback;
 }
 
 function sentToDCC($sessionID) {
@@ -238,11 +291,12 @@ function getCandidates() {
 
     if ($user->hasPermission('access_all_profiles')) {
         $candidates = $DB->pselect(
-            "SELECT c.PSCID, c.CandID, psc.Name, psc.Alias, ps.participant_status
+            "SELECT c.PSCID, c.CandID, psc.Name, psc.Alias, ps.participant_status, Date_registered
              FROM candidate c
              LEFT JOIN psc ON psc.CenterID=c.CenterID
              LEFT JOIN participant_status ps on ps.CandID=c.CandID
-             WHERE c.Active='Y' AND c.Entity_type='human' AND c.CenterID <> 1",
+             WHERE c.Active='Y' AND c.Entity_type='human' AND c.CenterID <> 1
+             ORDER BY Date_registered",
             array()
         );
         return $candidates;
@@ -420,7 +474,8 @@ function getInstruments($sessionID) {
                  WHERE Test_name=:t",
                 array("t" => $t["Test_name"])
         );
-
+        $ddeComplete = null;
+        $conflicts = false;
         if ($t["Data_entry"] === "Complete") {
             $ddeComplete = $DB->pselectOne(
                 "SELECT Data_entry 
@@ -428,6 +483,17 @@ function getInstruments($sessionID) {
                  WHERE CommentID=:cid",
                 array("cid" => "DDE_".$t["CommentID"])
             );
+            if ($ddeComplete) {
+                $conflictsExist = $DB->pselect(
+                    "SELECT ConflictID 
+                     FROM conflicts_unresolved 
+                     WHERE CommentID1=:cmid",
+                    array("cmid" => $t['CommentID'])
+                );
+                if ($conflictsExist) {
+                    $conflicts = true;
+                }
+            }
         }
 
         $result[$sg][] = array(
@@ -435,7 +501,8 @@ function getInstruments($sessionID) {
             "testName" => $t["Test_name"],
             "completion" => $t["Data_entry"],
             "ddeCompletion" => $ddeComplete,
-            "commentID" => $t["CommentID"]
+            "commentID" => $t["CommentID"],
+            "conflicts" => $conflicts
         );
     }
     return $result;

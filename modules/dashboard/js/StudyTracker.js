@@ -201,7 +201,8 @@ var SideBarCandInstContent = function (_React$Component3) {
                     " ",
                     sg
                 ));
-                for (var t in data[sg]) {
+
+                var _loop = function _loop(t) {
                     var inst = data[sg][t];
                     var url = loris.BaseURL + "/" + inst.testName + "/?commentID=" + inst.commentID + "&sessionID=" + sessionID + "&candID=" + candid;
                     var flagCompletion = void 0;
@@ -221,7 +222,7 @@ var SideBarCandInstContent = function (_React$Component3) {
                                 className: "complete left-align",
                                 style: bold
                             },
-                            "✓"
+                            "  ✓"
                         );
                     } else {
                         flagCompletion = React.createElement(
@@ -233,6 +234,20 @@ var SideBarCandInstContent = function (_React$Component3) {
                             "!  "
                         );
                     }
+                    var conflicts = [];
+                    if (inst.conflicts) {
+                        conflicts.push(React.createElement(
+                            "a",
+                            { className: "left-indent2",
+                                href: "#",
+                                onClick: function onClick() {
+                                    return openConflictResolver(candid, inst.testName);
+                                }
+                            },
+                            React.createElement("span", { className: "glyphicon glyphicon-remove-circle" }),
+                            "Conflicts"
+                        ));
+                    }
                     content.push(React.createElement(
                         "div",
                         null,
@@ -241,8 +256,13 @@ var SideBarCandInstContent = function (_React$Component3) {
                             { href: url, target: "_blank", className: "left-indent", style: style },
                             flagCompletion,
                             inst.fullName
-                        )
+                        ),
+                        conflicts
                     ));
+                };
+
+                for (var t in data[sg]) {
+                    _loop(t);
                 }
             }
             return React.createElement(
@@ -269,60 +289,141 @@ var SideBarCandContent = function (_React$Component4) {
         key: "render",
         value: function render() {
             var content = [];
-            content[0] = React.createElement(
-                "h3",
-                { className: "center" },
-                React.createElement(
-                    "a",
-                    { href: loris.BaseURL + "/" + this.props.candid, target: "_blank" },
-                    "Participant ",
-                    this.props.pscid
-                )
-            );
+            // use local variables for less typing
+            var visits = this.props.row.visits;
+            var pscid = this.props.row.pscid;
+            var candid = this.props.row.candid;
+            var feedback = this.props.row.feedback;
+            var dateReg = formatDate(new Date(this.props.row.dateReg));
+            var iconColor = { color: "#444444" };
+            // determine if participant has profile level feedback and add appropriate
+            // links and display as such
+            var profileURL = loris.BaseURL + "/" + candid;
+            var feedbackIcon = [];
+            if (feedback.profile) {
+                feedbackIcon.push(React.createElement("span", {
+                    className: "glyphicon glyphicon-edit",
+                    style: iconColor
+                }));
+                content.push(React.createElement(
+                    "h3",
+                    { className: "center" },
+                    feedbackIcon,
+                    React.createElement(
+                        "a",
+                        { href: "#", target: "_blank", onClick: function onClick() {
+                                return openBVLFeedback(candid);
+                            } },
+                        "Participant ",
+                        pscid
+                    )
+                ));
+            } else {
+                content.push(React.createElement(
+                    "h3",
+                    { className: "center" },
+                    React.createElement(
+                        "a",
+                        { href: profileURL, target: "_blank" },
+                        "Participant ",
+                        pscid
+                    )
+                ));
+            }
+
+            // add a subheader if looking at specific cohort
             if (this.props.currentCohort !== "all") {
-                content = content.concat(React.createElement(
+                content.push(React.createElement(
                     "h4",
                     { className: "center" },
                     this.props.currentCohort,
                     " Visits"
                 ));
             }
-            var visits = void 0;
-            var candid = void 0;
-            for (var i = 0; i < this.props.rows.length; i++) {
-                var r = this.props.rows[i];
-                if (r.pscid === this.props.pscid) {
-                    candid = r.candid;
-                    visits = r.visits;
-                    break;
-                }
-            }
 
             var visitContent = [];
             var fontSize = { fontSize: "1.10em" };
             visits.forEach(function (v) {
+                // make sure visit is part of current cohort
                 if (v.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
                     var url = loris.BaseURL + "/";
                     var vr = prettyStatus(v.visitRegStatus, v.visitRegDueDate);
                     var de = prettyStatus(v.dataEntryStatus, v.dataEntryDueDate);
-                    if (vr.status === "complete" && de.status === "complete") {
+                    var visitLink = [];
+                    var instrumentFeedback = [];
+
+                    // determine if participant has visit level feedback and display as such
+                    if (feedback.visits && feedback.visits.hasOwnProperty(v.sessionID)) {
+                        visitLink.push(React.createElement(
+                            "a",
+                            { href: "#",
+                                target: "_blank",
+                                style: fontSize,
+                                onClick: function onClick() {
+                                    return openBVLFeedback(candid, v.sessionID);
+                                }
+                            },
+                            React.createElement("span", { className: "glyphicon glyphicon-edit", style: iconColor }),
+                            v.visitLabel,
+                            ":"
+                        ));
+                    } else {
                         url += "instrument_list/?candID=" + candid + "&sessionID=" + v.sessionID;
+                        visitLink.push(React.createElement(
+                            "a",
+                            { href: url,
+                                target: "_blank",
+                                style: fontSize
+                            },
+                            v.visitLabel,
+                            ":"
+                        ));
+                    }
+                    // Check if there is instrument feedback and whether this
+                    // particular visit
+                    if (feedback.instruments && feedback.instruments.hasOwnProperty(v.sessionID)) {
+                        var _iconColor = { color: "#444444" };
+                        var instLinkStyle = {
+                            whiteSpace: "nowrap",
+                            textOverflow: "ellipsis",
+                            overflow: "hidden",
+                            display: "block",
+                            margin: "5px"
+                        };
+
+                        var _loop2 = function _loop2(f) {
+                            if (!feedback.instruments[f].commentID) {
+                                return "continue";
+                            }
+                            var fb = feedback.instruments[f];
+                            instrumentFeedback.push(React.createElement(
+                                "a",
+                                { href: "#",
+                                    onClick: function onClick() {
+                                        return openBVLFeedback(candid, v.sessionID, fb.commentID, fb.testName);
+                                    },
+                                    style: instLinkStyle
+                                },
+                                React.createElement("span", { className: "glyphicon glyphicon-edit", style: _iconColor }),
+                                fb.fullName
+                            ));
+                        };
+
+                        for (var f in feedback.instruments) {
+                            var _ret2 = _loop2(f);
+
+                            if (_ret2 === "continue") continue;
+                        }
+                    }
+                    if (vr.status === "complete" && de.status === "complete") {
+
                         visitContent.push(React.createElement(
                             "div",
                             null,
-                            React.createElement(
-                                "p",
-                                { style: fontSize },
-                                " ",
-                                React.createElement(
-                                    "a",
-                                    { href: url, target: "_blank" },
-                                    " ",
-                                    v.visitLabel,
-                                    ":"
-                                ),
-                                vr.html
-                            )
+                            " ",
+                            visitLink,
+                            vr.html,
+                            instrumentFeedback
                         ));
                     } else if (de.html) {
                         url += "instrument_list/?candID=" + candid + "&sessionID=" + v.sessionID;
@@ -330,12 +431,7 @@ var SideBarCandContent = function (_React$Component4) {
                             "div",
                             null,
                             " ",
-                            React.createElement(
-                                "a",
-                                { href: url, target: "_blank", style: fontSize },
-                                v.visitLabel,
-                                ":"
-                            ),
+                            visitLink,
                             React.createElement(
                                 "p",
                                 { className: "left-indent" },
@@ -380,7 +476,13 @@ var SideBarCandContent = function (_React$Component4) {
                 );
             }
             content.push(visitContent);
-
+            content.push(React.createElement(
+                "p",
+                { className: "right-align" },
+                "Candidate was registered on ",
+                dateReg,
+                "  "
+            ));
             return React.createElement(
                 "div",
                 { className: "SideBarCandContent" },
@@ -729,7 +831,8 @@ var VisitCell = function (_React$Component7) {
                         fontWeight: "bold",
                         color: "white",
                         position: "inherit",
-                        fontSize: "110%"
+                        fontSize: "120%",
+                        lineHeight: "120%"
                     };
                     if (visit.sentToDCC) {
                         innerCircleInfo = React.createElement(
@@ -753,6 +856,15 @@ var VisitCell = function (_React$Component7) {
                             { className: "deadline-approaching" },
                             "Data not yet sent to DCC"
                         ));
+                    } else if (visit.visitRegStatus === "cancelled-visit") {
+                        innerCircleStyle.color = "#888888";
+                        innerCircleStyle.fontSize = "200%";
+                        innerCircleStyle.lineHeight = "60%";
+                        innerCircleInfo = React.createElement(
+                            "div",
+                            { className: "center", style: innerCircleStyle },
+                            "x"
+                        );
                     }
                 }
 
@@ -808,12 +920,20 @@ var PSCIDCell = function (_React$Component8) {
     _createClass(PSCIDCell, [{
         key: "render",
         value: function render() {
+            var feedBackIcon = [];
+
+            if (Object.keys(this.props.feedback).length) {
+                var style = { color: "#444444" };
+                feedBackIcon.push(React.createElement("span", { className: "glyphicon glyphicon-edit", style: style }));
+            }
             return React.createElement(
                 "td",
                 {
                     className: "PSCIDCell",
                     onClick: this.props.clickHandler },
-                this.props.pscid
+                this.props.pscid,
+                " ",
+                feedBackIcon
             );
         }
     }]);
@@ -894,6 +1014,7 @@ var StudyTrackerRow = function (_React$Component9) {
                 },
                 React.createElement(PSCIDCell, {
                     pscid: this.props.pscid,
+                    feedback: this.props.feedback,
                     clickHandler: this.keepHighlightedShowCandFocus
                 }),
                 visits
@@ -917,6 +1038,7 @@ var StudyTrackerHeader = function (_React$Component10) {
         };
         _this11.highlightColumns = _this11.highlightColumns.bind(_this11);
         _this11.unhighlightColumns = _this11.unhighlightColumns.bind(_this11);
+        _this11.switchOrder = _this11.switchOrder.bind(_this11);
         _this11.keepHighlightedShowVisitFocus = _this11.keepHighlightedShowVisitFocus.bind(_this11);
         return _this11;
     }
@@ -954,6 +1076,18 @@ var StudyTrackerHeader = function (_React$Component10) {
             this.props.showVisitFocus(event);
         }
     }, {
+        key: "switchOrder",
+        value: function switchOrder() {
+            if (document.getElementById("order-toggle").classList.contains("glyphicon-chevron-down")) {
+                document.getElementById("order-toggle").classList.remove("glyphicon-chevron-down");
+                document.getElementById("order-toggle").classList.add("glyphicon-chevron-up");
+            } else {
+                document.getElementById("order-toggle").classList.remove("glyphicon-chevron-up");
+                document.getElementById("order-toggle").classList.add("glyphicon-chevron-down");
+            }
+            this.props.switchOrder();
+        }
+    }, {
         key: "render",
         value: function render() {
             var colWidth = 91.6666 / this.props.visitLabels.length;
@@ -978,7 +1112,11 @@ var StudyTrackerHeader = function (_React$Component10) {
                 React.createElement(
                     "tr",
                     null,
-                    React.createElement("th", { className: "col-md-1" }),
+                    React.createElement("th", { id: "order-toggle",
+                        className: "col-md-1 center glyphicon glyphicon-chevron-down",
+                        style: { color: "#444444" },
+                        onClick: this.switchOrder
+                    }),
                     visitLabelHeaders
                 )
             );
@@ -1021,6 +1159,7 @@ var StudyTracker = function (_React$Component11) {
         _this12.filterSites = _this12.filterSites.bind(_this12);
         _this12.filterTeams = _this12.filterTeams.bind(_this12);
         _this12.filterCohorts = _this12.filterCohorts.bind(_this12);
+        _this12.switchOrder = _this12.switchOrder.bind(_this12);
         _this12.renderRow = _this12.renderRow.bind(_this12);
         _this12.rowHasCurrentCohortVisit = _this12.rowHasCurrentCohortVisit.bind(_this12);
         return _this12;
@@ -1115,7 +1254,7 @@ var StudyTracker = function (_React$Component11) {
                 pscid = this.state.currentPSCID;
             }
 
-            var candid = void 0;
+            var row = void 0;
 
             var _iteratorNormalCompletion5 = true;
             var _didIteratorError5 = false;
@@ -1126,7 +1265,7 @@ var StudyTracker = function (_React$Component11) {
                     var r = _step5.value;
 
                     if (r.pscid === pscid) {
-                        candid = r.candid;
+                        row = r;
                     }
                 }
             } catch (err) {
@@ -1145,10 +1284,8 @@ var StudyTracker = function (_React$Component11) {
             }
 
             var sideBarContent = React.createElement(SideBarCandContent, {
-                pscid: pscid,
-                candid: candid,
                 currentCohort: this.state.currentCohort,
-                rows: this.state.rows
+                row: row
             });
 
             this.setState({
@@ -1264,6 +1401,12 @@ var StudyTracker = function (_React$Component11) {
                 filterCandText: filterCandText
             });
         }
+    }, {
+        key: "switchOrder",
+        value: function switchOrder() {
+            var rows = this.state.rows.reverse();
+            this.setState({ rows: rows });
+        }
 
         //Checks to see if a row has a visit with the selected cohort
 
@@ -1288,7 +1431,6 @@ var StudyTracker = function (_React$Component11) {
             if (this.rowHasCurrentCohortVisit(row) && (row.psc === this.state.currentSite || this.state.currentSite === "all") && row.pscid.startsWith(this.state.filterCandText)) {
                 return true;
             }
-            //console.log(~row.pscid.indexOf(this.state.filterCandText));
             return false;
         }
     }, {
@@ -1307,6 +1449,8 @@ var StudyTracker = function (_React$Component11) {
                         pscid: row.pscid,
                         candid: row.candid,
                         visits: row.visits,
+                        dateReg: row.dateReg,
+                        feedback: row.feedback,
                         currentCohort: this.state.currentCohort,
                         currentVisit: this.state.currentVisit,
                         currentPSCID: this.state.currentPSCID,
@@ -1452,4 +1596,41 @@ function prettyStatus(status, dueDate) {
     }
 
     return toReturn;
+}
+
+function formatDate(date) {
+    var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+    var day = date.getDate();
+    var monthIndex = date.getMonth();
+    var year = date.getFullYear();
+
+    return monthNames[monthIndex] + ' ' + day + ', ' + year;
+}
+
+function openBVLFeedback(candID, sessionID, commentID, testName) {
+    var url = loris.BaseURL + "/";
+    if (candID && sessionID && commentID && testName) {
+        url += testName + "/?commentID=" + commentID + "&sessionID=" + sessionID + "&candID=" + candID;
+    } else if (candID && sessionID) {
+        url += "instrument_list/?candID=" + candID + "&sessionID=" + sessionID;
+    } else if (candID) {
+        url += candID;
+    } else {
+        return;
+    }
+    var win = window.open(url, "_blank");
+    win.onload = function () {
+        win.document.querySelector("a.navbar-toggle").dispatchEvent(new MouseEvent("click"));
+    };
+}
+
+function openConflictResolver(candID, testName) {
+    var url = loris.BaseURL + "/conflict_resolver";
+    var win = window.open(url, "_blank");
+    win.onload = function () {
+        win.document.querySelector("input[name=CandID]").value = candID;
+        win.document.querySelector("select[name=Instrument]").value = testName;
+        win.document.querySelector("#testShowData1").dispatchEvent(new MouseEvent("click"));
+    };
 }

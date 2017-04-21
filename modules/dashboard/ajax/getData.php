@@ -162,12 +162,13 @@ function getTableData() {
                 $visitRegStatus   = 'complete-visit';
                 $sentToDCC        = sentToDCC($sessionID);
                 $totalInstrs      = getTotalInstruments($visitLabel, $subproject);
+                $totalDDEInstrs   = getTotalDDEInstruments($visitLabel, $subproject);
 
                 if (!$sentToDCC) {
                     $ddeInstCompleted = getDDEInstrumentsCompleted($sessionID);
                     $instrCompleted = getTotalInstrumentsCompleted($sessionID);
 
-                    if ($ddeInstCompleted !== $totalInstrs) {
+                    if ($ddeInstCompleted !== $totalDDEInstrs || $instrCompleted !== $totalInstrs) {
 
                         if ($instrCompleted === $totalInstrs) {
                             $dataEntryStatus = "complete-data-entry";
@@ -207,6 +208,7 @@ function getTableData() {
             $visit['ddeCompleted']     = $ddeCompleted;
             $visit['ddeInstCompleted'] = $ddeInstCompleted;
             $visit['sentToDCC']        = $sentToDCC;
+            $visit['totalDDEInstrs']   = $totalDDEInstrs;
             array_push($visits, $visit);
         }
 
@@ -410,6 +412,29 @@ function getTotalInstruments($visitLabel, $subproject) {
     );
 
     return $totalInstruments;
+}
+
+function getTotalDDEInstruments($visitLabel, $subproject) {
+    global $DB;
+    $totalDDEInstruments = $DB->pselectOne(
+        "SELECT COUNT(*) 
+         FROM test_battery AS tb 
+         INNER JOIN Config AS c
+         ON tb.Test_name=c.Value 
+         WHERE tb.Visit_label=:vl 
+         AND SubprojectID=:sp 
+         AND c.ConfigID=(
+             SELECT ID
+             FROM ConfigSettings
+             WHERE Name=:dde
+         )",
+        array(
+            "vl" => $visitLabel,
+            "sp" => $subproject,
+            "dde" => "DoubleDataEntryInstruments",
+        )
+    );
+    return $totalDDEInstruments;
 }
 
 function getTotalInstrumentsCompleted($sessionID) {

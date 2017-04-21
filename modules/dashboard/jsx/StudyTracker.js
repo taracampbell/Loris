@@ -301,7 +301,7 @@ class SideBarCandContent extends React.Component {
                         url += candid;
                         visitContent.push(
                             <div>
-                                <a href={url} target="_blank" style={fontSize}>
+                                <a href={url} target="_blank">
                                     {v.visitLabel}:
                                 </a>
                                 <p className="left-indent">Visit Registration: {vr.html}</p>

@@ -440,7 +440,7 @@ var SideBarCandContent = function (_React$Component4) {
                             null,
                             React.createElement(
                                 "a",
-                                { href: url, target: "_blank", style: fontSize },
+                                { href: url, target: "_blank" },
                                 v.visitLabel,
                                 ":"
                             ),

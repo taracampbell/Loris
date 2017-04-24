@@ -178,6 +178,7 @@ class SideBarCandContent extends React.Component {
         let pscid    = this.props.row.pscid;
         let candid   = this.props.row.candid;
         let feedback = this.props.row.feedback;
+        let statusDesc   = this.props.row.statusDesc;
         let dateReg = formatDate(new Date(this.props.row.dateReg));
         let iconColor = {color: "#444444"};
         // determine if participant has profile level feedback and add appropriate
@@ -301,7 +302,7 @@ class SideBarCandContent extends React.Component {
                         url += candid;
                         visitContent.push(
                             <div>
-                                <a href={url} target="_blank" style={fontSize}>
+                                <a href={url} target="_blank">
                                     {v.visitLabel}:
                                 </a>
                                 <p className="left-indent">Visit Registration: {vr.html}</p>
@@ -317,9 +318,15 @@ class SideBarCandContent extends React.Component {
                 </p>
         }
         content.push(visitContent);
+        let display = {display: "block"};
         content.push(
-            <p className="right-align small">
-                <em>Candidate was registered on {dateReg}</em>
+            <p className="right-align small" style={display}>
+                <em>Status: {statusDesc}</em>
+            </p>
+        );
+        content.push(
+            <p className="right-align small" style={display}>
+                <em>Participant was registered on {dateReg}</em>
             </p>
         );
         return (
@@ -478,33 +485,26 @@ class VisitCell extends React.Component {
                     <p>Double Data Entry:</p>,
                     <p className="center">
                         <i>
-                            {visit.ddeInstCompleted}/{visit.totalInstrs} instruments entered
+                            {visit.ddeInstCompleted}/{visit.totalDDEInstrs} instruments entered
                         </i>
                     </p>
                 );
-                let innerCircleStyle = {
-                    fontWeight: "bold",
-                    color: "white",
-                    position: "inherit",
-                    fontSize: "120%",
-                    lineHeight: "120%"
-                };
                 if (visit.sentToDCC) {
-                    innerCircleInfo = <div className="center" style={innerCircleStyle}>&#10003;</div>;
+                    innerCircleInfo = <span className="glyphicon glyphicon-ok inner-circle-glyph"></span>;
                     tooltipContent.push(
                         <p className="complete">
                             Data sent to DCC
                         </p>
                     );
                 } else if (visit.ddeCompleted) {
-                    innerCircleInfo = <div className="center" style={innerCircleStyle}>D</div>;
+                    innerCircleInfo = <span className="inner-circle-text">D</span>;
                     tooltipContent.push(
                         <p className="deadline-approaching">
                             Data not yet sent to DCC
                         </p>
                     );
                 } else if (visit.visitRegStatus === "cancelled-visit") {
-                    innerCircleInfo = <span className="glyphicon glyphicon-remove"></span>;
+                    innerCircleInfo = <span className="glyphicon glyphicon-remove inner-circle-glyph"></span>;
                 }
             }
 
@@ -1026,6 +1026,7 @@ class StudyTracker extends React.Component {
                             visitLabels={this.state.visitLabels}
                             currentVisit={this.state.currentVisit}
                             showVisitFocus={this.showVisitFocus}
+                            switchOrder={this.switchOrder}
                         />
                         <tbody>
                         {dataRows}

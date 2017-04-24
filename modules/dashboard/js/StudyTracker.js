@@ -281,6 +281,7 @@ var SideBarCandContent = function (_React$Component4) {
             var pscid = this.props.row.pscid;
             var candid = this.props.row.candid;
             var feedback = this.props.row.feedback;
+            var statusDesc = this.props.row.statusDesc;
             var dateReg = formatDate(new Date(this.props.row.dateReg));
             var iconColor = { color: "#444444" };
             // determine if participant has profile level feedback and add appropriate
@@ -438,7 +439,7 @@ var SideBarCandContent = function (_React$Component4) {
                             null,
                             React.createElement(
                                 "a",
-                                { href: url, target: "_blank", style: fontSize },
+                                { href: url, target: "_blank" },
                                 v.visitLabel,
                                 ":"
                             ),
@@ -461,13 +462,24 @@ var SideBarCandContent = function (_React$Component4) {
                 );
             }
             content.push(visitContent);
+            var display = { display: "block" };
             content.push(React.createElement(
                 "p",
-                { className: "right-align small" },
+                { className: "right-align small", style: display },
                 React.createElement(
                     "em",
                     null,
-                    "Candidate was registered on ",
+                    "Status: ",
+                    statusDesc
+                )
+            ));
+            content.push(React.createElement(
+                "p",
+                { className: "right-align small", style: display },
+                React.createElement(
+                    "em",
+                    null,
+                    "Participant was registered on ",
                     dateReg
                 )
             ));
@@ -805,23 +817,12 @@ var VisitCell = function (_React$Component7) {
                             null,
                             visit.ddeInstCompleted,
                             "/",
-                            visit.totalInstrs,
+                            visit.totalDDEInstrs,
                             " instruments entered"
                         )
                     ));
-                    var innerCircleStyle = {
-                        fontWeight: "bold",
-                        color: "white",
-                        position: "inherit",
-                        fontSize: "120%",
-                        lineHeight: "120%"
-                    };
                     if (visit.sentToDCC) {
-                        innerCircleInfo = React.createElement(
-                            "div",
-                            { className: "center", style: innerCircleStyle },
-                            "✓"
-                        );
+                        innerCircleInfo = React.createElement("span", { className: "glyphicon glyphicon-ok inner-circle-glyph" });
                         tooltipContent.push(React.createElement(
                             "p",
                             { className: "complete" },
@@ -829,8 +830,8 @@ var VisitCell = function (_React$Component7) {
                         ));
                     } else if (visit.ddeCompleted) {
                         innerCircleInfo = React.createElement(
-                            "div",
-                            { className: "center", style: innerCircleStyle },
+                            "span",
+                            { className: "inner-circle-text" },
                             "D"
                         );
                         tooltipContent.push(React.createElement(
@@ -839,7 +840,7 @@ var VisitCell = function (_React$Component7) {
                             "Data not yet sent to DCC"
                         ));
                     } else if (visit.visitRegStatus === "cancelled-visit") {
-                        innerCircleInfo = React.createElement("span", { className: "glyphicon glyphicon-remove" });
+                        innerCircleInfo = React.createElement("span", { className: "glyphicon glyphicon-remove inner-circle-glyph" });
                     }
                 }
 
@@ -1472,7 +1473,8 @@ var StudyTracker = function (_React$Component11) {
                         React.createElement(StudyTrackerHeader, {
                             visitLabels: this.state.visitLabels,
                             currentVisit: this.state.currentVisit,
-                            showVisitFocus: this.showVisitFocus
+                            showVisitFocus: this.showVisitFocus,
+                            switchOrder: this.switchOrder
                         }),
                         React.createElement(
                             "tbody",

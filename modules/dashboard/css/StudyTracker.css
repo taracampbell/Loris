@@ -19,3 +19,18 @@
 .SideBarInstStatus {
 	width: 30px;
 }
+
+.inner-circle-glyph {
+	position: relative;
+	top: 1.4px;
+	left: 2.6px;
+	color: white;
+}
+
+.inner-circle-text{
+	position: relative;
+	top: 0px;
+	left: 4.5px;
+	color: white;
+	font-weight: 600;
+}

@@ -504,10 +504,7 @@ class VisitCell extends React.Component {
                         </p>
                     );
                 } else if (visit.visitRegStatus === "cancelled-visit") {
-                    innerCircleStyle.color = "#888888";
-                    innerCircleStyle.fontSize = "200%";
-                    innerCircleStyle.lineHeight = "60%";
-                    innerCircleInfo = <div className="center" style={innerCircleStyle}>x</div>;
+                    innerCircleInfo = <span className="glyphicon glyphicon-remove"></span>;
                 }
             }
 

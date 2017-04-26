@@ -1,5 +1,7 @@
 "use strict";
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -727,7 +729,7 @@ var SideBar = function (_React$Component6) {
                             className: "closebtn",
                             onClick: this.props.closeSideBar
                         },
-                        "×"
+                        "\xD7"
                     ),
                     this.props.sideBarContent
                 )
@@ -759,104 +761,110 @@ var VisitCell = function (_React$Component7) {
                 bgColor = { backgroundColor: HIGHLIGHT_COLOR };
             }
             if (visit.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
-                var tooltipContent = [];
-                var vr = prettyStatus(visit.visitRegStatus, visit.visitRegDueDate);
-                tooltipContent.push(React.createElement(
-                    "p",
-                    null,
-                    "Visit Registration: ",
-                    vr.html
-                ));
-                var innerCircleInfo = null;
-                if (visit.dataEntryStatus) {
-                    var de = prettyStatus(visit.dataEntryStatus, visit.dataEntryDueDate);
+                var _ret3 = function () {
+                    var tooltipContent = [];
+                    var vr = prettyStatus(visit.visitRegStatus, visit.visitRegDueDate);
                     tooltipContent.push(React.createElement(
                         "p",
                         null,
-                        "Data Entry: ",
-                        de.html
-                    ), React.createElement(
-                        "p",
-                        { className: "center" },
-                        React.createElement(
-                            "i",
-                            null,
-                            visit.instrCompleted,
-                            "/",
-                            visit.totalInstrs,
-                            " instruments entered"
-                        )
+                        "Visit Registration: ",
+                        vr.html
                     ));
-                    tooltipContent.push(React.createElement(
-                        "p",
-                        null,
-                        "Double Data Entry:"
-                    ), React.createElement(
-                        "p",
-                        { className: "center" },
-                        React.createElement(
-                            "i",
-                            null,
-                            visit.ddeInstCompleted,
-                            "/",
-                            visit.totalDDEInstrs,
-                            " instruments entered"
-                        )
-                    ));
-                    if (visit.sentToDCC) {
-                        innerCircleInfo = React.createElement("span", { className: "glyphicon glyphicon-ok inner-circle-glyph" });
+                    var innerCircleInfo = null;
+                    if (visit.dataEntryStatus) {
+                        var de = prettyStatus(visit.dataEntryStatus, visit.dataEntryDueDate);
                         tooltipContent.push(React.createElement(
                             "p",
-                            { className: "complete" },
-                            "Data sent to DCC"
+                            null,
+                            "Data Entry: ",
+                            de.html
+                        ), React.createElement(
+                            "p",
+                            { className: "center" },
+                            React.createElement(
+                                "i",
+                                null,
+                                visit.instrCompleted,
+                                "/",
+                                visit.totalInstrs,
+                                " instruments entered"
+                            )
                         ));
-                    } else if (visit.ddeCompleted) {
-                        innerCircleInfo = React.createElement(
-                            "span",
-                            { className: "inner-circle-text" },
-                            "D"
-                        );
                         tooltipContent.push(React.createElement(
                             "p",
-                            { className: "deadline-approaching" },
-                            "Data not yet sent to DCC"
+                            null,
+                            "Double Data Entry:"
+                        ), React.createElement(
+                            "p",
+                            { className: "center" },
+                            React.createElement(
+                                "i",
+                                null,
+                                visit.ddeInstCompleted,
+                                "/",
+                                visit.totalDDEInstrs,
+                                " instruments entered"
+                            )
                         ));
-                    } else if (visit.visitRegStatus === "cancelled-visit") {
-                        innerCircleInfo = React.createElement("span", { className: "glyphicon glyphicon-remove inner-circle-glyph" });
+                        if (visit.sentToDCC) {
+                            innerCircleInfo = React.createElement("span", { className: "glyphicon glyphicon-ok inner-circle-glyph" });
+                            tooltipContent.push(React.createElement(
+                                "p",
+                                { className: "complete" },
+                                "Data sent to DCC"
+                            ));
+                        } else if (visit.ddeCompleted) {
+                            innerCircleInfo = React.createElement(
+                                "span",
+                                { className: "inner-circle-text" },
+                                "D"
+                            );
+                            tooltipContent.push(React.createElement(
+                                "p",
+                                { className: "deadline-approaching" },
+                                "Data not yet sent to DCC"
+                            ));
+                        } else if (visit.visitRegStatus === "cancelled-visit") {
+                            innerCircleInfo = React.createElement("span", { className: "glyphicon glyphicon-remove inner-circle-glyph" });
+                        }
                     }
-                }
 
-                var visitClass = "circle " + visit.dataEntryStatus + " " + visit.visitRegStatus;
+                    var visitClass = "circle " + visit.dataEntryStatus + " " + visit.visitRegStatus;
 
-                var sidebarArgs = {
-                    sessionID: visit.sessionID,
-                    pscid: this.props.pscid,
-                    candid: this.props.candid
-                };
+                    var sidebarArgs = {
+                        sessionID: visit.sessionID,
+                        pscid: _this8.props.pscid,
+                        candid: _this8.props.candid
+                    };
 
-                return React.createElement(
-                    "td",
-                    { className: visit.visitLabel, style: bgColor },
-                    React.createElement(
-                        "div",
-                        { onClick: function onClick() {
-                                return _this8.props.showCandInstFocus(sidebarArgs);
-                            },
-                            "data-tip": true, "data-for": visit.sessionID,
-                            className: visitClass
-                        },
-                        innerCircleInfo,
-                        React.createElement(
-                            ReactTooltip,
-                            { id: visit.sessionID, place: "top", type: "dark", effect: "solid" },
+                    return {
+                        v: React.createElement(
+                            "td",
+                            { className: visit.visitLabel, style: bgColor },
                             React.createElement(
                                 "div",
-                                { className: "ReactTooltipContent" },
-                                tooltipContent
+                                { onClick: function onClick() {
+                                        return _this8.props.showCandInstFocus(sidebarArgs);
+                                    },
+                                    "data-tip": true, "data-for": visit.sessionID,
+                                    className: visitClass
+                                },
+                                innerCircleInfo,
+                                React.createElement(
+                                    ReactTooltip,
+                                    { id: visit.sessionID, place: "top", type: "dark", effect: "solid" },
+                                    React.createElement(
+                                        "div",
+                                        { className: "ReactTooltipContent" },
+                                        tooltipContent
+                                    )
+                                )
                             )
                         )
-                    )
-                );
+                    };
+                }();
+
+                if ((typeof _ret3 === "undefined" ? "undefined" : _typeof(_ret3)) === "object") return _ret3.v;
             } else {
                 return React.createElement("td", { className: visit.visitLabel, style: bgColor });
             }
@@ -890,7 +898,7 @@ var PSCIDCell = function (_React$Component8) {
                     className: "PSCIDCell",
                     onClick: this.props.clickHandler },
                 this.props.pscid,
-                " ",
+                "\xA0",
                 feedBackIcon
             );
         }
@@ -1400,9 +1408,10 @@ var StudyTracker = function (_React$Component11) {
             // Filter out the entire row for candidates at sites other than
             // the currently selected one or if the candidate has no visits for
             // the currently selected cohort
-            var dataRows = this.state.rows.map(function (row) {
+            var dataRows = [];
+            this.state.rows.forEach(function (row) {
                 if (this.renderRow(row)) {
-                    return React.createElement(StudyTrackerRow, {
+                    dataRows.push(React.createElement(StudyTrackerRow, {
                         key: row.pscid,
                         pscid: row.pscid,
                         candid: row.candid,
@@ -1414,9 +1423,17 @@ var StudyTracker = function (_React$Component11) {
                         currentPSCID: this.state.currentPSCID,
                         showCandFocus: this.showCandFocus,
                         showCandInstFocus: this.showCandInstFocus
-                    });
+                    }));
                 }
             }.bind(this));
+
+            if (dataRows.length === 0) {
+                var noMatch = React.createElement(
+                    "p",
+                    null,
+                    "No participants match the current search parameters."
+                );
+            }
             return React.createElement(
                 "div",
                 { className: "StudyTracker" },
@@ -1464,6 +1481,7 @@ var StudyTracker = function (_React$Component11) {
                             dataRows
                         )
                     ),
+                    noMatch,
                     React.createElement(SideBar, {
                         closeSideBar: this.closeSideBar,
                         sideBarContent: this.state.sideBarContent,

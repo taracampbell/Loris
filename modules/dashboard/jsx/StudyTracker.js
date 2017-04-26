@@ -982,9 +982,10 @@ class StudyTracker extends React.Component {
         // Filter out the entire row for candidates at sites other than
         // the currently selected one or if the candidate has no visits for
         // the currently selected cohort
-        let dataRows = this.state.rows.map(function (row) {
+        let dataRows = [];
+        this.state.rows.forEach(function (row) {
                 if(this.renderRow(row)) {
-                    return (
+                    dataRows.push(
                         <StudyTrackerRow
                             key={row.pscid}
                             pscid={row.pscid}
@@ -998,10 +999,14 @@ class StudyTracker extends React.Component {
                             showCandFocus={this.showCandFocus}
                             showCandInstFocus={this.showCandInstFocus}
                         />
-                    )
+                    );
                 }
             }.bind(this)
         );
+
+        if (dataRows.length === 0) {
+            var noMatch = <p>No candidates match the current search parameters.</p>;
+        }
         return (
             <div className="StudyTracker">
                 <div className="row study-tracker-header">
@@ -1032,6 +1037,7 @@ class StudyTracker extends React.Component {
                         {dataRows}
                         </tbody>
                     </table>
+                    {noMatch}
                     <SideBar
                         closeSideBar={this.closeSideBar}
                         sideBarContent={this.state.sideBarContent}

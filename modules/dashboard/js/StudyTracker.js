@@ -1426,9 +1426,10 @@ var StudyTracker = function (_React$Component11) {
             // Filter out the entire row for candidates at sites other than
             // the currently selected one or if the candidate has no visits for
             // the currently selected cohort
-            var dataRows = this.state.rows.map(function (row) {
+            var dataRows = [];
+            this.state.rows.forEach(function (row) {
                 if (this.renderRow(row)) {
-                    return React.createElement(StudyTrackerRow, {
+                    dataRows.push(React.createElement(StudyTrackerRow, {
                         key: row.pscid,
                         pscid: row.pscid,
                         candid: row.candid,
@@ -1440,9 +1441,17 @@ var StudyTracker = function (_React$Component11) {
                         currentPSCID: this.state.currentPSCID,
                         showCandFocus: this.showCandFocus,
                         showCandInstFocus: this.showCandInstFocus
-                    });
+                    }));
                 }
             }.bind(this));
+
+            if (dataRows.length === 0) {
+                var noMatch = React.createElement(
+                    "p",
+                    null,
+                    "No candidates match the current search parameters."
+                );
+            }
             return React.createElement(
                 "div",
                 { className: "StudyTracker" },
@@ -1490,6 +1499,7 @@ var StudyTracker = function (_React$Component11) {
                             dataRows
                         )
                     ),
+                    noMatch,
                     React.createElement(SideBar, {
                         closeSideBar: this.closeSideBar,
                         sideBarContent: this.state.sideBarContent,

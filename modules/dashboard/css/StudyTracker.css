@@ -34,3 +34,12 @@
 	color: white;
 	font-weight: 600;
 }
+
+.sidebar-visit-status {
+	padding-left: 15px;
+	margin-bottom: 5px;
+}
+
+.sidebar-visit {
+	margin-bottom: 10px;
+}

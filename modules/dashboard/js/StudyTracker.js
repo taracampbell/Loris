@@ -283,7 +283,7 @@ var SideBarCandContent = function (_React$Component4) {
             var feedback = this.props.row.feedback;
             var statusDesc = this.props.row.statusDesc;
             var dateReg = formatDate(new Date(this.props.row.dateReg));
-            var iconColor = { color: "#444444" };
+            var iconColor = { color: "#ddd" };
             // determine if participant has profile level feedback and add appropriate
             // links and display as such
             var profileURL = loris.BaseURL + "/" + candid;
@@ -327,14 +327,18 @@ var SideBarCandContent = function (_React$Component4) {
                 ));
             }
 
-            // add a subheader if looking at specific cohort
-            /*if (this.props.currentCohort !== "all") {
-                content.push(
-                    <h4 className="center">
-                        {this.props.currentCohort} Visits
-                    </h4>
-                );
-            }*/
+            content.push(React.createElement(
+                "p",
+                { className: "small" },
+                React.createElement(
+                    "em",
+                    null,
+                    "Status: ",
+                    statusDesc,
+                    ", registered on ",
+                    dateReg
+                )
+            ));
 
             var visitContent = [];
             visits.forEach(function (v) {
@@ -356,16 +360,14 @@ var SideBarCandContent = function (_React$Component4) {
                                 }
                             },
                             React.createElement("span", { className: "glyphicon glyphicon-edit", style: iconColor }),
-                            v.visitLabel,
-                            ":"
+                            v.visitLabel
                         ));
                     } else {
                         url += "instrument_list/?candID=" + candid + "&sessionID=" + v.sessionID;
                         visitLink.push(React.createElement(
                             "a",
                             { href: url },
-                            v.visitLabel,
-                            ":"
+                            v.visitLabel
                         ));
                     }
                     // Check if there is instrument feedback and whether this
@@ -388,13 +390,14 @@ var SideBarCandContent = function (_React$Component4) {
                             instrumentFeedback.push(React.createElement(
                                 "a",
                                 { href: "#",
+                                    className: "sidebar-visit-status",
                                     onClick: function onClick() {
                                         return openBVLFeedback(candid, v.sessionID, fb.commentID, fb.testName);
                                     },
                                     style: instLinkStyle
                                 },
                                 React.createElement("span", { className: "glyphicon glyphicon-edit", style: _iconColor }),
-                                fb.fullName
+                                " " + fb.fullName
                             ));
                         };
 
@@ -408,7 +411,7 @@ var SideBarCandContent = function (_React$Component4) {
 
                         visitContent.push(React.createElement(
                             "div",
-                            null,
+                            { className: "sidebar-visit" },
                             visitLink,
                             vr.html,
                             instrumentFeedback
@@ -417,18 +420,18 @@ var SideBarCandContent = function (_React$Component4) {
                         url += "instrument_list/?candID=" + candid + "&sessionID=" + v.sessionID;
                         visitContent.push(React.createElement(
                             "div",
-                            null,
+                            { className: "sidebar-visit" },
                             visitLink,
                             React.createElement(
                                 "p",
-                                { className: "left-indent" },
-                                "Visit Registration: ",
+                                { className: "sidebar-visit-status" },
+                                "Visit Registration ",
                                 vr.html
                             ),
                             React.createElement(
                                 "p",
-                                { className: "left-indent" },
-                                "Data Entry: ",
+                                { className: "sidebar-visit-status" },
+                                "Data Entry ",
                                 de.html
                             )
                         ));
@@ -436,16 +439,16 @@ var SideBarCandContent = function (_React$Component4) {
                         url += candid;
                         visitContent.push(React.createElement(
                             "div",
-                            null,
+                            { className: "sidebar-visit" },
                             React.createElement(
                                 "a",
-                                { href: url, target: "_blank" },
+                                { href: url },
                                 v.visitLabel,
                                 ":"
                             ),
                             React.createElement(
                                 "p",
-                                { className: "left-indent" },
+                                { className: "sidebar-visit-status" },
                                 "Visit Registration: ",
                                 vr.html
                             )
@@ -462,27 +465,6 @@ var SideBarCandContent = function (_React$Component4) {
                 );
             }
             content.push(visitContent);
-            var display = { display: "block" };
-            content.push(React.createElement(
-                "p",
-                { className: "right-align small", style: display },
-                React.createElement(
-                    "em",
-                    null,
-                    "Status: ",
-                    statusDesc
-                )
-            ));
-            content.push(React.createElement(
-                "p",
-                { className: "right-align small", style: display },
-                React.createElement(
-                    "em",
-                    null,
-                    "Participant was registered on ",
-                    dateReg
-                )
-            ));
             return React.createElement(
                 "div",
                 { className: "SideBarCandContent" },

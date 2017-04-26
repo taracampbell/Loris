@@ -505,6 +505,16 @@ class VisitCell extends React.Component {
                 candid: this.props.candid
             };
 
+            let conflictFlag = [];
+            if (visit.hasConflicts) {
+                //let style = {float: "right"};
+                conflictFlag.push(
+                    <span
+                        className="conflict-flag center glyphicon glyphicon-remove-circle"
+                    />
+                );
+            }
+
             return (
                 <td className={visit.visitLabel} style={bgColor}>
                     <div onClick={() => this.props.showCandInstFocus(sidebarArgs)}
@@ -517,6 +527,7 @@ class VisitCell extends React.Component {
                                 {tooltipContent}
                             </div>
                         </ReactTooltip>
+                        {conflictFlag}
                     </div>
                 </td>
             );

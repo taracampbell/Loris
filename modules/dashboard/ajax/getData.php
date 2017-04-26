@@ -173,6 +173,7 @@ function getTableData() {
             $dataEntryDueDate    = null;
             $ddeCompleted        = null;
             $sentToDCC           = null;
+            $hasConflicts        = false;
             $instrCompleted      = 0;
             $ddeInstCompleted    = 0;
 
@@ -184,6 +185,7 @@ function getTableData() {
                 $sentToDCC        = sentToDCC($sessionID);
                 $totalInstrs      = getTotalInstruments($visitLabel, $subproject);
                 $totalDDEInstrs   = getTotalDDEInstruments($visitLabel, $subproject);
+                $hasConflicts     = visitHasConflicts($sessionID);
 
                 if (!$sentToDCC) {
                     $ddeInstCompleted = getDDEInstrumentsCompleted($sessionID);
@@ -230,6 +232,7 @@ function getTableData() {
             $visit['ddeInstCompleted'] = $ddeInstCompleted;
             $visit['sentToDCC']        = $sentToDCC;
             $visit['totalDDEInstrs']   = $totalDDEInstrs;
+            $visit['hasConflicts']     = $hasConflicts;
             array_push($visits, $visit);
         }
 
@@ -555,4 +558,29 @@ function getInstruments($sessionID) {
     return $result;
 }
 
+function visitHasConflicts($sessionID) {
+    global $DB;
+
+    $commentIDs = $DB->pselect(
+        "SELECT CommentID 
+         FROM flag 
+         WHERE SessionID=:sid 
+         AND CommentID NOT LIKE 'DDE_%'",
+        array("sid" => $sessionID)
+    );
+
+    $commentIDs = array_column($commentIDs, "CommentID");
+    $conflict = $DB->pselectOne(
+        "SELECT ConflictID
+         FROM conflicts_unresolved 
+         WHERE FIND_IN_SET (CommentID1, :cids)",
+        array("cids" => "'".implode(",",$commentIDs)."'")
+    );
+
+    if ($conflict) {
+        return true;
+    }
+
+    return false;
+}
 ?>

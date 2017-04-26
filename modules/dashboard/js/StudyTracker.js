@@ -837,6 +837,14 @@ var VisitCell = function (_React$Component7) {
                         candid: _this8.props.candid
                     };
 
+                    var conflictFlag = [];
+                    if (visit.hasConflicts) {
+                        //let style = {float: "right"};
+                        conflictFlag.push(React.createElement("span", {
+                            className: "conflict-flag center glyphicon glyphicon-remove-circle"
+                        }));
+                    }
+
                     return {
                         v: React.createElement(
                             "td",
@@ -858,7 +866,8 @@ var VisitCell = function (_React$Component7) {
                                         { className: "ReactTooltipContent" },
                                         tooltipContent
                                     )
-                                )
+                                ),
+                                conflictFlag
                             )
                         )
                     };

@@ -180,7 +180,7 @@ class SideBarCandContent extends React.Component {
         let feedback = this.props.row.feedback;
         let statusDesc   = this.props.row.statusDesc;
         let dateReg = formatDate(new Date(this.props.row.dateReg));
-        let iconColor = {color: "#444444"};
+        let iconColor = {color: "#ddd"};
         // determine if participant has profile level feedback and add appropriate
         // links and display as such
         let profileURL = loris.BaseURL + "/" + candid;
@@ -214,14 +214,11 @@ class SideBarCandContent extends React.Component {
             );
         }
 
-        // add a subheader if looking at specific cohort
-        /*if (this.props.currentCohort !== "all") {
-            content.push(
-                <h4 className="center">
-                    {this.props.currentCohort} Visits
-                </h4>
-            );
-        }*/
+        content.push(
+            <p className="small">
+                <em>Status: {statusDesc}, registered on {dateReg}</em>
+            </p>
+        );
 
         let visitContent = [];
         visits.forEach(
@@ -241,14 +238,14 @@ class SideBarCandContent extends React.Component {
                                onClick={() => openBVLFeedback(candid, v.sessionID)}
                             >
                                 <span className="glyphicon glyphicon-edit" style={iconColor}/>
-                                {v.visitLabel}:
+                                {v.visitLabel}
                             </a>
                         );
                     } else {
                         url += "instrument_list/?candID="+candid+"&sessionID="+v.sessionID;
                         visitLink.push(
                             <a href={url}>
-                                {v.visitLabel}:
+                                {v.visitLabel}
                             </a>
                         );
                     }
@@ -271,11 +268,12 @@ class SideBarCandContent extends React.Component {
                             let fb = feedback.instruments[f];
                             instrumentFeedback.push(
                                 <a href="#"
+                                   className="sidebar-visit-status"
                                    onClick={() => openBVLFeedback(candid, v.sessionID, fb.commentID, fb.testName)}
                                    style={instLinkStyle}
                                 >
                                     <span className="glyphicon glyphicon-edit" style={iconColor} />
-                                    {fb.fullName}
+                                    {" " + fb.fullName}
                                 </a>
                             );
                         }
@@ -283,7 +281,7 @@ class SideBarCandContent extends React.Component {
                     if (vr.status === "complete" && de.status === "complete") {
 
                         visitContent.push(
-                            <div>
+                            <div className="sidebar-visit">
                                 {visitLink}
                                 {vr.html}
                                 {instrumentFeedback}
@@ -292,20 +290,20 @@ class SideBarCandContent extends React.Component {
                     } else if(de.html){
                         url += "instrument_list/?candID="+candid+"&sessionID="+v.sessionID;
                         visitContent.push(
-                            <div>
+                            <div className="sidebar-visit">
                                 {visitLink}
-                                <p className="left-indent">Visit Registration: {vr.html}</p>
-                                <p className="left-indent">Data Entry: {de.html}</p>
+                                <p className="sidebar-visit-status">Visit Registration {vr.html}</p>
+                                <p className="sidebar-visit-status">Data Entry {de.html}</p>
                             </div>
                         );
                     } else {
                         url += candid;
                         visitContent.push(
-                            <div>
-                                <a href={url} target="_blank">
+                            <div className="sidebar-visit">
+                                <a href={url}>
                                     {v.visitLabel}:
                                 </a>
-                                <p className="left-indent">Visit Registration: {vr.html}</p>
+                                <p className="sidebar-visit-status">Visit Registration: {vr.html}</p>
                             </div>
                         );
                     }
@@ -318,17 +316,6 @@ class SideBarCandContent extends React.Component {
                 </p>
         }
         content.push(visitContent);
-        let display = {display: "block"};
-        content.push(
-            <p className="right-align small" style={display}>
-                <em>Status: {statusDesc}</em>
-            </p>
-        );
-        content.push(
-            <p className="right-align small" style={display}>
-                <em>Participant was registered on {dateReg}</em>
-            </p>
-        );
         return (
             <div className="SideBarCandContent">
                 {content}

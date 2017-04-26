@@ -1431,7 +1431,7 @@ var StudyTracker = function (_React$Component11) {
                 var noMatch = React.createElement(
                     "p",
                     null,
-                    "No candidates match the current search parameters."
+                    "No participants match the current search parameters."
                 );
             }
             return React.createElement(

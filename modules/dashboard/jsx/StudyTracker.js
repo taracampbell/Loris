@@ -992,7 +992,7 @@ class StudyTracker extends React.Component {
         );
 
         if (dataRows.length === 0) {
-            var noMatch = <p>No candidates match the current search parameters.</p>;
+            var noMatch = <p>No participants match the current search parameters.</p>;
         }
         return (
             <div className="StudyTracker">

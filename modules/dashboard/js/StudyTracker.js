@@ -877,7 +877,11 @@ var VisitCell = function (_React$Component7) {
 
                 if ((typeof _ret3 === "undefined" ? "undefined" : _typeof(_ret3)) === "object") return _ret3.v;
             } else {
-                return React.createElement("td", { className: visit.visitLabel, style: bgColor });
+                return React.createElement(
+                    "td",
+                    { className: "center " + visit.visitLabel, style: bgColor },
+                    "N/A"
+                );
             }
         }
     }]);

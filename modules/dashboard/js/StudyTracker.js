@@ -806,6 +806,17 @@ var VisitCell = function (_React$Component7) {
                                 " instruments entered"
                             )
                         ));
+
+                        if (visit.numConflicts > 0) {
+                            tooltipContent.push(React.createElement(
+                                "p",
+                                { className: "center" },
+                                React.createElement("span", { className: "glyphicon glyphicon-remove-circle" }),
+                                "\xA0",
+                                visit.numConflicts,
+                                " unresolved conflicts."
+                            ));
+                        }
                         if (visit.sentToDCC) {
                             innerCircleInfo = React.createElement("span", { className: "glyphicon glyphicon-ok inner-circle-glyph" });
                             tooltipContent.push(React.createElement(
@@ -837,14 +848,6 @@ var VisitCell = function (_React$Component7) {
                         candid: _this8.props.candid
                     };
 
-                    var conflictFlag = [];
-                    if (visit.hasConflicts) {
-                        //let style = {float: "right"};
-                        conflictFlag.push(React.createElement("span", {
-                            className: "conflict-flag center glyphicon glyphicon-remove-circle"
-                        }));
-                    }
-
                     return {
                         v: React.createElement(
                             "td",
@@ -866,8 +869,7 @@ var VisitCell = function (_React$Component7) {
                                         { className: "ReactTooltipContent" },
                                         tooltipContent
                                     )
-                                ),
-                                conflictFlag
+                                )
                             )
                         )
                     };

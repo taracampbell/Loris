@@ -195,11 +195,10 @@ table.study-tracker-table {
     margin: auto;
 }
 
-
 .complete-data-entry-dcc {
     background-image:
         radial-gradient(
-            circle, #ACE3E8, #6CB3E8
+            circle, #4A90E2, #4A90E2
         );
 }
 

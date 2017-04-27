@@ -160,8 +160,137 @@ var Filters = function (_React$Component2) {
     return Filters;
 }(React.Component);
 
-var SideBarCandInstContent = function (_React$Component3) {
-    _inherits(SideBarCandInstContent, _React$Component3);
+var Legend = function (_React$Component3) {
+    _inherits(Legend, _React$Component3);
+
+    function Legend() {
+        _classCallCheck(this, Legend);
+
+        return _possibleConstructorReturn(this, (Legend.__proto__ || Object.getPrototypeOf(Legend)).apply(this, arguments));
+    }
+
+    _createClass(Legend, [{
+        key: "render",
+        value: function render() {
+            return React.createElement(
+                "div",
+                null,
+                React.createElement(
+                    "div",
+                    { className: "SideBarHeader" },
+                    React.createElement(
+                        "h5",
+                        null,
+                        "Legend"
+                    )
+                ),
+                React.createElement(
+                    "div",
+                    null,
+                    React.createElement("div", { className: "circle no-deadline-visit" }),
+                    React.createElement(
+                        "span",
+                        null,
+                        "No deadline for visit. This is the initial state when a candidate is created."
+                    )
+                ),
+                React.createElement(
+                    "div",
+                    null,
+                    React.createElement("div", { className: "circle deadline-approaching-visit" }),
+                    React.createElement(
+                        "span",
+                        null,
+                        "Visit registration deadline approaching. Once the Initial Assessment - Screening visit has been registered all other visits must be registered within 90 days."
+                    )
+                ),
+                React.createElement(
+                    "div",
+                    null,
+                    React.createElement("div", { className: "circle deadline-past-visit" }),
+                    React.createElement(
+                        "span",
+                        null,
+                        "Deadline for visit registration has passed."
+                    )
+                ),
+                React.createElement(
+                    "div",
+                    null,
+                    React.createElement("div", { className: "circle complete-visit deadline-approaching-data-entry" }),
+                    React.createElement(
+                        "span",
+                        null,
+                        "Visit registration has been completed. Data entry deadline is now approaching and should be completed within 14 days of visit registration."
+                    ),
+                    React.createElement("div", { className: "circle complete-visit deadline-past-data-entry" }),
+                    React.createElement(
+                        "span",
+                        null,
+                        "Deadline for data entry has passed."
+                    ),
+                    React.createElement("div", { className: "circle complete-visit complete-data-entry" }),
+                    React.createElement(
+                        "span",
+                        null,
+                        "Initial data entry has been completed."
+                    ),
+                    React.createElement(
+                        "div",
+                        null,
+                        React.createElement(
+                            "div",
+                            { className: "circle complete-visit complete-data-entry" },
+                            React.createElement(
+                                "span",
+                                { className: "inner-circle-text" },
+                                "D"
+                            )
+                        ),
+                        React.createElement(
+                            "span",
+                            null,
+                            "Double data entry has been completed."
+                        )
+                    ),
+                    React.createElement(
+                        "div",
+                        null,
+                        React.createElement(
+                            "div",
+                            { className: "circle complete-visit complete-data-entry-dcc" },
+                            React.createElement("span", { className: "glyphicon glyphicon-ok inner-circle-glyph" })
+                        ),
+                        React.createElement(
+                            "span",
+                            null,
+                            "Data has been sent to DCC."
+                        )
+                    ),
+                    React.createElement(
+                        "div",
+                        null,
+                        React.createElement(
+                            "div",
+                            { className: "circle cancelled-visit cancelled-data" },
+                            React.createElement("span", { className: "glyphicon glyphicon-remove inner-circle-glyph" })
+                        ),
+                        React.createElement(
+                            "span",
+                            null,
+                            "Visit has been cancelled. Participant has been either excluded or withdrawn."
+                        )
+                    )
+                )
+            );
+        }
+    }]);
+
+    return Legend;
+}(React.Component);
+
+var SideBarCandInstContent = function (_React$Component4) {
+    _inherits(SideBarCandInstContent, _React$Component4);
 
     function SideBarCandInstContent() {
         _classCallCheck(this, SideBarCandInstContent);
@@ -265,8 +394,8 @@ var SideBarCandInstContent = function (_React$Component3) {
     return SideBarCandInstContent;
 }(React.Component);
 
-var SideBarCandContent = function (_React$Component4) {
-    _inherits(SideBarCandContent, _React$Component4);
+var SideBarCandContent = function (_React$Component5) {
+    _inherits(SideBarCandContent, _React$Component5);
 
     function SideBarCandContent() {
         _classCallCheck(this, SideBarCandContent);
@@ -478,8 +607,8 @@ var SideBarCandContent = function (_React$Component4) {
     return SideBarCandContent;
 }(React.Component);
 
-var SideBarVisitContent = function (_React$Component5) {
-    _inherits(SideBarVisitContent, _React$Component5);
+var SideBarVisitContent = function (_React$Component6) {
+    _inherits(SideBarVisitContent, _React$Component6);
 
     function SideBarVisitContent() {
         _classCallCheck(this, SideBarVisitContent);
@@ -704,8 +833,8 @@ var SideBarVisitContent = function (_React$Component5) {
     return SideBarVisitContent;
 }(React.Component);
 
-var SideBar = function (_React$Component6) {
-    _inherits(SideBar, _React$Component6);
+var SideBar = function (_React$Component7) {
+    _inherits(SideBar, _React$Component7);
 
     function SideBar() {
         _classCallCheck(this, SideBar);
@@ -740,8 +869,8 @@ var SideBar = function (_React$Component6) {
     return SideBar;
 }(React.Component);
 
-var VisitCell = function (_React$Component7) {
-    _inherits(VisitCell, _React$Component7);
+var VisitCell = function (_React$Component8) {
+    _inherits(VisitCell, _React$Component8);
 
     function VisitCell() {
         _classCallCheck(this, VisitCell);
@@ -752,7 +881,7 @@ var VisitCell = function (_React$Component7) {
     _createClass(VisitCell, [{
         key: "render",
         value: function render() {
-            var _this8 = this;
+            var _this9 = this;
 
             var visit = this.props.visit;
             var bgColor = {};
@@ -844,8 +973,8 @@ var VisitCell = function (_React$Component7) {
 
                     var sidebarArgs = {
                         sessionID: visit.sessionID,
-                        pscid: _this8.props.pscid,
-                        candid: _this8.props.candid
+                        pscid: _this9.props.pscid,
+                        candid: _this9.props.candid
                     };
 
                     return {
@@ -855,7 +984,7 @@ var VisitCell = function (_React$Component7) {
                             React.createElement(
                                 "div",
                                 { onClick: function onClick() {
-                                        return _this8.props.showCandInstFocus(sidebarArgs);
+                                        return _this9.props.showCandInstFocus(sidebarArgs);
                                     },
                                     "data-tip": true, "data-for": visit.sessionID,
                                     className: visitClass
@@ -889,8 +1018,8 @@ var VisitCell = function (_React$Component7) {
     return VisitCell;
 }(React.Component);
 
-var PSCIDCell = function (_React$Component8) {
-    _inherits(PSCIDCell, _React$Component8);
+var PSCIDCell = function (_React$Component9) {
+    _inherits(PSCIDCell, _React$Component9);
 
     function PSCIDCell() {
         _classCallCheck(this, PSCIDCell);
@@ -922,18 +1051,18 @@ var PSCIDCell = function (_React$Component8) {
     return PSCIDCell;
 }(React.Component);
 
-var StudyTrackerRow = function (_React$Component9) {
-    _inherits(StudyTrackerRow, _React$Component9);
+var StudyTrackerRow = function (_React$Component10) {
+    _inherits(StudyTrackerRow, _React$Component10);
 
     function StudyTrackerRow(props) {
         _classCallCheck(this, StudyTrackerRow);
 
-        var _this10 = _possibleConstructorReturn(this, (StudyTrackerRow.__proto__ || Object.getPrototypeOf(StudyTrackerRow)).call(this, props));
+        var _this11 = _possibleConstructorReturn(this, (StudyTrackerRow.__proto__ || Object.getPrototypeOf(StudyTrackerRow)).call(this, props));
 
-        _this10.highlightRow = _this10.highlightRow.bind(_this10);
-        _this10.unhighlightRow = _this10.unhighlightRow.bind(_this10);
-        _this10.keepHighlightedShowCandFocus = _this10.keepHighlightedShowCandFocus.bind(_this10);
-        return _this10;
+        _this11.highlightRow = _this11.highlightRow.bind(_this11);
+        _this11.unhighlightRow = _this11.unhighlightRow.bind(_this11);
+        _this11.keepHighlightedShowCandFocus = _this11.keepHighlightedShowCandFocus.bind(_this11);
+        return _this11;
     }
 
     _createClass(StudyTrackerRow, [{
@@ -1006,22 +1135,22 @@ var StudyTrackerRow = function (_React$Component9) {
     return StudyTrackerRow;
 }(React.Component);
 
-var StudyTrackerHeader = function (_React$Component10) {
-    _inherits(StudyTrackerHeader, _React$Component10);
+var StudyTrackerHeader = function (_React$Component11) {
+    _inherits(StudyTrackerHeader, _React$Component11);
 
     function StudyTrackerHeader(props) {
         _classCallCheck(this, StudyTrackerHeader);
 
-        var _this11 = _possibleConstructorReturn(this, (StudyTrackerHeader.__proto__ || Object.getPrototypeOf(StudyTrackerHeader)).call(this, props));
+        var _this12 = _possibleConstructorReturn(this, (StudyTrackerHeader.__proto__ || Object.getPrototypeOf(StudyTrackerHeader)).call(this, props));
 
-        _this11.state = {
+        _this12.state = {
             visitInFocus: null
         };
-        _this11.highlightColumns = _this11.highlightColumns.bind(_this11);
-        _this11.unhighlightColumns = _this11.unhighlightColumns.bind(_this11);
-        _this11.switchOrder = _this11.switchOrder.bind(_this11);
-        _this11.keepHighlightedShowVisitFocus = _this11.keepHighlightedShowVisitFocus.bind(_this11);
-        return _this11;
+        _this12.highlightColumns = _this12.highlightColumns.bind(_this12);
+        _this12.unhighlightColumns = _this12.unhighlightColumns.bind(_this12);
+        _this12.switchOrder = _this12.switchOrder.bind(_this12);
+        _this12.keepHighlightedShowVisitFocus = _this12.keepHighlightedShowVisitFocus.bind(_this12);
+        return _this12;
     }
 
     // When mouse enters header cell, highlight all cells for that visit
@@ -1107,15 +1236,15 @@ var StudyTrackerHeader = function (_React$Component10) {
     return StudyTrackerHeader;
 }(React.Component);
 
-var StudyTracker = function (_React$Component11) {
-    _inherits(StudyTracker, _React$Component11);
+var StudyTracker = function (_React$Component12) {
+    _inherits(StudyTracker, _React$Component12);
 
     function StudyTracker(props) {
         _classCallCheck(this, StudyTracker);
 
-        var _this12 = _possibleConstructorReturn(this, (StudyTracker.__proto__ || Object.getPrototypeOf(StudyTracker)).call(this, props));
+        var _this13 = _possibleConstructorReturn(this, (StudyTracker.__proto__ || Object.getPrototypeOf(StudyTracker)).call(this, props));
 
-        _this12.state = {
+        _this13.state = {
             rows: [],
             visitLabels: [],
             currentSite: "all",
@@ -1129,21 +1258,22 @@ var StudyTracker = function (_React$Component11) {
             currentVisit: null,
             currentSideBarFocus: null,
             filterCandText: "",
-            active: _this12.props.active
+            active: _this13.props.active
         };
-        _this12.showCandInstFocus = _this12.showCandInstFocus.bind(_this12);
-        _this12.showCandFocus = _this12.showCandFocus.bind(_this12);
-        _this12.showVisitFocus = _this12.showVisitFocus.bind(_this12);
-        _this12.showSideBar = _this12.showSideBar.bind(_this12);
-        _this12.closeSideBar = _this12.closeSideBar.bind(_this12);
-        _this12.filterCand = _this12.filterCand.bind(_this12);
-        _this12.filterSites = _this12.filterSites.bind(_this12);
-        _this12.filterTeams = _this12.filterTeams.bind(_this12);
-        _this12.filterCohorts = _this12.filterCohorts.bind(_this12);
-        _this12.switchOrder = _this12.switchOrder.bind(_this12);
-        _this12.renderRow = _this12.renderRow.bind(_this12);
-        _this12.rowHasCurrentCohortVisit = _this12.rowHasCurrentCohortVisit.bind(_this12);
-        return _this12;
+        _this13.showCandInstFocus = _this13.showCandInstFocus.bind(_this13);
+        _this13.showCandFocus = _this13.showCandFocus.bind(_this13);
+        _this13.showVisitFocus = _this13.showVisitFocus.bind(_this13);
+        _this13.showLegend = _this13.showLegend.bind(_this13);
+        _this13.showSideBar = _this13.showSideBar.bind(_this13);
+        _this13.closeSideBar = _this13.closeSideBar.bind(_this13);
+        _this13.filterCand = _this13.filterCand.bind(_this13);
+        _this13.filterSites = _this13.filterSites.bind(_this13);
+        _this13.filterTeams = _this13.filterTeams.bind(_this13);
+        _this13.filterCohorts = _this13.filterCohorts.bind(_this13);
+        _this13.switchOrder = _this13.switchOrder.bind(_this13);
+        _this13.renderRow = _this13.renderRow.bind(_this13);
+        _this13.rowHasCurrentCohortVisit = _this13.rowHasCurrentCohortVisit.bind(_this13);
+        return _this13;
     }
 
     _createClass(StudyTracker, [{
@@ -1296,13 +1426,29 @@ var StudyTracker = function (_React$Component11) {
                 visit = this.state.currentVisit;
             }
 
-            var sidebarContent = React.createElement(SideBarVisitContent, {
+            var sideBarContent = React.createElement(SideBarVisitContent, {
                 visit: visit,
                 currentSite: this.state.currentSite,
                 currentCohort: this.state.currentCohort,
                 rows: this.state.rows
             });
-            this.setState({ sideBarContent: sidebarContent });
+            this.setState({ sideBarContent: sideBarContent });
+
+            if (event) {
+                this.showSideBar();
+            }
+        }
+    }, {
+        key: "showLegend",
+        value: function showLegend(event) {
+            var sideBarContent = React.createElement(Legend, null);
+
+            this.setState({
+                currentVisit: null,
+                currentPSCID: null,
+                currentSideBarFocus: "legend",
+                sideBarContent: sideBarContent
+            });
 
             if (event) {
                 this.showSideBar();
@@ -1460,7 +1606,10 @@ var StudyTracker = function (_React$Component11) {
                         { className: "col-md-6" },
                         React.createElement(
                             "h3",
-                            { className: "dashboard-header" },
+                            {
+                                className: "dashboard-header",
+                                onClick: this.showLegend
+                            },
                             "Study Progression"
                         )
                     ),

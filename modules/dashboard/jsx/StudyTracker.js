@@ -95,6 +95,73 @@ class Filters extends React.Component {
     }
 }
 
+class Legend extends React.Component {
+    render() {
+        return (
+            <div>
+                <div className="SideBarHeader">
+                    <h5>Legend</h5>
+                </div>
+                <div>
+                    <div className="circle no-deadline-visit"/>
+                    <span>No deadline for visit. This is the initial state when a candidate is created.</span>
+                </div>
+                <div>
+                    <div className="circle deadline-approaching-visit"/>
+                    <span>
+                        Visit registration deadline approaching. Once the Initial
+                        Assessment - Screening visit has been registered all other
+                        visits must be registered within 90 days.
+                    </span>
+                </div>
+                <div>
+                    <div className="circle deadline-past-visit"/>
+                    <span>
+                        Deadline for visit registration has passed.
+                    </span>
+                </div>
+                <div>
+                    <div className="circle complete-visit deadline-approaching-data-entry"/>
+                    <span>
+                        Visit registration has been completed.
+                        Data entry deadline is now approaching and should
+                        be completed within 14 days of visit registration.
+                    </span>
+                    <div className="circle complete-visit deadline-past-data-entry"/>
+                    <span>
+                        Deadline for data entry has passed.
+                    </span>
+                    <div className="circle complete-visit complete-data-entry"/>
+                    <span>
+                        Initial data entry has been completed.
+                    </span>
+                    <div>
+                        <div className="circle complete-visit complete-data-entry">
+                            <span className="inner-circle-text">D</span>
+                        </div>
+                        <span>Double data entry has been completed.</span>
+                    </div>
+                    <div>
+                        <div className="circle complete-visit complete-data-entry-dcc">
+                            <span className="glyphicon glyphicon-ok inner-circle-glyph"/>
+                        </div>
+                        <span>Data has been sent to DCC.</span>
+                    </div>
+                    <div>
+                        <div className="circle cancelled-visit cancelled-data">
+                            <span className="glyphicon glyphicon-remove inner-circle-glyph" />
+                        </div>
+                        <span>
+                            Visit has been cancelled. Participant has
+                            been either excluded or withdrawn.
+                        </span>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+}
+
 class SideBarCandInstContent extends React.Component {
     render() {
         let content = [];
@@ -734,6 +801,7 @@ class StudyTracker extends React.Component {
         this.showCandInstFocus = this.showCandInstFocus.bind(this);
         this.showCandFocus = this.showCandFocus.bind(this);
         this.showVisitFocus = this.showVisitFocus.bind(this);
+        this.showLegend = this.showLegend.bind(this);
         this.showSideBar = this.showSideBar.bind(this);
         this.closeSideBar = this.closeSideBar.bind(this);
         this.filterCand = this.filterCand.bind(this);
@@ -861,15 +929,30 @@ class StudyTracker extends React.Component {
             visit = this.state.currentVisit;
         }
 
-        let sidebarContent = <SideBarVisitContent
+        let sideBarContent = <SideBarVisitContent
             visit={visit}
             currentSite={this.state.currentSite}
             currentCohort={this.state.currentCohort}
             rows={this.state.rows}
         />;
         this.setState(
-            {sideBarContent: sidebarContent}
+            {sideBarContent: sideBarContent}
         );
+
+        if (event) {
+            this.showSideBar();
+        }
+    }
+
+    showLegend(event){
+        let sideBarContent = <Legend/>;
+
+        this.setState({
+            currentVisit: null,
+            currentPSCID: null,
+            currentSideBarFocus: "legend",
+            sideBarContent: sideBarContent
+        });
 
         if (event) {
             this.showSideBar();
@@ -1007,7 +1090,11 @@ class StudyTracker extends React.Component {
             <div className="StudyTracker">
                 <div className="row study-tracker-header">
                     <div className="col-md-6">
-                        <h3 className="dashboard-header">Study Progression</h3>
+                        <h3
+                            className="dashboard-header"
+                            onClick={this.showLegend}
+                        >Study Progression
+                        </h3>
                     </div>
                     <div className="col-md-6">
                         <Filters

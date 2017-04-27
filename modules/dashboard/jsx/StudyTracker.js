@@ -530,7 +530,7 @@ class VisitCell extends React.Component {
                 </td>
             );
         } else {
-            return (<td className={visit.visitLabel} style={bgColor}/>);
+            return (<td className={"center "+visit.visitLabel} style={bgColor}>N/A</td>);
         }
     }
 }

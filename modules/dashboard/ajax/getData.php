@@ -173,7 +173,7 @@ function getTableData() {
             $dataEntryDueDate    = null;
             $ddeCompleted        = null;
             $sentToDCC           = null;
-            $numConflicts        = false;
+            $numConflicts        = 0;
             $instrCompleted      = 0;
             $ddeInstCompleted    = 0;
 

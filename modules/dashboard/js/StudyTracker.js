@@ -806,6 +806,17 @@ var VisitCell = function (_React$Component7) {
                                 " instruments entered"
                             )
                         ));
+
+                        if (visit.numConflicts > 0) {
+                            tooltipContent.push(React.createElement(
+                                "p",
+                                { className: "center" },
+                                React.createElement("span", { className: "glyphicon glyphicon-remove-circle" }),
+                                "\xA0",
+                                visit.numConflicts,
+                                " unresolved conflicts."
+                            ));
+                        }
                         if (visit.sentToDCC) {
                             innerCircleInfo = React.createElement("span", { className: "glyphicon glyphicon-ok inner-circle-glyph" });
                             tooltipContent.push(React.createElement(

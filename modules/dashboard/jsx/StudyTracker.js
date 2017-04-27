@@ -476,8 +476,17 @@ class VisitCell extends React.Component {
                         </i>
                     </p>
                 );
+
+                if (visit.numConflicts > 0) {
+                    tooltipContent.push(
+                        <p className="center">
+                            <span className="glyphicon glyphicon-remove-circle"/>
+                            &nbsp;{visit.numConflicts} unresolved conflicts.
+                        </p>
+                    );
+                }
                 if (visit.sentToDCC) {
-                    innerCircleInfo = <span className="glyphicon glyphicon-ok inner-circle-glyph"></span>;
+                    innerCircleInfo = <span className="glyphicon glyphicon-ok inner-circle-glyph"/>;
                     tooltipContent.push(
                         <p className="complete">
                             Data sent to DCC
@@ -491,7 +500,7 @@ class VisitCell extends React.Component {
                         </p>
                     );
                 } else if (visit.visitRegStatus === "cancelled-visit") {
-                    innerCircleInfo = <span className="glyphicon glyphicon-remove inner-circle-glyph"></span>;
+                    innerCircleInfo = <span className="glyphicon glyphicon-remove inner-circle-glyph"/>;
                 }
             }
 

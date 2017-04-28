@@ -1611,7 +1611,7 @@ var StudyTracker = function (_React$Component12) {
                     { className: "row study-tracker-header" },
                     React.createElement(
                         "div",
-                        { className: "col-md-6 row" },
+                        { className: "col-md-6" },
                         React.createElement(
                             "h3",
                             { className: "dashboard-header" },

@@ -1093,7 +1093,7 @@ class StudyTracker extends React.Component {
         return (
             <div className="StudyTracker">
                 <div className="row study-tracker-header">
-                    <div className="col-md-6 row">
+                    <div className="col-md-6">
                         <h3 className="dashboard-header">
                             Study Progression
                             <span className="right-align legend-icon"

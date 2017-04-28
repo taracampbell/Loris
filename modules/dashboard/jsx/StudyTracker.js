@@ -485,7 +485,9 @@ class VisitCell extends React.Component {
                         </p>
                     );
                 }
-                if (visit.sentToDCC) {
+                if (visit.visitRegStatus === "cancelled-visit") {
+                    innerCircleInfo = <span className="glyphicon glyphicon-remove inner-circle-glyph"/>;
+                } else if (visit.sentToDCC) {
                     innerCircleInfo = <span className="glyphicon glyphicon-ok inner-circle-glyph"/>;
                     tooltipContent.push(
                         <p className="complete">
@@ -499,8 +501,6 @@ class VisitCell extends React.Component {
                             Data not yet sent to DCC
                         </p>
                     );
-                } else if (visit.visitRegStatus === "cancelled-visit") {
-                    innerCircleInfo = <span className="glyphicon glyphicon-remove inner-circle-glyph"/>;
                 }
             }
 

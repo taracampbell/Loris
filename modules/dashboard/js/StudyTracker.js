@@ -186,7 +186,7 @@ var Legend = function (_React$Component3) {
                 ),
                 React.createElement(
                     "div",
-                    null,
+                    { className: "legend-entry" },
                     React.createElement("div", { className: "circle no-deadline-visit" }),
                     React.createElement(
                         "span",
@@ -196,7 +196,7 @@ var Legend = function (_React$Component3) {
                 ),
                 React.createElement(
                     "div",
-                    null,
+                    { className: "legend-entry" },
                     React.createElement("div", { className: "circle deadline-approaching-visit" }),
                     React.createElement(
                         "span",
@@ -206,7 +206,7 @@ var Legend = function (_React$Component3) {
                 ),
                 React.createElement(
                     "div",
-                    null,
+                    { className: "legend-entry" },
                     React.createElement("div", { className: "circle deadline-past-visit" }),
                     React.createElement(
                         "span",
@@ -216,70 +216,78 @@ var Legend = function (_React$Component3) {
                 ),
                 React.createElement(
                     "div",
-                    null,
+                    { className: "legend-entry" },
                     React.createElement("div", { className: "circle complete-visit deadline-approaching-data-entry" }),
                     React.createElement(
                         "span",
                         null,
                         "Visit registration has been completed. Data entry deadline is now approaching and should be completed within 14 days of visit registration."
-                    ),
+                    )
+                ),
+                React.createElement(
+                    "div",
+                    { className: "legend-entry" },
                     React.createElement("div", { className: "circle complete-visit deadline-past-data-entry" }),
                     React.createElement(
                         "span",
                         null,
                         "Deadline for data entry has passed."
-                    ),
+                    )
+                ),
+                React.createElement(
+                    "div",
+                    { className: "legend-entry" },
                     React.createElement("div", { className: "circle complete-visit complete-data-entry" }),
                     React.createElement(
                         "span",
                         null,
                         "Initial data entry has been completed."
-                    ),
+                    )
+                ),
+                React.createElement(
+                    "div",
+                    { className: "legend-entry" },
                     React.createElement(
                         "div",
-                        null,
-                        React.createElement(
-                            "div",
-                            { className: "circle complete-visit complete-data-entry" },
-                            React.createElement(
-                                "span",
-                                { className: "inner-circle-text" },
-                                "D"
-                            )
-                        ),
+                        { className: "circle complete-visit complete-data-entry" },
                         React.createElement(
                             "span",
-                            null,
-                            "Double data entry has been completed."
+                            { className: "inner-circle-text" },
+                            "D"
                         )
                     ),
                     React.createElement(
-                        "div",
+                        "span",
                         null,
-                        React.createElement(
-                            "div",
-                            { className: "circle complete-visit complete-data-entry-dcc" },
-                            React.createElement("span", { className: "glyphicon glyphicon-ok inner-circle-glyph" })
-                        ),
-                        React.createElement(
-                            "span",
-                            null,
-                            "Data has been sent to DCC."
-                        )
-                    ),
+                        "Double data entry has been completed."
+                    )
+                ),
+                React.createElement(
+                    "div",
+                    { className: "legend-entry" },
                     React.createElement(
                         "div",
+                        { className: "circle complete-visit complete-data-entry-dcc" },
+                        React.createElement("span", { className: "glyphicon glyphicon-ok inner-circle-glyph" })
+                    ),
+                    React.createElement(
+                        "span",
                         null,
-                        React.createElement(
-                            "div",
-                            { className: "circle cancelled-visit cancelled-data" },
-                            React.createElement("span", { className: "glyphicon glyphicon-remove inner-circle-glyph" })
-                        ),
-                        React.createElement(
-                            "span",
-                            null,
-                            "Visit has been cancelled. Participant has been either excluded or withdrawn."
-                        )
+                        "Data has been sent to DCC."
+                    )
+                ),
+                React.createElement(
+                    "div",
+                    { className: "legend-entry" },
+                    React.createElement(
+                        "div",
+                        { className: "circle cancelled-visit cancelled-data" },
+                        React.createElement("span", { className: "glyphicon glyphicon-remove inner-circle-glyph" })
+                    ),
+                    React.createElement(
+                        "span",
+                        null,
+                        "Visit has been cancelled. Participant has been either excluded or withdrawn."
                     )
                 )
             );
@@ -1603,14 +1611,18 @@ var StudyTracker = function (_React$Component12) {
                     { className: "row study-tracker-header" },
                     React.createElement(
                         "div",
-                        { className: "col-md-6" },
+                        { className: "col-md-6 row" },
                         React.createElement(
                             "h3",
-                            {
-                                className: "dashboard-header",
-                                onClick: this.showLegend
-                            },
-                            "Study Progression"
+                            { className: "dashboard-header" },
+                            "Study Progression",
+                            React.createElement(
+                                "span",
+                                { className: "right-align legend-icon",
+                                    onClick: this.showLegend
+                                },
+                                "?"
+                            )
                         )
                     ),
                     React.createElement(

@@ -102,11 +102,11 @@ class Legend extends React.Component {
                 <div className="SideBarHeader">
                     <h5>Legend</h5>
                 </div>
-                <div>
+                <div className="legend-entry">
                     <div className="circle no-deadline-visit"/>
                     <span>No deadline for visit. This is the initial state when a candidate is created.</span>
                 </div>
-                <div>
+                <div className="legend-entry">
                     <div className="circle deadline-approaching-visit"/>
                     <span>
                         Visit registration deadline approaching. Once the Initial
@@ -114,48 +114,52 @@ class Legend extends React.Component {
                         visits must be registered within 90 days.
                     </span>
                 </div>
-                <div>
+                <div className="legend-entry">
                     <div className="circle deadline-past-visit"/>
                     <span>
                         Deadline for visit registration has passed.
                     </span>
                 </div>
-                <div>
+                <div className="legend-entry">
                     <div className="circle complete-visit deadline-approaching-data-entry"/>
                     <span>
                         Visit registration has been completed.
                         Data entry deadline is now approaching and should
                         be completed within 14 days of visit registration.
                     </span>
+                </div>
+                <div className="legend-entry">
                     <div className="circle complete-visit deadline-past-data-entry"/>
                     <span>
                         Deadline for data entry has passed.
                     </span>
+                </div>
+                <div className="legend-entry">
                     <div className="circle complete-visit complete-data-entry"/>
                     <span>
                         Initial data entry has been completed.
                     </span>
-                    <div>
-                        <div className="circle complete-visit complete-data-entry">
-                            <span className="inner-circle-text">D</span>
-                        </div>
-                        <span>Double data entry has been completed.</span>
+                </div>
+                <div className="legend-entry">
+                    <div className="circle complete-visit complete-data-entry">
+                        <span className="inner-circle-text">D</span>
                     </div>
-                    <div>
-                        <div className="circle complete-visit complete-data-entry-dcc">
-                            <span className="glyphicon glyphicon-ok inner-circle-glyph"/>
-                        </div>
-                        <span>Data has been sent to DCC.</span>
+                    <span>Double data entry has been completed.</span>
+                </div>
+                <div className="legend-entry">
+                    <div className="circle complete-visit complete-data-entry-dcc">
+                        <span className="glyphicon glyphicon-ok inner-circle-glyph"/>
                     </div>
-                    <div>
-                        <div className="circle cancelled-visit cancelled-data">
-                            <span className="glyphicon glyphicon-remove inner-circle-glyph" />
-                        </div>
-                        <span>
-                            Visit has been cancelled. Participant has
-                            been either excluded or withdrawn.
-                        </span>
+                    <span>Data has been sent to DCC.</span>
+                </div>
+                <div className="legend-entry">
+                    <div className="circle cancelled-visit cancelled-data">
+                        <span className="glyphicon glyphicon-remove inner-circle-glyph" />
                     </div>
+                    <span>
+                        Visit has been cancelled. Participant has
+                        been either excluded or withdrawn.
+                    </span>
                 </div>
             </div>
         );
@@ -1089,12 +1093,16 @@ class StudyTracker extends React.Component {
         return (
             <div className="StudyTracker">
                 <div className="row study-tracker-header">
-                    <div className="col-md-6">
-                        <h3
-                            className="dashboard-header"
-                            onClick={this.showLegend}
-                        >Study Progression
+                    <div className="col-md-6 row">
+                        <h3 className="dashboard-header">
+                            Study Progression
+                            <span className="right-align legend-icon"
+                                  onClick={this.showLegend}
+                            >
+                                ?
+                            </span>
                         </h3>
+
                     </div>
                     <div className="col-md-6">
                         <Filters
@@ -1106,6 +1114,7 @@ class StudyTracker extends React.Component {
                             cohorts={this.state.cohorts}
                             filterCohorts={this.filterCohorts}
                         />
+
                     </div>
                 </div>
                 <div>

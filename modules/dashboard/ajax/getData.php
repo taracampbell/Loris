@@ -185,12 +185,14 @@ function getTableData() {
                 $sentToDCC        = sentToDCC($sessionID);
                 $totalInstrs      = getTotalInstruments($visitLabel, $subproject);
                 $totalDDEInstrs   = getTotalDDEInstruments($visitLabel, $subproject);
-                $numConflicts     = getNumConflictsForVisit($sessionID);
+
 
                 if (!$sentToDCC) {
                     $ddeInstCompleted = getDDEInstrumentsCompleted($sessionID);
                     $instrCompleted = getTotalInstrumentsCompleted($sessionID);
-
+                    if ($ddeInstCompleted > 0) {
+                        $numConflicts = getNumConflictsForVisit($sessionID);
+                    }
                     if ($ddeInstCompleted !== $totalDDEInstrs || $instrCompleted !== $totalInstrs) {
 
                         if ($instrCompleted === $totalInstrs) {

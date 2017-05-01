@@ -8,7 +8,7 @@ function SiteFilter(props) {
     let options = [];
 
     if (props.sites.size > 1) {
-        options.push(<option value="all">Show All Sites</option>);
+        options.push(<option key="all" value="all">Show All Sites</option>);
     }
     props.sites.forEach(function (name, alias) {
            options.push(<option key={alias} value={alias}>{name}</option>);
@@ -527,21 +527,23 @@ class VisitCell extends React.Component {
         if (visit.cohort === this.props.currentCohort || this.props.currentCohort === "all") {
             let tooltipContent = [];
             let vr = prettyStatus(visit.visitRegStatus, visit.visitRegDueDate);
-            tooltipContent.push(<p>Visit Registration: {vr.html}</p>);
+            tooltipContent.push(
+                <p key="vr-status">Visit Registration: {vr.html}</p>
+            );
             let innerCircleInfo = null;
             if (visit.dataEntryStatus) {
                 let de = prettyStatus(visit.dataEntryStatus, visit.dataEntryDueDate);
                 tooltipContent.push(
-                    <p>Data Entry: {de.html}</p>,
-                    <p className="center">
+                    <p key="de-status">Data Entry: {de.html}</p>,
+                    <p key="instr-entered" className="center">
                         <i>
                             {visit.instrCompleted}/{visit.totalInstrs} instruments entered
                         </i>
                     </p>
                 );
                 tooltipContent.push(
-                    <p>Double Data Entry:</p>,
-                    <p className="center">
+                    <p key="dde">Double Data Entry:</p>,
+                    <p key="dde-entered" className="center">
                         <i>
                             {visit.ddeInstCompleted}/{visit.totalDDEInstrs} instruments entered
                         </i>
@@ -550,7 +552,7 @@ class VisitCell extends React.Component {
 
                 if (visit.numConflicts > 0) {
                     tooltipContent.push(
-                        <p className="center">
+                        <p key="conflicts" className="center">
                             <span className="glyphicon glyphicon-remove-circle"/>
                             &nbsp;{visit.numConflicts} unresolved conflicts.
                         </p>
@@ -559,14 +561,14 @@ class VisitCell extends React.Component {
                 if (visit.sentToDCC) {
                     innerCircleInfo = <span className="glyphicon glyphicon-ok inner-circle-glyph"/>;
                     tooltipContent.push(
-                        <p className="complete">
+                        <p key="dcc-sent" className="complete">
                             Data sent to DCC
                         </p>
                     );
                 } else if (visit.ddeCompleted) {
                     innerCircleInfo = <span className="inner-circle-text">D</span>;
                     tooltipContent.push(
-                        <p className="deadline-approaching">
+                        <p key="dcc-not-sent" className="deadline-approaching">
                             Data not yet sent to DCC
                         </p>
                     );
@@ -613,9 +615,7 @@ class PSCIDCell extends React.Component {
 
         if (Object.keys(this.props.feedback).length) {
             let style = {color: "#444444"};
-            feedBackIcon.push(
-                <span className="glyphicon glyphicon-edit" style={style}/>
-            );
+            feedBackIcon = <span className="glyphicon glyphicon-edit" style={style}/>;
         }
         return (
             <td

@@ -22,7 +22,7 @@ function SiteFilter(props) {
     if (props.sites.size > 1) {
         options.push(React.createElement(
             "option",
-            { value: "all" },
+            { key: "all", value: "all" },
             "Show All Sites"
         ));
     }
@@ -903,7 +903,7 @@ var VisitCell = function (_React$Component8) {
                     var vr = prettyStatus(visit.visitRegStatus, visit.visitRegDueDate);
                     tooltipContent.push(React.createElement(
                         "p",
-                        null,
+                        { key: "vr-status" },
                         "Visit Registration: ",
                         vr.html
                     ));
@@ -912,12 +912,12 @@ var VisitCell = function (_React$Component8) {
                         var de = prettyStatus(visit.dataEntryStatus, visit.dataEntryDueDate);
                         tooltipContent.push(React.createElement(
                             "p",
-                            null,
+                            { key: "de-status" },
                             "Data Entry: ",
                             de.html
                         ), React.createElement(
                             "p",
-                            { className: "center" },
+                            { key: "instr-entered", className: "center" },
                             React.createElement(
                                 "i",
                                 null,
@@ -929,11 +929,11 @@ var VisitCell = function (_React$Component8) {
                         ));
                         tooltipContent.push(React.createElement(
                             "p",
-                            null,
+                            { key: "dde" },
                             "Double Data Entry:"
                         ), React.createElement(
                             "p",
-                            { className: "center" },
+                            { key: "dde-entered", className: "center" },
                             React.createElement(
                                 "i",
                                 null,
@@ -947,7 +947,7 @@ var VisitCell = function (_React$Component8) {
                         if (visit.numConflicts > 0) {
                             tooltipContent.push(React.createElement(
                                 "p",
-                                { className: "center" },
+                                { key: "conflicts", className: "center" },
                                 React.createElement("span", { className: "glyphicon glyphicon-remove-circle" }),
                                 "\xA0",
                                 visit.numConflicts,
@@ -958,7 +958,7 @@ var VisitCell = function (_React$Component8) {
                             innerCircleInfo = React.createElement("span", { className: "glyphicon glyphicon-ok inner-circle-glyph" });
                             tooltipContent.push(React.createElement(
                                 "p",
-                                { className: "complete" },
+                                { key: "dcc-sent", className: "complete" },
                                 "Data sent to DCC"
                             ));
                         } else if (visit.ddeCompleted) {
@@ -969,7 +969,7 @@ var VisitCell = function (_React$Component8) {
                             );
                             tooltipContent.push(React.createElement(
                                 "p",
-                                { className: "deadline-approaching" },
+                                { key: "dcc-not-sent", className: "deadline-approaching" },
                                 "Data not yet sent to DCC"
                             ));
                         } else if (visit.visitRegStatus === "cancelled-visit") {
@@ -1042,7 +1042,7 @@ var PSCIDCell = function (_React$Component9) {
 
             if (Object.keys(this.props.feedback).length) {
                 var style = { color: "#444444" };
-                feedBackIcon.push(React.createElement("span", { className: "glyphicon glyphicon-edit", style: style }));
+                feedBackIcon = React.createElement("span", { className: "glyphicon glyphicon-edit", style: style });
             }
             return React.createElement(
                 "td",

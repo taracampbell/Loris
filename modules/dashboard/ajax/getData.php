@@ -206,6 +206,8 @@ function getTableData() {
                         $dataEntryStatus = 'complete-data-entry';
                     }
                 } else {
+                    $ddeInstCompleted =$totalDDEInstrs;
+                    $instrCompleted = $totalInstrs;
                     $dataEntryStatus = "complete-data-entry-dcc";
                 }
             } else {

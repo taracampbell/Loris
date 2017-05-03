@@ -424,7 +424,7 @@ var Task = function (_React$Component5) {
   _createClass(Task, [{
     key: "render",
     value: function render() {
-      var href = loris.baseURL + this.props.URL;
+      var href = loris.BaseURL + this.props.URL;
       return React.createElement(
         "a",
         { href: href, className: "list-group-item" },

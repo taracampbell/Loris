@@ -205,7 +205,7 @@ class StudyProgressionPanel extends React.Component {
 
 class Task extends React.Component {
   render() {
-    let href = loris.baseURL + this.props.URL;
+    let href = loris.BaseURL + this.props.URL;
     return (
       <a href={href} className="list-group-item">
         <div className="row">

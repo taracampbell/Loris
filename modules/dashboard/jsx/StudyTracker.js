@@ -484,7 +484,7 @@ class SideBarVisitContent extends React.Component {
             <div className="SideBarVisitContent">
                 <div className="SideBarHeader">
                     <h5>
-                        {this.props.visit} Visit
+                        {backToFrontVLs.get(this.props.visit)} Visit
                     </h5>
                 </div>
                 <div className="SideBarSubContent">

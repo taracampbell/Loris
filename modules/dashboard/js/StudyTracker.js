@@ -813,7 +813,7 @@ var SideBarVisitContent = function (_React$Component6) {
                     React.createElement(
                         "h5",
                         null,
-                        this.props.visit,
+                        backToFrontVLs.get(this.props.visit),
                         " Visit"
                     )
                 ),

@@ -29,10 +29,11 @@ if (isset($_GET['data'])) {
     } else if ($data == 'all') {
         header('Content-Type: application/json');
         $result = array(
-            "cohorts"     => getCohorts(),
-            "sites"       => getSites(),
-            "tableData"   => getTableData(),
-            "visitLabels" => getVisitLabels()
+            "cohorts"       => getCohorts(),
+            "sites"         => getSites(),
+            "tableData"     => getTableData(),
+            "visitLabels"   => array_keys(getVisitLabels()),
+            "feVisitLabels" => array_values(getVisitLabels())
         );
         echo json_encode($result);
     } else {
@@ -78,10 +79,10 @@ function getVisitLabels() {
     //$visits = Utility::getVisitList();
 
     $visits = array(
-        'Initial_Assessment_Screening',
-        'Clinical_Assessment',
-        'Neuropsychology_Assessment',
-        'Initial_MRI'
+        'Initial_Assessment_Screening' => 'Initial Assessment - Screening',
+        'Clinical_Assessment' => 'Initial Assessment - Clinical',
+        'Neuropsychology_Assessment' => 'Initial Assessment - Neuropsychology',
+        'Initial_MRI' => 'Initial MRI'
     );
 
     return $visits;
@@ -156,7 +157,7 @@ function getTableData() {
         } else {
             $statusDesc = "Active";
         }
-        foreach ($visitLabels as $visitLabel) {
+        foreach ($visitLabels as $visitLabel => $feVL) {
             $session = $DB->pselectRow(
                 "SELECT ID, SubprojectID, Date_visit, Current_stage
                  FROM session
@@ -233,6 +234,7 @@ function getTableData() {
             $visit['instrCompleted']   = $instrCompleted;
             $visit['totalInstrs']      = $totalInstrs;
             $visit['visitLabel']       = $visitLabel;
+            $visit['feVisitLabel']     = $feVL;
             $visit['cohort']           = getCohortName($subproject);
             $visit['ddeCompleted']     = $ddeCompleted;
             $visit['ddeInstCompleted'] = $ddeInstCompleted;

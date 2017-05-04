@@ -4,6 +4,9 @@ const COMPRESS_TBL_WIDTH = "75%";
 const HIGHLIGHT_COLOR = "#E9EBF3";
 const GET_DATA_URL = loris.BaseURL + "/dashboard/ajax/getData.php";
 
+let backToFrontVLs = new Map();
+let frontToBackVLs = new Map();
+
 function SiteFilter(props) {
     let options = [];
 
@@ -309,14 +312,14 @@ class SideBarCandContent extends React.Component {
                                onClick={() => openBVLFeedback(candid, v.sessionID)}
                             >
                                 <span className="glyphicon glyphicon-edit" style={iconColor}/>
-                                {v.visitLabel}
+                                {backToFrontVLs.get(v.visitLabel)}
                             </a>
                         );
                     } else {
                         url += "instrument_list/?candID="+candid+"&sessionID="+v.sessionID;
                         visitLink.push(
                             <a href={url}>
-                                {v.visitLabel}
+                                {backToFrontVLs.get(v.visitLabel)}
                             </a>
                         );
                     }
@@ -372,7 +375,7 @@ class SideBarCandContent extends React.Component {
                         visitContent.push(
                             <div className="sidebar-visit">
                                 <a href={url}>
-                                    {v.visitLabel}:
+                                    {backToFrontVLs.get(v.visitLabel)}:
                                 </a>
                                 <p className="sidebar-visit-status">Visit Registration: {vr.html}</p>
                             </div>
@@ -481,7 +484,7 @@ class SideBarVisitContent extends React.Component {
             <div className="SideBarVisitContent">
                 <div className="SideBarHeader">
                     <h5>
-                        {this.props.visit} Visit
+                        {backToFrontVLs.get(this.props.visit)} Visit
                     </h5>
                 </div>
                 <div className="SideBarSubContent">
@@ -718,12 +721,14 @@ class StudyTrackerHeader extends React.Component {
     // This means that the text that shows up in the column header
     // must be equal to the css class name which is perhaps bad design
      highlightColumns(event) {
-        let visitClass = "." + $(event.target).text();
+         let beVL = frontToBackVLs.get($(event.target).text());
+        let visitClass = "." + beVL;
         $(visitClass).css("background-color", HIGHLIGHT_COLOR);
     }
      unhighlightColumns(event) {
-        if (this.props.currentVisit !== $(event.target).text()) {
-            let visitClass = "." + $(event.target).text();
+         let beVL = frontToBackVLs.get($(event.target).text());
+         if (this.props.currentVisit !== beVL) {
+            let visitClass = "." + beVL;
             $(visitClass).css("background-color", "");
         }
     }
@@ -753,7 +758,7 @@ class StudyTrackerHeader extends React.Component {
 
   render() {
     let colWidth = 91.6666/this.props.visitLabels.length;
-    let colStyle = {width: colWidth + '%'}
+    let colStyle = {width: colWidth + '%'};
     let visitLabelHeaders = this.props.visitLabels.map(function(vl) {
             let cssClass = "VLHeader " + vl;
             return (
@@ -764,7 +769,7 @@ class StudyTrackerHeader extends React.Component {
                 onClick={this.keepHighlightedShowVisitFocus}
                 key={vl}
                 className={cssClass}>
-                {vl}
+                {backToFrontVLs.get(vl)}
             </th>)
         }.bind(this)
     );
@@ -789,6 +794,7 @@ class StudyTracker extends React.Component {
         this.state = {
              rows: [],
              visitLabels: [],
+             feVisitLabels: [],
              currentSite: "all",
              sites: new Map(),
              teams: [],
@@ -820,7 +826,7 @@ class StudyTracker extends React.Component {
     loadDataFromServer() {
         $.get(GET_DATA_URL, {data: "all"}, function(data, status) {
            if (status === "success") {
-               let cohorts = [], visitLabels = [], rows = [];
+               let cohorts = [], visitLabels = [], feVisitLabels = [], rows = [];
                let sites = new Map();
 
                for (let r in data.tableData) {
@@ -832,15 +838,30 @@ class StudyTracker extends React.Component {
                    cohorts.push(data.cohorts[c]);
                }
                this.setState({cohorts: cohorts});
+
                for (let s in data.sites) {
                    sites.set(data.sites[s].Alias, data.sites[s].Name);
                }
                this.setState({sites: sites});
+
                for (let v in data.visitLabels) {
                    visitLabels.push(data.visitLabels[v]);
                }
                this.setState({visitLabels: visitLabels});
+
+               for (let v in data.feVisitLabels) {
+                   feVisitLabels.push(data.feVisitLabels[v]);
+               }
+               this.setState({feVisitLabels: feVisitLabels});
            }
+           // Set visit label maps
+            let beVLs = this.state.visitLabels;
+            let feVLs = this.state.feVisitLabels;
+
+            for (let i = 0; i < beVLs.length; i++) {
+                backToFrontVLs.set(beVLs[i], feVLs[i]);
+                frontToBackVLs.set(feVLs[i], beVLs[i]);
+            }
         }.bind(this));
     }
 
@@ -923,7 +944,7 @@ class StudyTracker extends React.Component {
     showVisitFocus(event){
         let visit;
         if (event) {
-            visit = $(event.target).text();
+            visit = frontToBackVLs.get($(event.target).text());
             this.setState({
                 currentVisit: visit,
                 currentPSCID: null,

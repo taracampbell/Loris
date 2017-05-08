@@ -1,4 +1,16 @@
 <?php
+/**
+ * This file is used by the Dashboard to get the data for
+ * the dashboard home page
+ *
+ * PHP Version 7
+ *
+ * @category Main
+ * @package  Loris
+ * @author   Tara Campbell <tara.campbell@mail.mcgill.ca>
+ * @license  http://www.gnu.org/licenses/gpl-3.0.txt GPLv3
+ * @link     https://github.com/aces/Loris-Trunk
+ */
 
 header('Content-Type: application/json');
 $result = array(
@@ -15,13 +27,25 @@ $result = array(
 );
 echo json_encode($result);
 
-function getUsername() {
+/**
+ * GetUsername
+ *
+ * @return string
+ */
+function getUsername()
+{
     $user = User::singleton();
 
     return $user->getFullname();
 }
 
-function getLastLogin() {
+/**
+ * GetLastLogin
+ *
+ * @return string
+ */
+function getLastLogin()
+{
     $DB     = Database::singleton();
     $user   = User::singleton();
     $userID = $user->getUsername();
@@ -42,13 +66,25 @@ function getLastLogin() {
     return "...never. Welcome!";
 }
 
-function getDescription() {
+/**
+ * GetDescription
+ *
+ * @return string
+ */
+function getDescription()
+{
     $config = NDB_Config::singleton();
 
     return $config->getSetting('projectDescription');
 }
 
-function getLinks() {
+/**
+ * GetLinks
+ *
+ * @return array
+ */
+function getLinks()
+{
     $config = NDB_Config::singleton();
 
     $dashboardLinks = $config->getExternalLinks('dashboard');
@@ -68,7 +104,13 @@ function getLinks() {
     return null;
 }
 
-function getRecruitment() {
+/**
+ * GetRecruitment
+ *
+ * @return array
+ */
+function getRecruitment()
+{
     $config = NDB_Config::singleton();
 
     $recruitment = array();
@@ -99,13 +141,25 @@ function getRecruitment() {
     return $recruitment;
 }
 
-function getUseProject() {
+/**
+ * GetUseProject
+ *
+ * @return array
+ */
+function getUseProject()
+{
     $config = NDB_Config::singleton();
 
     return $config->getSetting('useProjects');
 }
 
-function getTotalScans() {
+/**
+ * GetTotalScans
+ *
+ * @return int
+ */
+function getTotalScans()
+{
     $DB = Database::singleton();
 
     $totalScans = $DB->pselectOne(
@@ -120,7 +174,13 @@ function getTotalScans() {
     return $totalScans;
 }
 
-function getTasks() {
+/**
+ * GetTasks
+ *
+ * @return array
+ */
+function getTasks()
+{
     $tasks = array();
 
     $newScans                = getNewScans();
@@ -159,14 +219,22 @@ function getTasks() {
     return $tasks;
 }
 
-// TODO restructure array
-function getDocRepoNotifications() {
+/**
+ * GetDocRepoNotifications
+ *
+ * @return array
+ */
+function getDocRepoNotifications()
+{
     $user = User::singleton();
     $DB   = Database::singleton();
 
-    if ($user->hasPermission('document_repository_view') || $user->hasPermission('document_repository_delete')) {
+    if ($user->hasPermission('document_repository_view') 
+        || $user->hasPermission('document_repository_delete')
+    ) {
         $document_repository = $DB->pselect(
-            "SELECT File_name as fileName, Date_uploaded as dateUploaded, Data_dir as dataDir
+            "SELECT File_name as fileName, Date_uploaded as dateUploaded,
+             Data_dir as dataDir
              FROM document_repository 
              ORDER BY Date_uploaded
              DESC LIMIT 4",
@@ -184,14 +252,20 @@ function getDocRepoNotifications() {
     return null;
 }
 
-// TODO restructure array
-function getBVLFeedbackNotifications() {
+/**
+ * GetBVLFeedbackNotifications
+ *
+ * @return array
+ */
+function getBVLFeedbackNotifications()
+{
     $user = User::singleton();
     $DB   = Database::singleton();
 
     if ($user->hasPermission('bvl_feedback')) {
         $bvl_feedback = $DB->pselect(
-            "SELECT fbt.Name as name, fbe.Testdate as testDate, fbe.Comment as comment, fbth.FieldName, 
+            "SELECT fbt.Name as name, fbe.Testdate as testDate,
+             fbe.Comment as comment, fbth.FieldName, 
              fbth.CommentID, fbth.SessionID, fbth.CandID, fbth.Feedback_level
              FROM feedback_bvl_entry fbe 
              JOIN feedback_bvl_thread fbth USING (FeedbackID) 
@@ -231,8 +305,7 @@ function getBVLFeedbackNotifications() {
  */
 
 /**
-
- * Gets the total count of candidates associated with a specific project
+ * GetTotalRecruitment
  *
  * @return int
  */
@@ -313,16 +386,17 @@ function getTotalGenderByProject($gender, $projectID)
 }
 
 /**
- * Creates the template data for a progress bar
+ * Creates the data for a progress bar
  *
  * @param mixed  $ID                ID for the progress bar
  * @param string $title             Title for the progress bar
  * @param int    $recruitmentTarget Target number of candidates
  * @param int    $totalRecruitment  Total number of candidates
  *
- * @return void
+ * @return array
  */
-function createProjectProgressBar($ID, $title, $recruitmentTarget, $totalRecruitment) {
+function createProjectProgressBar($ID, $title, $recruitmentTarget, $totalRecruitment)
+{
     $progressBar = array();
     $progressBar['total_recruitment'] = $totalRecruitment;
     $progressBar['title'] = $title;
@@ -368,7 +442,13 @@ function createProjectProgressBar($ID, $title, $recruitmentTarget, $totalRecruit
  * TASKS
  */
 
-function getNewScans() {
+/**
+ * GetNewScans
+ *
+ * @return array
+ */
+function getNewScans()
+{
     $user = User::singleton();
     $DB   = Database::singleton();
 
@@ -400,7 +480,13 @@ function getNewScans() {
     return null;
 }
 
-function getDataEntryConflicts() {
+/**
+ * GetDataEntryConflicts
+ *
+ * @return array
+ */
+function getDataEntryConflicts()
+{
     $user = User::singleton();
     $DB   = Database::singleton();
     $site = $user->getSiteName();
@@ -446,7 +532,13 @@ function getDataEntryConflicts() {
     return null;
 }
 
-function getIncompleteForms() {
+/**
+ * GetIncompleteForms
+ *
+ * @return array
+ */
+function getIncompleteForms()
+{
     $user = User::singleton();
     $DB   = Database::singleton();
     $site = $user->getSiteName();
@@ -477,7 +569,8 @@ function getIncompleteForms() {
                 array('Site' => $site)
             );
 
-            $url = $baseURL . "/statistics/?submenu=statistics_site&CenterID=" . $site;
+            $url = $baseURL . "/statistics/?submenu=statistics_site&CenterID="
+                   . $site;
         }
 
         if ($count > 0) {
@@ -494,11 +587,19 @@ function getIncompleteForms() {
     return null;
 }
 
-function getFinalRadiologicalReview() {
+/**
+ * GetFinalRadiologicalReview
+ *
+ * @return array
+ */
+function getFinalRadiologicalReview()
+{
     $user = User::singleton();
     $DB   = Database::singleton();
 
-    if ($user->hasPermission('edit_final_radiological_review') && $user->hasPermission('view_final_radiological_review')) {
+    if ($user->hasPermission('edit_final_radiological_review')
+        && $user->hasPermission('view_final_radiological_review')
+    ) {
 
         $count = $DB->pselectOne(
             "SELECT COUNT(*) FROM final_radiological_review f
@@ -524,7 +625,13 @@ function getFinalRadiologicalReview() {
     return null;
 }
 
-function getAccountsPendingApproval() {
+/**
+ * GetAccountsPendingApproval
+ *
+ * @return array
+ */
+function getAccountsPendingApproval()
+{
     $user = User::singleton();
     $DB   = Database::singleton();
     $site = $user->getSiteName();
@@ -565,7 +672,13 @@ function getAccountsPendingApproval() {
     return null;
 }
 
-function getViolatedScans() {
+/**
+ * GetViolatedScans
+ *
+ * @return array
+ */
+function getViolatedScans()
+{
     $user = User::singleton();
     $DB   = Database::singleton();
 
@@ -574,9 +687,9 @@ function getViolatedScans() {
             "SELECT COUNT(*) FROM mri_protocol_violated_scans
              LEFT JOIN candidate c USING (CandID)
              WHERE COALESCE(c.CenterID, 0) <> 1",
-                /* include null CenterIDs so we don't accidentally
-                filter things out */
-                array()
+            /* include null CenterIDs so we don't accidentally
+            filter things out */
+            array()
         );
 
         if ($count > 0) {
@@ -593,7 +706,13 @@ function getViolatedScans() {
     return null;
 }
 
-function getIssueTrackerAssignedIssues() {
+/**
+ * GetIssueTrackerAssignedIssues
+ *
+ * @return array
+ */
+function getIssueTrackerAssignedIssues()
+{
     $user = User::singleton();
     $DB   = Database::singleton();
 

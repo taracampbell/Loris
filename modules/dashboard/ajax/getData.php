@@ -1,4 +1,17 @@
 <?php
+/**
+ * This file is used by the Dashboard to get the data for
+ * the study tracker
+ *
+ * PHP Version 7
+ *
+ * @category Main
+ * @package  Loris
+ * @author   Tara Campbell <tara.campbell@mail.mcgill.ca>
+ * @license  http://www.gnu.org/licenses/gpl-3.0.txt GPLv3
+ * @link     https://github.com/aces/Loris-Trunk
+ */
+
 $DB = Database::singleton();
 
 const DATA_ENTRY_DAYS = 14;
@@ -43,13 +56,25 @@ if (isset($_GET['data'])) {
 
 exit();
 
-function getCohorts() {
+/**
+ * GetCohorts
+ *
+ * @return array
+ */
+function getCohorts()
+{
     $cohorts = Utility::getSubprojectList();
 
     return $cohorts;
 }
 
-function getSites() {
+/**
+ * GetSites
+ *
+ * @return array
+ */
+function getSites()
+{
     global $DB;
 
     $user = User::singleton();
@@ -75,20 +100,32 @@ function getSites() {
     }
 }
 
-function getVisitLabels() {
+/**
+ * GetVisitLabels
+ *
+ * @return array
+ */
+function getVisitLabels()
+{
     //$visits = Utility::getVisitList();
 
     $visits = array(
         'Initial_Assessment_Screening' => 'Initial Assessment - Screening',
-        'Clinical_Assessment' => 'Initial Assessment - Clinical',
-        'Neuropsychology_Assessment' => 'Initial Assessment - Neuropsychology',
-        'Initial_MRI' => 'Initial MRI'
+        'Clinical_Assessment'          => 'Initial Assessment - Clinical',
+        'Neuropsychology_Assessment'   => 'Initial Assessment - Neuropsychology',
+        'Initial_MRI'                  => 'Initial MRI'
     );
 
     return $visits;
 }
 
-function getTableData() {
+/**
+ * GetTableData
+ *
+ * @return array
+ */
+function getTableData()
+{
     global $DB;
 
     $visitLabels = getVisitLabels();
@@ -194,7 +231,9 @@ function getTableData() {
                     if ($ddeInstCompleted > 0) {
                         $numConflicts = getNumConflictsForVisit($sessionID);
                     }
-                    if ($ddeInstCompleted !== $totalDDEInstrs || $instrCompleted !== $totalInstrs) {
+                    if ($ddeInstCompleted !== $totalDDEInstrs
+                        || $instrCompleted !== $totalInstrs
+                    ) {
 
                         if ($instrCompleted === $totalInstrs) {
                             $dataEntryStatus = "complete-data-entry";
@@ -261,28 +300,40 @@ function getTableData() {
     return $tableData;
 }
 
-function getFeedback($candID) {
+/**
+ * GetFeedback
+ *
+ * @param int $candID the candidate id
+ *
+ * @return array
+ */
+function getFeedback($candID)
+{
     global $DB;
 
-    $query =
+    $feedback = $DB->pselect(
         "SELECT fbt.Feedback_level, fbt.SessionID, fbt.CommentID, fl.Test_name, tn.Full_name 
          FROM feedback_bvl_thread AS fbt
          LEFT JOIN flag AS fl ON (fbt.CommentID=fl.CommentID)
          LEFT JOIN test_names AS tn ON (fl.Test_name=tn.Test_name)
-         WHERE Status <> 'closed' AND CandID=:cid";
-    $queryArgs = array(
-        "cid" => $candID
-    );
-
-    $feedback = $DB->pselect(
-        $query,
-        $queryArgs
+         WHERE Status <> 'closed' AND CandID=:cid",
+        array(
+         "cid" => $candID
+        )
     );
 
     return $feedback;
 }
 
-function sentToDCC($sessionID) {
+/**
+ * SentToDCC
+ *
+ * @param int $sessionID the session ID
+ *
+ * @return boolean
+ */
+function sentToDCC($sessionID)
+{
     global $DB;
 
     $submitted = $DB->pselectOne(
@@ -299,7 +350,15 @@ function sentToDCC($sessionID) {
     return false;
 }
 
-function screeningDone($candID) {
+/**
+ * ScreeningDone
+ *
+ * @param int $candID the candidate ID
+ *
+ * @return boolean
+ */
+function screeningDone($candID)
+{
     global $DB;
 
     $screening = $DB->pselectOne(
@@ -311,8 +370,6 @@ function screeningDone($candID) {
         array('CID' => $candID)
     );
 
-    error_log($screening . '\n');
-
     if (is_numeric($screening)) {
         return true;
     } else {
@@ -320,7 +377,13 @@ function screeningDone($candID) {
     }
 }
 
-function getCandidates() {
+/**
+ * GetCandidates
+ *
+ * @return array
+ */
+function getCandidates()
+{
     global $DB;
     $user = User::singleton();
 
@@ -348,11 +411,28 @@ function getCandidates() {
     }
 }
 
-function dateAdd($date, $days) {
+/**
+ * DateAdd
+ *
+ * @param date $date the base date
+ * @param int  $days the number of days to add to the date
+ *
+ * @return date
+ */
+function dateAdd($date, $days)
+{
     return date('Y-m-d', strtotime($date . ' + ' . $days . ' days'));
 }
 
-function datePast($date) {
+/**
+ * DatePast
+ *
+ * @param date $date the date
+ *
+ * @return boolean
+ */
+function datePast($date)
+{
     $date = new DateTime($date);
     $now  = new DateTime();
 
@@ -362,7 +442,16 @@ function datePast($date) {
     return false;
 }
 
-function determineVisitRegDueDate($visitLabel, $candID) {
+/**
+ * DetermineVisitRegDueDate
+ *
+ * @param string $visitLabel the visit lable
+ * @param int    $candID     the candidate id
+ *
+ * @return date
+ */
+function determineVisitRegDueDate($visitLabel, $candID)
+{
     global $DB;
 
     if ($visitLabel == 'Initial_Assessment_Screening') {
@@ -378,12 +467,30 @@ function determineVisitRegDueDate($visitLabel, $candID) {
     }
 }
 
-function determineDataEntryDueDate($visitDate) {
+/**
+ * DetermineDataEntryDueDate
+ *
+ * @param date $visitDate the visit date
+ *
+ * @return date
+ */
+function determineDataEntryDueDate($visitDate)
+{
 
     return dateAdd($visitDate, DATA_ENTRY_DAYS);
 }
 
-function determineVisitRegStatus($visitLabel, $candID, $screeningDone) {
+/**
+ * DetermineVisitRegStatusDate
+ *
+ * @param string  $visitLabel    the visit lable
+ * @param int     $candID        the candidate id
+ * @param boolean $screeningDone was screening already done?
+ *
+ * @return string
+ */
+function determineVisitRegStatus($visitLabel, $candID, $screeningDone)
+{
     if ($visitLabel == 'Initial_Assessment_Screening' | !$screeningDone) {
         return 'no-deadline-visit';
     }
@@ -395,7 +502,15 @@ function determineVisitRegStatus($visitLabel, $candID, $screeningDone) {
     }
 }
 
-function getDDEInstrumentsCompleted($sessionID) {
+/**
+ * GetDDEInstrumentsCompleted
+ *
+ * @param int $sessionID the session id
+ *
+ * @return int
+ */
+function getDDEInstrumentsCompleted($sessionID)
+{
     global $DB;
 
     $totalDDEComplete = $DB->pselectOne(
@@ -410,7 +525,16 @@ function getDDEInstrumentsCompleted($sessionID) {
     return $totalDDEComplete;
 }
 
-function determineDataEntryStatus($sessionID, $visitDate) {
+/**
+ * DetermineDataEntryStatus
+ *
+ * @param int  $sessionID the session ID
+ * @param date $visitDate the visit date
+ *
+ * @return string
+ */
+function determineDataEntryStatus($sessionID, $visitDate)
+{
     global $DB;
 
     $session = $DB->pselect(
@@ -431,7 +555,16 @@ function determineDataEntryStatus($sessionID, $visitDate) {
     }
 }
 
-function getTotalInstruments($visitLabel, $subproject) {
+/**
+ * GetTotalInstruments
+ *
+ * @param int    $visitLabel the visit label
+ * @param string $subproject the subproject
+ *
+ * @return string
+ */
+function getTotalInstruments($visitLabel, $subproject)
+{
     global $DB;
 
     $totalInstruments = $DB->pselectOne(
@@ -447,7 +580,16 @@ function getTotalInstruments($visitLabel, $subproject) {
     return $totalInstruments;
 }
 
-function getTotalDDEInstruments($visitLabel, $subproject) {
+/**
+ * GetTotalDDEInstruments
+ *
+ * @param int    $visitLabel the visit label
+ * @param string $subproject the subproject
+ *
+ * @return string
+ */
+function getTotalDDEInstruments($visitLabel, $subproject)
+{
     global $DB;
     $totalDDEInstruments = $DB->pselectOne(
         "SELECT COUNT(*) 
@@ -470,7 +612,15 @@ function getTotalDDEInstruments($visitLabel, $subproject) {
     return $totalDDEInstruments;
 }
 
-function getTotalInstrumentsCompleted($sessionID) {
+/**
+ * GetTotalInstrumentsCompleted
+ *
+ * @param int $sessionID the session ID
+ *
+ * @return int
+ */
+function getTotalInstrumentsCompleted($sessionID)
+{
     global $DB;
 
     $totalInstruments = $DB->pselectOne(
@@ -485,7 +635,15 @@ function getTotalInstrumentsCompleted($sessionID) {
     return $totalInstruments;
 }
 
-function getCohortName($subproject) {
+/**
+ * GetCohortName
+ *
+ * @param string $subproject the subproject
+ *
+ * @return string
+ */
+function getCohortName($subproject)
+{
     global $DB;
 
     return $DB->pselectOne(
@@ -496,10 +654,19 @@ function getCohortName($subproject) {
     );
 }
 
-// Returns an array of subgroups which then map to
-// an array of instruments, each containing test name, full name,
-// data entry status, and commentID
-function getInstruments($sessionID) {
+/**
+ * GetInstruments
+ *
+ * Returns an array of subgroups which then map to
+ * an array of instruments, each containing test name, full name,
+ * data entry status, and commentID
+ *
+ * @param int $sessionID the session ID
+ *
+ * @return array
+ */
+function getInstruments($sessionID)
+{
     global $DB;
 
     $result = array();
@@ -514,23 +681,23 @@ function getInstruments($sessionID) {
 
     foreach ($tests as $t) {
         $sg = $DB->pselectOne(
-              "SELECT Subgroup_name
-               FROM test_subgroups s 
-               INNER JOIN test_names t 
-               ON s.ID = t.sub_group
-               WHERE test_name = :tn",
-                array("tn" => $t['Test_name'])
-            );
+            "SELECT Subgroup_name
+             FROM test_subgroups s 
+             INNER JOIN test_names t 
+             ON s.ID = t.sub_group
+             WHERE test_name = :tn",
+            array("tn" => $t['Test_name'])
+        );
 
         if (!array_key_exists($sg, $result)) {
             $result[$sg] = array();
         }
 
         $fullName = $DB->pselectOne(
-                "SELECT Full_name 
-                 FROM test_names
-                 WHERE Test_name=:t",
-                array("t" => $t["Test_name"])
+            "SELECT Full_name 
+             FROM test_names
+             WHERE Test_name=:t",
+            array("t" => $t["Test_name"])
         );
         $ddeComplete = null;
         $conflicts = false;
@@ -566,7 +733,15 @@ function getInstruments($sessionID) {
     return $result;
 }
 
-function getNumConflictsForVisit($sessionID) {
+/**
+ * GetNumConflictsForVisit
+ *
+ * @param int $sessionID the session ID
+ *
+ * @return int
+ */
+function getNumConflictsForVisit($sessionID)
+{
     global $DB;
 
     $commentIDs = $DB->pselect(
@@ -582,7 +757,7 @@ function getNumConflictsForVisit($sessionID) {
         "SELECT COUNT(*)
          FROM conflicts_unresolved 
          WHERE FIND_IN_SET (CommentID1, :cids)",
-        array("cids" => "'".implode(",",$commentIDs)."'")
+        array("cids" => "'".implode(",", $commentIDs)."'")
     );
 
     return $numConflicts;

@@ -14,13 +14,16 @@ var COMPRESS_TBL_WIDTH = "75%";
 var HIGHLIGHT_COLOR = "#E9EBF3";
 var GET_DATA_URL = loris.BaseURL + "/dashboard/ajax/getData.php";
 
+var backToFrontVLs = new Map();
+var frontToBackVLs = new Map();
+
 function SiteFilter(props) {
     var options = [];
 
     if (props.sites.size > 1) {
         options.push(React.createElement(
             "option",
-            { value: "all" },
+            { key: "all", value: "all" },
             "Show All Sites"
         ));
     }
@@ -497,14 +500,14 @@ var SideBarCandContent = function (_React$Component5) {
                                 }
                             },
                             React.createElement("span", { className: "glyphicon glyphicon-edit", style: iconColor }),
-                            v.visitLabel
+                            backToFrontVLs.get(v.visitLabel)
                         ));
                     } else {
                         url += "instrument_list/?candID=" + candid + "&sessionID=" + v.sessionID;
                         visitLink.push(React.createElement(
                             "a",
                             { href: url },
-                            v.visitLabel
+                            backToFrontVLs.get(v.visitLabel)
                         ));
                     }
                     // Check if there is instrument feedback and whether this
@@ -580,7 +583,7 @@ var SideBarCandContent = function (_React$Component5) {
                             React.createElement(
                                 "a",
                                 { href: url },
-                                v.visitLabel,
+                                backToFrontVLs.get(v.visitLabel),
                                 ":"
                             ),
                             React.createElement(
@@ -808,7 +811,7 @@ var SideBarVisitContent = function (_React$Component6) {
                     React.createElement(
                         "h5",
                         null,
-                        this.props.visit,
+                        backToFrontVLs.get(this.props.visit),
                         " Visit"
                     )
                 ),
@@ -900,7 +903,7 @@ var VisitCell = function (_React$Component8) {
                 var vr = prettyStatus(visit.visitRegStatus, visit.visitRegDueDate);
                 tooltipContent.push(React.createElement(
                     "p",
-                    null,
+                    { key: "vr-status" },
                     "Visit Registration: ",
                     vr.html
                 ));
@@ -909,12 +912,12 @@ var VisitCell = function (_React$Component8) {
                     var de = prettyStatus(visit.dataEntryStatus, visit.dataEntryDueDate);
                     tooltipContent.push(React.createElement(
                         "p",
-                        null,
+                        { key: "de-status" },
                         "Data Entry: ",
                         de.html
                     ), React.createElement(
                         "p",
-                        { className: "center" },
+                        { key: "instr-entered", className: "center" },
                         React.createElement(
                             "i",
                             null,
@@ -926,11 +929,11 @@ var VisitCell = function (_React$Component8) {
                     ));
                     tooltipContent.push(React.createElement(
                         "p",
-                        null,
+                        { key: "dde" },
                         "Double Data Entry:"
                     ), React.createElement(
                         "p",
-                        { className: "center" },
+                        { key: "dde-entered", className: "center" },
                         React.createElement(
                             "i",
                             null,
@@ -944,7 +947,7 @@ var VisitCell = function (_React$Component8) {
                     if (visit.numConflicts > 0) {
                         tooltipContent.push(React.createElement(
                             "p",
-                            { className: "center" },
+                            { key: "conflicts", className: "center" },
                             React.createElement("span", { className: "glyphicon glyphicon-remove-circle" }),
                             " ",
                             visit.numConflicts,
@@ -957,7 +960,7 @@ var VisitCell = function (_React$Component8) {
                         innerCircleInfo = React.createElement("span", { className: "glyphicon glyphicon-ok inner-circle-glyph" });
                         tooltipContent.push(React.createElement(
                             "p",
-                            { className: "complete" },
+                            { key: "dcc-sent", className: "complete" },
                             "Data sent to DCC"
                         ));
                     } else if (visit.ddeCompleted) {
@@ -968,7 +971,7 @@ var VisitCell = function (_React$Component8) {
                         );
                         tooltipContent.push(React.createElement(
                             "p",
-                            { className: "deadline-approaching" },
+                            { key: "dcc-not-sent", className: "deadline-approaching" },
                             "Data not yet sent to DCC"
                         ));
                     }
@@ -1034,7 +1037,7 @@ var PSCIDCell = function (_React$Component9) {
 
             if (Object.keys(this.props.feedback).length) {
                 var style = { color: "#444444" };
-                feedBackIcon.push(React.createElement("span", { className: "glyphicon glyphicon-edit", style: style }));
+                feedBackIcon = React.createElement("span", { className: "glyphicon glyphicon-edit", style: style });
             }
             return React.createElement(
                 "td",
@@ -1161,14 +1164,16 @@ var StudyTrackerHeader = function (_React$Component11) {
     _createClass(StudyTrackerHeader, [{
         key: "highlightColumns",
         value: function highlightColumns(event) {
-            var visitClass = "." + $(event.target).text();
+            var beVL = frontToBackVLs.get($(event.target).text());
+            var visitClass = "." + beVL;
             $(visitClass).css("background-color", HIGHLIGHT_COLOR);
         }
     }, {
         key: "unhighlightColumns",
         value: function unhighlightColumns(event) {
-            if (this.props.currentVisit !== $(event.target).text()) {
-                var visitClass = "." + $(event.target).text();
+            var beVL = frontToBackVLs.get($(event.target).text());
+            if (this.props.currentVisit !== beVL) {
+                var visitClass = "." + beVL;
                 $(visitClass).css("background-color", "");
             }
         }
@@ -1213,7 +1218,7 @@ var StudyTrackerHeader = function (_React$Component11) {
                         onClick: this.keepHighlightedShowVisitFocus,
                         key: vl,
                         className: cssClass },
-                    vl
+                    backToFrontVLs.get(vl)
                 );
             }.bind(this));
             return React.createElement(
@@ -1247,6 +1252,7 @@ var StudyTracker = function (_React$Component12) {
         _this13.state = {
             rows: [],
             visitLabels: [],
+            feVisitLabels: [],
             currentSite: "all",
             sites: new Map(),
             teams: [],
@@ -1283,6 +1289,7 @@ var StudyTracker = function (_React$Component12) {
                 if (status === "success") {
                     var cohorts = [],
                         visitLabels = [],
+                        feVisitLabels = [],
                         rows = [];
                     var sites = new Map();
 
@@ -1295,14 +1302,29 @@ var StudyTracker = function (_React$Component12) {
                         cohorts.push(data.cohorts[c]);
                     }
                     this.setState({ cohorts: cohorts });
+
                     for (var s in data.sites) {
                         sites.set(data.sites[s].Alias, data.sites[s].Name);
                     }
                     this.setState({ sites: sites });
+
                     for (var v in data.visitLabels) {
                         visitLabels.push(data.visitLabels[v]);
                     }
                     this.setState({ visitLabels: visitLabels });
+
+                    for (var _v in data.feVisitLabels) {
+                        feVisitLabels.push(data.feVisitLabels[_v]);
+                    }
+                    this.setState({ feVisitLabels: feVisitLabels });
+                }
+                // Set visit label maps
+                var beVLs = this.state.visitLabels;
+                var feVLs = this.state.feVisitLabels;
+
+                for (var i = 0; i < beVLs.length; i++) {
+                    backToFrontVLs.set(beVLs[i], feVLs[i]);
+                    frontToBackVLs.set(feVLs[i], beVLs[i]);
                 }
             }.bind(this));
         }
@@ -1416,7 +1438,7 @@ var StudyTracker = function (_React$Component12) {
         value: function showVisitFocus(event) {
             var visit = void 0;
             if (event) {
-                visit = $(event.target).text();
+                visit = frontToBackVLs.get($(event.target).text());
                 this.setState({
                     currentVisit: visit,
                     currentPSCID: null,

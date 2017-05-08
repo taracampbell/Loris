@@ -205,7 +205,8 @@ function getTableData()
             $sessionID           = null;
             $subproject          = null;
             $visitDate           = null;
-            $visitRegStatus      = determineVisitRegStatus($visitLabel, $candID, $screeningDone);
+            $visitRegStatus 
+                = determineVisitRegStatus($visitLabel, $candID, $screeningDone);
             $dataEntryStatus     = null;
             $visitRegDueDate     = null;
             $dataEntryDueDate    = null;
@@ -238,8 +239,10 @@ function getTableData()
                         if ($instrCompleted === $totalInstrs) {
                             $dataEntryStatus = "complete-data-entry";
                         } else {
-                            $dataEntryStatus = determineDataEntryStatus($sessionID, $visitDate);
-                            $dataEntryDueDate = determineDataEntryDueDate($visitDate);
+                            $dataEntryStatus
+                                = determineDataEntryStatus($sessionID, $visitDate);
+                            $dataEntryDueDate
+                                = determineDataEntryDueDate($visitDate);
                         }
                     } else {
                         $ddeCompleted = true;
@@ -261,7 +264,8 @@ function getTableData()
                 $dataEntryStatus  = 'cancelled-data';
                 $dataEntryDueDate = null;
             } else {
-                $visitRegDueDate = determineVisitRegDueDate($visitLabel, $candID, $screeningDone);
+                $visitRegDueDate
+                    = determineVisitRegDueDate($visitLabel, $candID, $screeningDone);
             }
 
             $visit = array();
@@ -312,7 +316,8 @@ function getFeedback($candID)
     global $DB;
 
     $feedback = $DB->pselect(
-        "SELECT fbt.Feedback_level, fbt.SessionID, fbt.CommentID, fl.Test_name, tn.Full_name 
+        "SELECT fbt.Feedback_level, fbt.SessionID, fbt.CommentID,
+         fl.Test_name, tn.Full_name 
          FROM feedback_bvl_thread AS fbt
          LEFT JOIN flag AS fl ON (fbt.CommentID=fl.CommentID)
          LEFT JOIN test_names AS tn ON (fl.Test_name=tn.Test_name)
@@ -389,7 +394,8 @@ function getCandidates()
 
     if ($user->hasPermission('access_all_profiles')) {
         $candidates = $DB->pselect(
-            "SELECT c.PSCID, c.CandID, psc.Name, psc.Alias, ps.participant_status, ps.participant_suboptions, Date_registered
+            "SELECT c.PSCID, c.CandID, psc.Name, psc.Alias,
+             ps.participant_status, ps.participant_suboptions, Date_registered
              FROM candidate c
              LEFT JOIN psc ON psc.CenterID=c.CenterID
              LEFT JOIN participant_status ps on ps.CandID=c.CandID

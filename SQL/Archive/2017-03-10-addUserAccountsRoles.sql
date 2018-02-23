@@ -6,10 +6,10 @@ DROP TABLE `permissions_category`;
 
 CREATE TABLE `permission_category` (
  `PermissionCategoryID` INTEGER unsigned NOT NULL AUTO_INCREMENT,
- `Category` varchar(255),
+ `Name` varchar(255),
  `Label` varchar(255),
  PRIMARY KEY (`PermissionCategoryID`),
- UNIQUE KEY `UK_Category` (`Category`)
+ UNIQUE KEY `UK_Category` (`Name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `permission_category_permissions_rel` (

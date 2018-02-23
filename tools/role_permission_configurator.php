@@ -2,7 +2,6 @@
 /**
  * Script to add or remove permissions from a role
  *
- *
  * PHP Version 5-7
  *
  * @category Main
@@ -72,9 +71,7 @@ if (count($argv) === 2 && isset($argv[1])) {
             echo "The permissions for the $role role are:\n\n";
             prettyPrint(
                 $permissionObject->getPermissionsFromRoles(
-                    array(
-                        $roleObject->getRoleID($role)
-                    )
+                    array($roleObject->getRoleIDFromName($role))
                 )
             );
             exit(7);
@@ -90,7 +87,8 @@ if ((count($argv) === 4 || (count($argv) === 5) && $argv[4] === 'updateExisting'
     case "add":
         // User looking to add a permission to a role
         if ($permissionObject->isPermission($permission)
-            && $roleObject->isRole($role)) {
+            && $roleObject->isRole($role)
+        ) {
             addPermission($role, $permission, $update);
             exit(8);
         }
@@ -101,7 +99,8 @@ if ((count($argv) === 4 || (count($argv) === 5) && $argv[4] === 'updateExisting'
     case "remove":
         // User looking to remove a permission from a role
         if ($permissionObject->isPermission($permission)
-            && $roleObject->isRole($role)) {
+            && $roleObject->isRole($role)
+        ) {
             removePermission($role, $permission, $update);
             exit(11);
         } else {
@@ -134,17 +133,17 @@ function syntaxIncorrect()
 {
     echo "You have not used the correct argument syntax for this script.
 
-To see the roles in the database:                               php update_roles.php roles
-To see the permissions in the database:                         php update_roles.php permissions
-To see the permissions for a role:                              php update_roles.php \$role
-To add a permission to the role:                                php update_roles.php \$role add \$perm [updateExisting]
+To see the roles in the database:                               php role_permission_configurator.php roles
+To see the permissions in the database:                         php role_permission_configurator.php permissions
+To see the permissions for a role:                              php role_permission_configurator.php \$role
+To add a permission to the role:                                php role_permission_configurator.php \$role add \$perm [updateExisting]
 -> The updateExisting option adds the permission to 
    users currently in the specified role
-To remove a permission from the role:                           php update_roles.php \$role remove \$perm [updateExisting]
+To remove a permission from the role:                           php role_permission_configurator.php \$role remove \$perm [updateExisting]
 -> The updateExisting option removes the permission 
    from users currently in the specified role
-To rebuild the roles for every user based on their permissions: php update_roles.php rebuildRoles
-To rebuild permissions for every user based on their role:      php update_roles.php rebuildPermissions\n";
+To rebuild the roles for every user based on their permissions: php role_permission_configurator.php rebuildRoles
+To rebuild permissions for every user based on their role:      php role_permission_configurator.php rebuildPermissions\n";
 }
 
 /**
@@ -265,7 +264,7 @@ function addPermission($role, $permission, $update)
 
     echo "Adding the $permission permission to the $role role...\n\n";
 
-    $roleID       = $roleObject->getRoleID($role);
+    $roleID       = $roleObject->getRoleIDFromName($role);
     $permissionID = $permissionObject->getPermissionID($permission);
 
     // Check is it has that permission already
@@ -322,7 +321,7 @@ function removePermission($role, $permission, $update)
 
     echo "Removing the $permission permission from the $role role...\n\n";
 
-    $roleID       = $roleObject->getRoleID($role);
+    $roleID       = $roleObject->getRoleIDFromName($role);
     $permissionID = $permissionObject->getPermissionID($permission);
 
     // Check is it has that permission already

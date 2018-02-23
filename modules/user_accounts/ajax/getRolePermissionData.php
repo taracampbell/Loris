@@ -19,9 +19,9 @@ if (!$user->hasPermission('user_accounts')) {
 }
 
 $data = array(
-         'roles'       => getRoles(),
-         'permissions' => getPermissions(),
-        );
+    'roles'       => getRoles(),
+    'permissions' => getPermissions(),
+);
 
 echo json_encode($data);
 exit();
@@ -35,33 +35,45 @@ exit();
  */
 function getRoles()
 {
-    $DB          = \Database::singleton();
+    $db          = (\NDB_Factory::singleton())->database();
     $userEditing = \User::singleton();
+    $roleObject       = new \Role($db);
+    $permissionObject = new \Permission($db);
 
-    $roles = $DB->pselect(
-        "SELECT PermissionCategoryID as id, Label as name
-         FROM permission_category",
-        array()
-    );
 
-    if (!empty($roles)) {
-        foreach ($roles as &$role) {
+    $RoleLabels = $roleObject->getRoleLabels();
+    $roles = array();
+
+    if (!empty($RoleLabels)) {
+        foreach ($RoleLabels as $RoleID=>$RoleLabel) {
+            $role['id'] = (string)$RoleID;
+            $role['name'] = $RoleLabel;
 
             if (!creatingNewUser()) {
                 // Determine if checked
                 $role['checked'] = userHasRole($role['id']);
             }
 
-            // Get permissions associated with role
-            $role['permissions'] = getRolePermissions($role['id']);
+            $rolePermissions = $roleObject->getRolePermissionIDs(
+                $RoleID
+            );
+            foreach ($rolePermissions as $permissionID) {
+                $info['code'] = $permissionObject->getPermissionNameFromID(
+                        $permissionID
+                    );
+                $info['permissionID'] = $permissionID;
+                $role['permissions'][] = $info;
+            }
 
             // Determine if the role should be enabled based on editing user
             // permissions
             if (editingSelf()) {
                 $role['disabled'] = true;
             } else {
-                foreach ($role['permissions'] as &$permission) {
-                    $enabled = $userEditing->hasPermission($permission['code']);
+                foreach ($role['permissions'] as $permission) {
+                    $enabled = $userEditing->hasPermission(
+                        $permission['code']
+                    );
 
                     if (!$enabled) {
                         $role['disabled'] = true;
@@ -69,6 +81,7 @@ function getRoles()
                     }
                 }
             }
+            $roles[] = $role;
         }
     }
 
@@ -84,19 +97,23 @@ function getRoles()
  */
 function getPermissions()
 {
-    $DB = \Database::singleton();
+    $db          = (\NDB_Factory::singleton())->database();
+    $permissionObject = new \Permission($db);
+    $permissionLabels = $permissionObject->getPermissionLabels();
 
-    $permissions = $DB->pselect(
-        "SELECT permID as id, code, description as name
-         FROM permissions",
-        array()
-    );
+    $permissions = array();
 
     if (!creatingNewUser()) {
         $userEditing = \User::singleton();
         $userToEdit  = \User::factory($_REQUEST['identifier']);
 
-        foreach ($permissions as &$permission) {
+        foreach ($permissionLabels as $permissionID=>$permissionLabel) {
+            $permission['id'] = (string)$permissionID;
+            $permission['name'] = $permissionLabel;
+            $permission['code'] = $permissionObject->getPermissionNameFromID(
+                $permissionID
+            );
+
             $permission['checked'] = $userToEdit->hasPermission(
                 $permission['code'],
                 true
@@ -105,11 +122,13 @@ function getPermissions()
                 $permission['disabled'] = true;
             } else {
                 $permission['disabled']
-                    = !$userEditing->hasPermission($permission['code']);
+                    = !$userEditing->hasPermission(
+                    $permission['code']
+                );
             }
+            $permissions[] = $permission;
         }
     }
-
     return $permissions;
 }
 
@@ -118,26 +137,26 @@ function getPermissions()
  *
  * @param int $roleID The role to be checked
  *
+ * @note should be moved to user class once user model if improved
+ *
  * @return boolean
  */
 function userHasRole($roleID)
 {
     $DB = \Database::singleton();
 
-    error_log($_REQUEST['identifier']);
     $role = $DB->pselectOne(
         "SELECT upc.PermissionCategoryID
          FROM users_permission_category_rel upc
          LEFT JOIN users u ON u.ID=upc.UserID
          WHERE u.userID=:UID AND upc.PermissionCategoryID=:RID",
         array(
-         'UID' => $_REQUEST['identifier'],
-         'RID' => $roleID,
+            'UID' => $_REQUEST['identifier'],
+            'RID' => $roleID,
         )
     );
 
     if ($role) {
-        error_log("TRUEEEE");
         return true;
     }
     return false;
@@ -195,4 +214,3 @@ function creatingNewUser()
         return false;
     }
 }
-?>

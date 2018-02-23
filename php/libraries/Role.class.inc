@@ -6,8 +6,9 @@
  *
  * @category Main
  * @package  Loris
- * @author   Loris Team
+ * @author   Rida Abou-Haidar <rida.loris@gmail.com>
  * @license  http://www.gnu.org/licenses/gpl-3.0.txt GPLv3
+ * @link     https://www.github.com/aces/Loris/
  */
 
 /**
@@ -15,16 +16,16 @@
  *
  * @category Main
  * @package  Loris
- * @author   Loris Team
+ * @author   Rida Abou-Haidar <rida.loris@gmail.com>
  * @license  http://www.gnu.org/licenses/gpl-3.0.txt GPLv3
+ * @link     https://www.github.com/aces/Loris/
  */
 class Role
 {
     /**
      * Stores Database being used
      *
-     * @var Database
-     *
+     * @var    $DB Database
      * @access private
      */
     var $DB;
@@ -32,7 +33,7 @@ class Role
     /**
      * Role constructor.
      *
-     * @param $Database
+     * @param Database $Database database
      */
     function __construct($Database)
     {
@@ -48,7 +49,25 @@ class Role
     {
 
         $roles = $this->DB->pselectColWithIndexKey(
-            "SELECT PermissionCategoryID, Category
+            "SELECT PermissionCategoryID, Name
+         FROM permission_category",
+            array(),
+            "PermissionCategoryID"
+        );
+
+        return $roles;
+    }
+
+    /**
+     * Gets the list of role labelss in the database.
+     *
+     * @return array Associative array in the form $roleID=>$roleLabel
+     */
+    function getRoleLabels()
+    {
+
+        $roles = $this->DB->pselectColWithIndexKey(
+            "SELECT PermissionCategoryID, Label
          FROM permission_category",
             array(),
             "PermissionCategoryID"
@@ -83,7 +102,7 @@ class Role
      *
      * @return int
      */
-    function getRoleID($roleName)
+    function getRoleIDFromName($roleName)
     {
         if (!$this->isRole($roleName)) {
             throw new LorisException(
@@ -94,7 +113,7 @@ class Role
         $roleID = $this->DB->pselectOne(
             "SELECT PermissionCategoryID
          FROM permission_category
-         WHERE Category=:role",
+         WHERE Name=:role",
             array("role" => $roleName)
         );
 
@@ -110,9 +129,7 @@ class Role
      */
     function getRolePermissionIDs($roleID)
     {
-        $DB = \Database::singleton();
-
-        $permissions = $DB->pselectCol(
+        $permissions = $this->DB->pselectCol(
             "SELECT PermissionID
          FROM permission_category_permissions_rel
          WHERE PermissionCategoryID=:rid",
@@ -131,9 +148,7 @@ class Role
      */
     function getRoleUsers($roleID)
     {
-        $DB = \Database::singleton();
-
-        $usersWithRole = $DB->pselectColWithIndexKey(
+        $usersWithRole = $this->DB->pselectColWithIndexKey(
             "SELECT upc.UserID, u.Real_name
             FROM users_permission_category_rel upc 
               JOIN users u ON u.ID=upc.UserID

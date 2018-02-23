@@ -6,8 +6,9 @@
  *
  * @category Main
  * @package  Loris
- * @author   Loris Team
+ * @author   Rida Abou-Haidar <rida.loris@gmail.com>
  * @license  http://www.gnu.org/licenses/gpl-3.0.txt GPLv3
+ * @link     https://www.github.com/aces/Loris/
  */
 
 /**
@@ -15,24 +16,24 @@
  *
  * @category Main
  * @package  Loris
- * @author   Loris Team
+ * @author   Rida Abou-Haidar <rida.loris@gmail.com>
  * @license  http://www.gnu.org/licenses/gpl-3.0.txt GPLv3
+ * @link     https://www.github.com/aces/Loris/
  */
 class Permission
 {
     /**
      * Stores Database being used
      *
-     * @var Database
-     *
+     * @var    $DB Database
      * @access private
      */
     var $DB;
 
     /**
-     * Role constructor.
+     * Permission constructor.
      *
-     * @param $Database
+     * @param Database $Database database
      */
     function __construct($Database)
     {
@@ -47,9 +48,7 @@ class Permission
      */
     function getPermissions()
     {
-        $DB = \Database::singleton();
-
-        $permissions = $DB->pselectColWithIndexKey(
+        $permissions = $this->DB->pselectColWithIndexKey(
             "SELECT permID, code
          FROM permissions",
             array(),
@@ -59,6 +58,22 @@ class Permission
         return $permissions;
     }
 
+    /**
+     * Gets the list of permission labels in the database.
+     *
+     * @return array Associative array in the form $permissionID=>$permissionLabel
+     */
+    function getPermissionLabels()
+    {
+        $permissions = $this->DB->pselectColWithIndexKey(
+            "SELECT permID, description
+         FROM permissions",
+            array(),
+            "permID"
+        );
+
+        return $permissions;
+    }
 
     /**
      * Checks if the string is a permission within the database
@@ -85,7 +100,7 @@ class Permission
      *
      * @return int
      */
-    function getPermissionID($permissionName)
+    function getPermissionIDFromName($permissionName)
     {
         if (!$this->isPermission($permissionName)) {
             throw new LorisException(
@@ -104,6 +119,33 @@ class Permission
     }
 
     /**
+     * Gets the NAME of a permission given its ID
+     *
+     * @param int $permissionID the permission ID for which the name is needed
+     *
+     * @throws LorisException if permission ID does not exist
+     *
+     * @return string
+     */
+    function getPermissionNameFromID($permissionID)
+    {
+        $permissionName = $this->DB->pselectOne(
+            "SELECT code
+         FROM permissions
+         WHERE permID=:pid",
+            array("pid" => $permissionID)
+        );
+
+        if (empty($permissionName)) {
+            throw new LorisException(
+                "Could not retrieve the permission name for 
+                permission ID '$permissionID'"
+            );
+        }
+        return $permissionName;
+    }
+
+    /**
      * Gets the roles associated to a permission
      *
      * @param int $permissionID the permission
@@ -112,9 +154,7 @@ class Permission
      */
     function getPermissionRoleIDs($permissionID)
     {
-        $DB = \Database::singleton();
-
-        $roles = $DB->pselectCol(
+        $roles = $this->DB->pselectCol(
             "SELECT PermissionCategoryID
          FROM permission_category_permissions_rel
          WHERE PermissionID=:pid",
@@ -133,9 +173,7 @@ class Permission
      */
     function getPermissionUsers($permissionID)
     {
-        $DB = \Database::singleton();
-
-        $usersWithPermission = $DB->pselectColWithIndexKey(
+        $usersWithPermission = $this->DB->pselectColWithIndexKey(
             "SELECT upr.userID, u.Real_name
             FROM user_perm_rel upr 
               JOIN users u ON u.ID=upr.userID

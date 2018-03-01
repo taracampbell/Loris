@@ -19,9 +19,9 @@ if (!$user->hasPermission('user_accounts')) {
 }
 
 $data = array(
-    'roles'       => getRoles(),
-    'permissions' => getPermissions(),
-);
+         'roles'       => getRoles(),
+         'permissions' => getPermissions(),
+        );
 
 echo json_encode($data);
 exit();
@@ -37,16 +37,15 @@ function getRoles()
 {
     $db          = (\NDB_Factory::singleton())->database();
     $userEditing = \User::singleton();
-    $roleObject       = new \Role($db);
+    $roleObject  = new \Role($db);
     $permissionObject = new \Permission($db);
 
-
     $RoleLabels = $roleObject->getRoleLabels();
-    $roles = array();
+    $roles      = array();
 
     if (!empty($RoleLabels)) {
         foreach ($RoleLabels as $RoleID=>$RoleLabel) {
-            $role['id'] = (string)$RoleID;
+            $role['id']   = (string)$RoleID;
             $role['name'] = $RoleLabel;
 
             if (!creatingNewUser()) {
@@ -58,10 +57,10 @@ function getRoles()
                 $RoleID
             );
             foreach ($rolePermissions as $permissionID) {
-                $info['code'] = $permissionObject->getPermissionNameFromID(
-                        $permissionID
-                    );
-                $info['permissionID'] = $permissionID;
+                $info['code']          = $permissionObject->getPermissionNameFromID(
+                    $permissionID
+                );
+                $info['permissionID']  = $permissionID;
                 $role['permissions'][] = $info;
             }
 
@@ -97,7 +96,7 @@ function getRoles()
  */
 function getPermissions()
 {
-    $db          = (\NDB_Factory::singleton())->database();
+    $db = (\NDB_Factory::singleton())->database();
     $permissionObject = new \Permission($db);
     $permissionLabels = $permissionObject->getPermissionLabels();
 
@@ -108,7 +107,7 @@ function getPermissions()
         $userToEdit  = \User::factory($_REQUEST['identifier']);
 
         foreach ($permissionLabels as $permissionID=>$permissionLabel) {
-            $permission['id'] = (string)$permissionID;
+            $permission['id']   = (string)$permissionID;
             $permission['name'] = $permissionLabel;
             $permission['code'] = $permissionObject->getPermissionNameFromID(
                 $permissionID
@@ -123,8 +122,8 @@ function getPermissions()
             } else {
                 $permission['disabled']
                     = !$userEditing->hasPermission(
-                    $permission['code']
-                );
+                        $permission['code']
+                    );
             }
             $permissions[] = $permission;
         }
@@ -146,13 +145,13 @@ function userHasRole($roleID)
     $DB = \Database::singleton();
 
     $role = $DB->pselectOne(
-        "SELECT upc.PermissionCategoryID
-         FROM users_permission_category_rel upc
-         LEFT JOIN users u ON u.ID=upc.UserID
-         WHERE u.userID=:UID AND upc.PermissionCategoryID=:RID",
+        "SELECT urr.RoleID
+         FROM user_role_rel urr
+         LEFT JOIN users u ON u.ID=urr.UserID
+         WHERE u.userID=:UID AND urr.RoleID=:RID",
         array(
-            'UID' => $_REQUEST['identifier'],
-            'RID' => $roleID,
+         'UID' => $_REQUEST['identifier'],
+         'RID' => $roleID,
         )
     );
 
@@ -174,10 +173,10 @@ function getRolePermissions($roleID)
     $DB = \Database::singleton();
 
     $permissions = $DB->pselect(
-        "SELECT pc.PermissionID as permissionID, p.code
-         FROM permission_category_permissions_rel pc
-         LEFT JOIN permissions p ON p.permID=pc.PermissionID
-         WHERE pc.PermissionCategoryID=:RID",
+        "SELECT rpr.PermissionID, p.code
+         FROM role_permission_rel rpr
+         LEFT JOIN permissions p ON p.permID=rpr.PermissionID
+         WHERE rpr.RoleID=:RID",
         array('RID' => $roleID)
     );
 

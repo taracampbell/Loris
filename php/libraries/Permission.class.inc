@@ -112,8 +112,8 @@ class Permission
         $permissionID = $this->DB->pselectOne(
             "SELECT permID
          FROM permissions
-         WHERE code=:permission",
-            array("permission" => $permissionName)
+         WHERE code=:PN",
+            array("PN" => $permissionName)
         );
         return $permissionID;
     }
@@ -132,8 +132,8 @@ class Permission
         $permissionName = $this->DB->pselectOne(
             "SELECT code
          FROM permissions
-         WHERE permID=:pid",
-            array("pid" => $permissionID)
+         WHERE permID=:PID",
+            array("PID" => $permissionID)
         );
 
         if (empty($permissionName)) {
@@ -155,10 +155,10 @@ class Permission
     function getPermissionRoleIDs($permissionID)
     {
         $roles = $this->DB->pselectCol(
-            "SELECT PermissionCategoryID
-         FROM permission_category_permissions_rel
-         WHERE PermissionID=:pid",
-            array("id" => $permissionID)
+            "SELECT RoleID
+         FROM role_permission_rel
+         WHERE PermissionID=:PID",
+            array("PID" => $permissionID)
         );
 
         return $roles;
@@ -177,8 +177,8 @@ class Permission
             "SELECT upr.userID, u.Real_name
             FROM user_perm_rel upr 
               JOIN users u ON u.ID=upr.userID
-              WHERE upr.permId=:pid",
-            array("pid" => $permissionID),
+              WHERE upr.permId=:PID",
+            array("PID" => $permissionID),
             "userID"
         );
         return $usersWithPermission;

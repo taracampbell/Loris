@@ -483,17 +483,19 @@ class Edit_User extends \NDB_Form
             // Update roles
             $userID = $user->getData('ID');
 
+            //TODO: move to a save function in user model
             $DB->delete(
-                'users_permission_category_rel',
+                'user_role_rel',
                 array('UserID' => $userID)
             );
 
             foreach ($roleIDs as $roleID) {
+                //TODO: move to a save function in user model
                 $DB->insert(
-                    'users_permission_category_rel',
+                    'user_role_rel',
                     array(
-                     'UserID'                => $userID,
-                     'PermissionCategoryID' => $roleID,
+                     'UserID' => $userID,
+                     'RoleID' => $roleID,
                     )
                 );
             }

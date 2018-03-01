@@ -49,10 +49,10 @@ class Role
     {
 
         $roles = $this->DB->pselectColWithIndexKey(
-            "SELECT PermissionCategoryID, Name
-         FROM permission_category",
+            "SELECT RoleID, Name
+         FROM role",
             array(),
-            "PermissionCategoryID"
+            "RoleID"
         );
 
         return $roles;
@@ -67,10 +67,10 @@ class Role
     {
 
         $roles = $this->DB->pselectColWithIndexKey(
-            "SELECT PermissionCategoryID, Label
-         FROM permission_category",
+            "SELECT RoleID, Label
+         FROM role",
             array(),
-            "PermissionCategoryID"
+            "RoleID"
         );
 
         return $roles;
@@ -111,10 +111,10 @@ class Role
         }
 
         $roleID = $this->DB->pselectOne(
-            "SELECT PermissionCategoryID
-         FROM permission_category
-         WHERE Name=:role",
-            array("role" => $roleName)
+            "SELECT RoleID
+         FROM role
+         WHERE Name=:RN",
+            array("RN" => $roleName)
         );
 
         return $roleID;
@@ -131,9 +131,9 @@ class Role
     {
         $permissions = $this->DB->pselectCol(
             "SELECT PermissionID
-         FROM permission_category_permissions_rel
-         WHERE PermissionCategoryID=:rid",
-            array("rid" => $roleID)
+         FROM role_permission_rel
+         WHERE RoleID=:RID",
+            array("RID" => $roleID)
         );
 
         return $permissions;
@@ -149,11 +149,11 @@ class Role
     function getRoleUsers($roleID)
     {
         $usersWithRole = $this->DB->pselectColWithIndexKey(
-            "SELECT upc.UserID, u.Real_name
-            FROM users_permission_category_rel upc 
-              JOIN users u ON u.ID=upc.UserID
-              WHERE upc.PermissionCategoryID=:rid",
-            array("rid" => $roleID),
+            "SELECT urr.UserID, u.Real_name
+            FROM user_role_rel urr 
+              JOIN users u ON u.ID=urr.UserID
+              WHERE urr.RoleID=:RID",
+            array("RID" => $roleID),
             "UserID"
         );
         return $usersWithRole;

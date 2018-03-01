@@ -165,7 +165,7 @@ function rebuildRoles()
 
         // delete existing roles
         $DB->delete(
-            'users_permission_category_rel',
+            'user_role_rel',
             array('UserID' => $userID)
         );
         // get their permission set
@@ -180,10 +180,10 @@ function rebuildRoles()
             foreach ($newRoles as $roleID => $roleName) {
                 echo "\tAdding $roleName\n";
                 $DB->insert(
-                    'users_permission_category_rel',
+                    'user_role_rel',
                     array(
-                     'UserID'               => $userID,
-                     'PermissionCategoryID' => $roleID,
+                     'UserID' => $userID,
+                     'RoleID' => $roleID,
                     )
                 );
             }
@@ -276,10 +276,10 @@ function addPermission($role, $permission, $update)
 
     // Insert the permission into permission role rel table
     $DB->insert(
-        'permission_category_permissions_rel',
+        'role_permission_rel',
         array(
-         'PermissionCategoryID' => $roleID,
-         'PermissionID'         => $permissionID,
+         'RoleID'       => $roleID,
+         'PermissionID' => $permissionID,
         )
     );
 
@@ -333,10 +333,10 @@ function removePermission($role, $permission, $update)
 
     // Delete the role from the role permission rel table
     $DB->delete(
-        'permission_category_permissions_rel',
+        'role_permission_rel',
         array(
-         'PermissionCategoryID' => $roleID,
-         'PermissionID'         => $permissionID,
+         'RoleID'       => $roleID,
+         'PermissionID' => $permissionID,
         )
     );
 
@@ -431,8 +431,8 @@ function getUserPermissionIDs($userID)
     $userPermissions = $DB->pselectCol(
         "SELECT permID
          FROM user_perm_rel
-         WHERE userID=:uid",
-        array('uid' => $userID)
+         WHERE userID=:UID",
+        array('UID' => $userID)
     );
 
     return $userPermissions;
@@ -450,10 +450,10 @@ function getUserRoleIDs($userID)
     $DB = \Database::singleton();
 
     $userRoles = $DB->pselectCol(
-        "SELECT PermissionCategoryID
-         FROM users_permission_category_rel
-         WHERE UserID=:uid",
-        array('uid' => $userID)
+        "SELECT RoleID
+         FROM user_role_rel
+         WHERE UserID=:UID",
+        array('UID' => $userID)
     );
 
     return $userRoles;
@@ -472,12 +472,12 @@ function userHasRole($userID, $roleID)
     $DB = \Database::singleton();
 
     $result = $DB->pselectOne(
-        "SELECT PermissionCategoryID
-         FROM users_permission_category_rel 
-         WHERE UserID=:uid AND PermissionCategoryID=:rid",
+        "SELECT RoleID
+         FROM user_role_rel 
+         WHERE UserID=:UID AND RoleID=:RID",
         array(
-         'uid' => $userID,
-         'rid' => $roleID,
+         'UID' => $userID,
+         'RID' => $roleID,
         )
     );
 
@@ -502,10 +502,10 @@ function userhasPermission($userID, $permissionID)
     $result = $DB->pselectOne(
         "SELECT userID
          FROM user_perm_rel upr
-         WHERE userID=:uid AND permID=:pid",
+         WHERE userID=:UID AND permID=:PID",
         array(
-         'uid' => $userID,
-         'pid' => $permissionID,
+         'UID' => $userID,
+         'PID' => $permissionID,
         )
     );
 
